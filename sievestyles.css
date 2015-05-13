@@ -1,1 +1,13 @@
-/* styles go here */
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+#overview {
+	position: fixed;
+	left: 20px;
+	width: 50%;
+}
+
+#parent {
+	margin-left: 50%;
+}
