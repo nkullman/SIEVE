@@ -7,12 +7,13 @@
 
 /** 2D-array (of chars) representing AAs at each position in the sequence
  * for the vaccine and each sequence ID */
-var seqID_pos;
-/** Object (dictionary) storing sequence IDs with keys for AA sequence (char array),
+var sequences;
+/** Object (dictionary) of sequence IDs with AA sequence (char array),
  * vac/plac, and mismatch (boolean array) */
 var seqID_lookup;
-/** Object storing vaccine information: ID and AA sequence */
+/** Object with vaccine ID and AA sequence */
 var vaccine;
+
 
 
 parseVaccineSeq("env.aa.92TH023.fasta");
@@ -21,7 +22,7 @@ parseSeqMismatch("rv144.env.mismatch.distance.csv");
 parseSeqIDFasta("rv144.env.aa.fasta");
 
 /** Read in FASTA file containing vaccine ID and AA sequence.
- * Make vaccine AA sequence first row in seqID_aa matrix.
+ * Make vaccine AA sequence first row in sequences matrix.
  * Add data to vaccine object */
 function parseVaccineSeq(filename) {
 	d3.text(filename, function(data) { 
@@ -29,10 +30,10 @@ function parseVaccineSeq(filename) {
 		// add vaccine ID to vaccine object
 		vaccine = {};
 		vaccine.ID = lines[0].substr(1);
-		// add vaccine sequence (char array) to vaccine object and seqID_pos matrix
+		// add vaccine sequence (char array) to vaccine object and sequences matrix
 		var vacseq = lines[1].split("");
 		vaccine.sequence = vacseq;
-		seqID_pos = new Array(vacseq);
+		sequences = new Array(vacseq);
 	});
 }
 
@@ -67,25 +68,31 @@ function parseSeqMismatch(filename) {
 			// convert mm array from string to int
 			mm = stringArrToIntArr(mm);
 			// add mm to seqID
-			seqID_lookup.seqID.mismatch = mm;
+			seqID_lookup[seqID].mismatch = mm;
 		}
 	});
 }
 
 /** Read in FASTA file containing AA sequences for each breakthrough sequence ID.
- * Store AA sequences (as char arrays) as rows in seqID_pos matrix.
+ * Store AA sequences (as char arrays) as rows in sequences matrix.
  * Add AA sequences to corresponding objects in seqID_lookup array. */
-function parseSeqIDFasta(fastafile) {
-	d3.text(fastafile, function(rawdata) { 
-		var lines = rawdata.split('\n');
-		for (var i = 1; i < lines.length; i+=2) { lines[i] = lines[i].split(""); }
-		console.log(lines);
-		
-		// add sequences (in order) to seqID_pos matrix		
-		// add to seqID_lookup object w/keys: seqIDs; values: AA sequence
+function parseSeqIDFasta(filename) {
+	d3.text(filename, function(data) { 
+		var lines = data.split('\n');
+		for (var i = 0; i < lines.length; i += 0) {
+			if (!lines[i].startsWith(">") || lines[i].length === 0) { i++; }
+			else {
+				var seqID = lines[i].substr(1).trim(/(\r\n|\n|\r)/gm);
+				var seq = lines[i+1].split("");
+				seqID_lookup[seqID].sequence = seq;
+				sequences.push(seq);
+				i += 2;
+			}
+		}
 	});
 }
 
+/** Convert an array of strings to integers */
 function stringArrToIntArr(array){
 	var result = array;
 	for (var i = 0; i < result.length; i++){
