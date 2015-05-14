@@ -13,13 +13,16 @@ var sequences;
 var seqID_lookup;
 /** Object with vaccine ID and AA sequence */
 var vaccine;
-
+/** Object with conservation and hxb2 info for each position */
+var envmap;
 
 
 parseVaccineSeq("env.aa.92TH023.fasta");
 parseSeqIDs_trt("rv144_trt_lookup.csv");
 parseSeqMismatch("rv144.env.mismatch.distance.csv");
 parseSeqIDFasta("rv144.env.aa.fasta");
+parseEnvMap("env.map.csv");
+sequences = transpose(sequences);
 
 /** Read in FASTA file containing vaccine ID and AA sequence.
  * Make vaccine AA sequence first row in sequences matrix.
@@ -92,6 +95,23 @@ function parseSeqIDFasta(filename) {
 	});
 }
 
+/** Read in CSV containing HBX2 and conservation info for each site.
+ * Store data in an object with keys for each AA position index
+ */
+function parseEnvMap(filename) {
+	d3.csv(filename, function(data) {
+		envmap = d3.nest()
+			.key(function(d) {return d.posIndex;})
+			.rollup(function(d) {
+				return { "hxb2Pos": d[0].hxb2Pos,
+						 "hxb2aa": d[0].hxb2aa,
+						 "conservation": d[0].conservation };
+				
+			})
+			.map(data);
+	});
+}
+
 /** Convert an array of strings to integers */
 function stringArrToIntArr(array){
 	var result = array;
@@ -99,4 +119,9 @@ function stringArrToIntArr(array){
 		result[i] = parseInt(result[i]);
 	}
 	return result;
+}
+
+/** Transpose 2D array */
+function transpose(array) {
+  return array[0].map(function (_, c) { return array.map(function (r) { return r[c]; }); });
 }
