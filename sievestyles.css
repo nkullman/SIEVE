@@ -11,3 +11,8 @@ body {
 #parent {
 	margin-left: 50%;
 }
+
+.overlay {
+	fill: none;
+	pointer-events: all;
+}
