@@ -46,6 +46,7 @@ function dovacparsing(vacdata){
 	vaccine.ID = lines[0].substr(1);
 	// add vaccine sequence (char array) to vaccine object and sequences matrix
 	var vacseq = lines[1].split("");
+	while (vacseq[vacseq.length-1].charCodeAt(0) < 32) { vacseq.pop(); }
 	vaccine.sequence = vacseq;
 	sequences = new Array(vacseq);
 }
@@ -89,6 +90,7 @@ function doseqparsing(seqdata) {
 		else {
 			var seqID = lines[i].substr(1).trim(/(\r\n|\n|\r)/gm);
 			var seq = lines[i+1].split("");
+			while (seq[seq.length-1].charCodeAt(0) < 32) { seq.pop(); }
 			seqID_lookup[seqID].sequence = seq;
 			sequences.push(seq);
 			i += 2;
