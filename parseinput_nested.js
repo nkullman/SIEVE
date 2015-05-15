@@ -125,11 +125,3 @@ function stringArrToIntArr(array){
 function transpose(array) {
   return array[0].map(function (_, c) { return array.map(function (r) { return r[c]; }); });
 }
-
-/** With data in hand, make the visualization */
-function generateVis(){
-	console.log(sequences);
-	console.log(vaccine);
-	console.log(seqID_lookup);
-	console.log(envmap);
-}
