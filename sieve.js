@@ -7,7 +7,10 @@ var aacolor = d3.scale.ordinal()
 		
 /** With data in hand, make the visualization */
 function generateVis(){
-	
+	generateSiteSelector();
+}
+
+function generateSiteSelector() {
 	var width = 960,
 	    height = 500;
 	
