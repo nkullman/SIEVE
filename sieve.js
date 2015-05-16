@@ -24,11 +24,19 @@ function generateSiteSelector() {
 	  ];
 	});
 	
-	var xScale = d3.scale.linear()
+	var xScale = d3.scale.ordinal()
+		.domain(d3.range(vaccine.sequence.length))
+		.range([0, width]);
+		
+	var yScale = d3.scale.linear()
+		.domain(0, 1)
+		.range([height, 0]);
+	
+	var exScale = d3.scale.linear()
 	    .domain([0, width])
 	    .range([0, width]);
 	
-	var yScale = d3.scale.linear()
+	var eyScale = d3.scale.linear()
 	    .domain([0, height])
 	    .range([height, 0]);
 	
@@ -36,7 +44,7 @@ function generateSiteSelector() {
 	    .attr("width", width)
 	    .attr("height", height)
 	  .append("g")
-	    .call(d3.behavior.zoom().x(xScale).y(yScale).scaleExtent([1, 8]).on("zoom", zoom));
+	    .call(d3.behavior.zoom().x(exScale).y(eyScale).scaleExtent([1, 8]).on("zoom", zoom));
 	
 	svg.append("rect")
 	    .attr("class", "overlay")
@@ -54,6 +62,6 @@ function generateSiteSelector() {
 	}
 	
 	function transform(d) {
-	  return "translate(" + xScale(d[0]) + "," + yScale(d[1]) + ")";
+	  return "translate(" + exScale(d[0]) + "," + eyScale(d[1]) + ")";
 	}
 }
