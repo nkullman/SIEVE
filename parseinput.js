@@ -24,6 +24,7 @@ parseSeqIDFasta("rv144.env.aa.fasta");
 parseEnvMap("env.map.csv");
 sequences = transpose(sequences);
 
+
 /** Read in FASTA file containing vaccine ID and AA sequence.
  * Make vaccine AA sequence first row in sequences matrix.
  * Add data to vaccine object */
