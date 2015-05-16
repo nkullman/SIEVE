@@ -11,57 +11,43 @@ function generateVis(){
 }
 
 function generateSiteSelector() {
-	var width = 960,
-	    height = 500;
-	
-	var randomX = d3.random.normal(width / 2, 80),
-	    randomY = d3.random.normal(height / 2, 80);
-	
-	var data = d3.range(2000).map(function() {
-	  return [
-	    randomX(),
-	    randomY()
-	  ];
-	});
+	var margin = {top: 20, right: 30, bottom: 30, left: 40},
+	width = 500 - margin.left - margin.right,
+	height = 300 - margin.top - margin.bottom;
 	
 	var xScale = d3.scale.ordinal()
 		.domain(d3.range(vaccine.sequence.length))
-		.range([0, width]);
+		.rangeBands([0, width], 0.05);
 		
 	var yScale = d3.scale.linear()
-		.domain(0, 1)
+		.domain([0, 1])
 		.range([height, 0]);
-	
-	var exScale = d3.scale.linear()
-	    .domain([0, width])
-	    .range([0, width]);
-	
-	var eyScale = d3.scale.linear()
-	    .domain([0, height])
-	    .range([height, 0]);
 	
 	var svg = d3.select("#overview").append("svg")
 	    .attr("width", width)
 	    .attr("height", height)
 	  .append("g")
-	    .call(d3.behavior.zoom().x(exScale).y(eyScale).scaleExtent([1, 8]).on("zoom", zoom));
+	  	.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+	    .call(d3.behavior.zoom().scaleExtent([0, 1000]).on("zoom", zoom));
 	
 	svg.append("rect")
 	    .attr("class", "overlay")
 	    .attr("width", width)
 	    .attr("height", height);
 	
-	var circle = svg.selectAll("circle")
-	    .data(data)
-	  .enter().append("circle")
-	    .attr("r", 2.5)
-	    .attr("transform", transform);
+	var sitebars = svg.selectAll(".sitebars")
+	    .data(vaccine.sequence)
+	  .enter().append("rect")
+	    .attr("x", function (d,i) { return xScale(i); })
+		.attr("y", yScale(1))
+		.attr("width", xScale.rangeBand())
+		.attr("height", height - yScale(1))
+		.attr("fill", function (d,i) {
+			if (i%2 === 0) return "orange";
+			else return "steelblue";
+		});
 	
 	function zoom() {
-	  circle.attr("transform", transform);
-	}
-	
-	function transform(d) {
-	  return "translate(" + exScale(d[0]) + "," + eyScale(d[1]) + ")";
+	  sitebars.attr("transform", "translate(" + d3.event.translate[0]+",0)scale(" + d3.event.scale + ",1)");
 	}
 }
