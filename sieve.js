@@ -1,9 +1,9 @@
 var aacolor = d3.scale.ordinal()
 	.range(['#CCFF00','#FFFF00','#FF0000','#FF0066','#00FF66','#FF9900','#0066FF',
 		'#66FF00','#6600FF','#33FF00','#00FF00','#CC00FF','#FFCC00','#FF00CC',
-		'#0000FF','#FF3300','#FF6600','#99FF00','#00CCFF','#00FFCC'])
+		'#0000FF','#FF3300','#FF6600','#99FF00','#00CCFF','#00FFCC','#000000'])
 	.domain(['A','C','D','E','F','G','H','I','K','L','M',
-		'N','P','Q','R','S','T','V','W','Y']);
+		'N','P','Q','R','S','T','V','W','Y','-']);
 var barmargin = {top: 5, right: 10, bottom: 0, left: 10},
 	barwidth = 200,
 	barheight = 20,
@@ -13,8 +13,9 @@ var barchartmargin = {top: 5, right: 10, bottom: 10, left: 50},
 	barchartheight = 70;
 		
 var plac_scale = d3.scale.linear()
-		.range([0, barwidth]);
-var vac_scale = plac_scale;
+	.range([0, barwidth]);
+var vac_scale = d3.scale.linear()
+	.range([0, barwidth]);
 		
 /** With data in hand, make the visualization */
 function generateVis(){

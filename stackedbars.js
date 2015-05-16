@@ -1,4 +1,5 @@
-var fig3array = [6, 19, 169, 181, 268, 317, 343, 353, 369, 379, 413, 424]
+//This is an array of indices corresponding to the shown AA sites in figure 3 of the paper
+var fig3array = [8, 21, 186, 198, 307, 358, 387, 399, 420, 330, 468, 480]
 
 var group_axis = d3.svg.axis()
 	.scale(d3.scale.ordinal()
@@ -18,26 +19,27 @@ var sites_svg = d3.select("#sites")
 	.attr("width", barchartwidth + barchartmargin.left + barchartmargin.right)
 	.attr("height", 0);
 
-function create_selected_AAsites(sites)
+function update_AAsites(sites)
 {
+	//Use enter() and exit() to create, move, and remove AA site charts around
 	var AAsites = sites_svg.selectAll(".AAsite")
 		.data(sites, function(d) { return d; });
-	sites_svg.transition()
+	sites_svg.transition() //makes the svg resize to fit charts
 		.attr("height", AAsites[0].length*(barchartheight + barchartmargin.top + barchartmargin.bottom));
 	
-	AAsites.transition()
+	AAsites.transition() //moves charts which are staying to accomadate new/removed charts
 		.attr("transform", AAsite_translate);
 	
-	AAsites.exit().transition()
+	AAsites.exit().transition() //animates a removal by pushing chart downwards while scaling y component to 0
 		.attr("transform", function(d, i) { return AAsite_shrink(d,i+1); })
 		.remove();
 		
 	AAsites.enter().append("g")
 		.attr("class", "AAsite")
-		.attr("transform", AAsite_shrink)
+		.attr("transform", AAsite_shrink) //start with 0 y scaling
 		.each(create_AAsite_chart)
 		.transition()
-		.attr("transform", AAsite_translate);
+		.attr("transform", AAsite_translate); //scale y component from 0 to 1
 }
 
 function create_AAsite_chart(site)
@@ -47,12 +49,14 @@ function create_AAsite_chart(site)
 	var vacnest = d3.nest()
 	//count aas of each type at this site
 		.key(function(d) { return d; })
+		.sortKeys(d3.ascending)
 		.rollup(function(d) { return d.length; })
 		.entries(sequences.vaccine[site].filter(function(d) {
 			return d != vaccine.sequence[site];
 		}));
 	var placnest = d3.nest()
 		.key(function(d, i) { return d; })
+		.sortKeys(d3.ascending)
 		.rollup(function(d) { return d.length; })
 		.entries(sequences.placebo[site].filter(function(d) {
 			return d!= vaccine.sequence[site];
