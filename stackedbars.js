@@ -17,37 +17,47 @@ var vac_scale = d3.scale.linear()
 	.range([0, barwidth])
 	.domain([0, nvac]);
 	
-var group_scale = d3.scale.ordinal()
-	.domain(["PLACEBO","VACCINE"])
-	.rangeRoundPoints([0,barchartheight]);
+function create_AAsite_div(site)
+{
+	//Create a div to put a AA site chart then put the chart inside
+	var location = d3.select("#sites")
+		.append("div")
+		.attr("id", site)
+		.attr("class", "AAsite");
+	create_AAsite_chart(location, site);
+}
 
 function create_AAsite_chart(location, site)
 {
 	//Create a viz of two stacked horizontal stacked bar charts.
 	//Passed the location to append viz and the index of the site of interest
-	var nest = d3.nest()
+	var vacnest = d3.nest()
 	//count aas of each type at this site
-		.key(function(d, i) { return seqID[i]; }) //TODO: should return vac/plac
-		.key(function(d, i) { return d[i]; })
+		.key(function(d) { return d; })
 		.rollup(function(d) { return d.length; })
-		.entries(seqID_aa[site]); //TODO: should filter out matches of vaccine seq
+		.entries(sequences[0].values[site].filter(function(d) {
+			return d != vaccine.sequence[site];
+		}));
+	var placnest = d3.nest()
+		.key(function(d, i) { return d; })
+		.rollup(function(d) { return d.length; })
+		.entries(sequences[1].values[site].filter(function(d) {
+			return d!= vaccine.sequence[site];
+		}));
 	
 	var svg = location.append("svg")
 		.attr("width", barchartwidth + barchartmargin.left + barchartmargin.right)
 		.attr("height", barchartheight + barchartmargin.top + barchartmargin.bottom)
 		.append("g")
 			.attr("transform", "translate(" + barchartmargin.left + "," + barchartmargin.top + ")");
+	
+	create_stacked_bar(svg, vacnest, barchartheight/3)
+	create_stacked_bar(svg, placnest, 2*barchartheight/3)
 }
 
-function create_stacked_bar(location, nest, num_patients)
+function create_stacked_bar(svg, nest, yloc)
 {
-	var scale = d3.scale.linear()
-		.range([0, barwidth])
-		.domain([0, num_patients]);
-	var axis = d3.svg.axis()
-		.scale(scale)
-		.orient("bottom");
-	var svg = location.append("svg")
+	var bar = svg.append("g")
 		.attr("width", barwidth + barmargin.left + barmargin.right)
 		.attr("height", barheight + barmargin.top + barmargin.bottom)
 		.append("g")
