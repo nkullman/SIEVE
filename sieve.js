@@ -27,7 +27,7 @@ function generateVis(){
 }
 
 function generateSiteSelector() {
-	var margin = {top: 20, right: 30, bottom: 30, left: 40},
+	var margin = {top: 100, right: 30, bottom: 30, left: 40},
 	width = 500 - margin.left - margin.right,
 	height = 200 - margin.top - margin.bottom;
 	
@@ -37,25 +37,25 @@ function generateSiteSelector() {
 		
 	var yScale = d3.scale.linear()
 		.domain([0, 1])
-		.range([0.75*height, 0.25*height]);
+		.range([height, 0]);
 		
 	var xAxis = d3.svg.axis()
 		.scale(xScale)
 		.orient("bottom");
 	
-	var svg = d3.select("#overview").append("svg")
-	    .attr("width", width)
-	    .attr("height", height)
+	var seqchart = d3.select("#overview").append("svg")
+	    .attr("width", width + margin.left + margin.right)
+	    .attr("height", height + margin.top + margin.bottom)
 	  .append("g")
 	  	.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 	    .call(d3.behavior.zoom().scaleExtent([0, 1000]).on("zoom", zoom));
 	
-	svg.append("rect")
+	seqchart.append("rect")
 	    .attr("class", "overlay")
 	    .attr("width", width)
 	    .attr("height", height);
 	
-	var sitebars = svg.selectAll(".sitebars")
+	var sitebars = seqchart.selectAll(".sitebars")
 	    .data(vaccine.sequence)
 	  .enter().append("rect")
 	    .attr("x", function (d,i) { return xScale(i); })
@@ -63,18 +63,17 @@ function generateSiteSelector() {
 		.attr("width", xScale.rangeBand())
 		.attr("height", height - yScale(1))
 		.attr("fill", function (d) {
-			if (d === '-') { return "black"; }
-			else { return aacolor(d); }
+			return aacolor(d);
 		});
 		
-	svg.append("g")
+	seqchart.append("g")
 		.attr("class", "x axis")
-		.attr("transform", "translate(0," + yScale(0) + ")")
+		.attr("transform", "translate(0," + (height + 5) + ")")
 		.call(xAxis);
 	
 	function zoom() {
 	  sitebars.attr("transform", "translate(" + d3.event.translate[0]+", 0)scale(" + d3.event.scale + ", 1)");
-	  svg.select(".x.axis").attr("transform", "translate(" + d3.event.translate[0]+","+(yScale(0))+")")
+	  seqchart.select(".x.axis").attr("transform", "translate(" + d3.event.translate[0]+","+(height + 5)+")")
        .call(xAxis.scale(xScale.rangeBands([0, width * d3.event.scale], 0.05)));
 	}
 }
