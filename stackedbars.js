@@ -35,13 +35,13 @@ function create_AAsite_chart(location, site)
 	//count aas of each type at this site
 		.key(function(d) { return d; })
 		.rollup(function(d) { return d.length; })
-		.entries(sequences.vaccine.filter(function(d) {
+		.entries(sequences.vaccine[site].filter(function(d) {
 			return d != vaccine.sequence[site];
 		}));
 	var placnest = d3.nest()
 		.key(function(d, i) { return d; })
 		.rollup(function(d) { return d.length; })
-		.entries(sequences.placebo.filter(function(d) {
+		.entries(sequences.placebo[site].filter(function(d) {
 			return d!= vaccine.sequence[site];
 		}));
 	
@@ -50,18 +50,17 @@ function create_AAsite_chart(location, site)
 		.attr("height", barchartheight + barchartmargin.top + barchartmargin.bottom)
 		.append("g")
 			.attr("transform", "translate(" + barchartmargin.left + "," + barchartmargin.top + ")");
-	
-	create_stacked_bar(svg, vacnest, barchartheight/3)
-	create_stacked_bar(svg, placnest, 2*barchartheight/3)
+	create_stacked_bar(svg, vacnest, vac_scale, barchartheight/3);
+	create_stacked_bar(svg, placnest, plac_scale, 2*barchartheight/3);
 }
 
-function create_stacked_bar(svg, nest, yloc)
+function create_stacked_bar(svg, nest, scale, yloc)
 {
 	var bar = svg.append("g")
 		.attr("width", barwidth + barmargin.left + barmargin.right)
 		.attr("height", barheight + barmargin.top + barmargin.bottom)
 		.append("g")
-			.attr("transform", "translate(" + barmargin.left + "," + barmargin.top + ")");
+			.attr("transform", "translate(" + barmargin.left + "," + (barmargin.top+yloc) + ")");
 	var sum = 0;
 	nest.forEach(function(d)
 	{
@@ -70,13 +69,11 @@ function create_stacked_bar(svg, nest, yloc)
 		d.x1 = sum;
 	});
 	
-	svg.selectAll("rect")
+	bar.selectAll("rect")
 		.data(nest)
 		.enter().append("rect")
 		.attr("x", function(d) {return scale(d.x0);})
 		.attr("height", barheight)
 		.attr("width", function(d) {return scale(d.x1) - scale(d.x0);})
 		.style("fill", function(d) {return aacolor(d.key);});
-		
-	return svg;
 }
