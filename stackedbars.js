@@ -6,8 +6,8 @@ var barchartmargin = {top: 5, right: 10, bottom: 0, left: 10},
 	barchartwidth = 250,
 	barchartheight = 50;
 
-var nplac = 75; //TODO: write these as part of text parsing
-var nvac = 56;
+var nplac = 66; //TODO: write these as part of text parsing
+var nvac = 43;
 	
 var plac_scale = d3.scale.linear()
 	.range([0, barwidth])
@@ -35,13 +35,13 @@ function create_AAsite_chart(location, site)
 	//count aas of each type at this site
 		.key(function(d) { return d; })
 		.rollup(function(d) { return d.length; })
-		.entries(sequences[0].values[site].filter(function(d) {
+		.entries(sequences.vaccine.filter(function(d) {
 			return d != vaccine.sequence[site];
 		}));
 	var placnest = d3.nest()
 		.key(function(d, i) { return d; })
 		.rollup(function(d) { return d.length; })
-		.entries(sequences[1].values[site].filter(function(d) {
+		.entries(sequences.placebo.filter(function(d) {
 			return d!= vaccine.sequence[site];
 		}));
 	
