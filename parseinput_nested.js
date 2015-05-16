@@ -7,6 +7,8 @@
 
 /** 2D-array (of chars) representing AAs at each position in the sequence
  * for the vaccine and each sequence ID */
+var sequences_raw;
+/** Object holding a 2D-array of sequences for both the vaccine and placebo groups */
 var sequences;
 /** Object (dictionary) of sequence IDs with AA sequence (char array),
  * vac/plac, and mismatch (boolean array) */
@@ -15,6 +17,10 @@ var seqID_lookup;
 var vaccine;
 /** Object with conservation and hxb2 info for each position */
 var envmap;
+/** Number of people in the vaccine group */
+var numvac = 0;
+/** Number of people in the placebo group */
+var numplac = 0;
 
 d3.text("env.aa.92TH023.fasta", function(vacdata) {
 	dovacparsing(vacdata);
@@ -26,8 +32,9 @@ d3.text("env.aa.92TH023.fasta", function(vacdata) {
 				doseqparsing(seqdata);
 				d3.csv("env.map.csv", function(mapdata){
 					makeenvmap(mapdata);
-					sequences = transpose(sequences);
-					
+					sequences_raw = transpose(sequences_raw);
+					sequences.vaccine = transpose(sequences.vaccine);
+					sequences.placebo = transpose(sequences.placebo);
 					generateVis();
 					
 				});
@@ -43,12 +50,15 @@ function dovacparsing(vacdata){
 	var lines = vacdata.split('\n');
 	// add vaccine ID to vaccine object
 	vaccine = {};
+	sequences = {};
 	vaccine.ID = lines[0].substr(1);
 	// add vaccine sequence (char array) to vaccine object and sequences matrix
 	var vacseq = lines[1].split("");
 	while (vacseq[vacseq.length-1].charCodeAt(0) < 32) { vacseq.pop(); }
 	vaccine.sequence = vacseq;
-	sequences = new Array(vacseq);
+	sequences_raw = new Array(vacseq);
+	sequences.vaccine = new Array();
+	sequences.placebo = new Array();
 }
 
 /** Create dictionary using sequence IDs and add treatment info (vaccine/placebo)
@@ -92,7 +102,14 @@ function doseqparsing(seqdata) {
 			var seq = lines[i+1].split("");
 			while (seq[seq.length-1].charCodeAt(0) < 32) { seq.pop(); }
 			seqID_lookup[seqID].sequence = seq;
-			sequences.push(seq);
+			sequences_raw.push(seq);
+			if (seqID_lookup[seqID].vaccine) {
+				sequences.vaccine.push(seq);
+				numvac++;
+			} else {
+				sequences.placebo.push(seq);
+				numplac++;
+			}
 			i += 2;
 		}
 	}
