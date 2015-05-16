@@ -2,9 +2,9 @@ var barmargin = {top: 5, right: 10, bottom: 0, left: 10},
 	barwidth = 200,
 	barheight = 20,
 	barpadding = .1;
-var barchartmargin = {top: 5, right: 10, bottom: 0, left: 10},
+var barchartmargin = {top: 5, right: 10, bottom: 10, left: 50},
 	barchartwidth = 250,
-	barchartheight = 50;
+	barchartheight = 70;
 
 var nplac = 66; //TODO: write these as part of text parsing
 var nvac = 43;
@@ -16,6 +16,19 @@ var plac_scale = d3.scale.linear()
 var vac_scale = d3.scale.linear()
 	.range([0, barwidth])
 	.domain([0, nvac]);
+
+var group_axis = d3.svg.axis()
+	.scale(d3.scale.ordinal()
+		.domain(["Vaccine", "Placebo"])
+		.rangeRoundPoints([15,40]))
+	.orient("left");
+
+var mismatch_axis = d3.svg.axis()
+	.scale(d3.scale.linear()
+		.domain([0,100])
+		.range([0, barwidth]))
+	.orient("bottom")
+	.ticks(5);
 	
 function create_AAsite_div(site)
 {
@@ -50,8 +63,15 @@ function create_AAsite_chart(location, site)
 		.attr("height", barchartheight + barchartmargin.top + barchartmargin.bottom)
 		.append("g")
 			.attr("transform", "translate(" + barchartmargin.left + "," + barchartmargin.top + ")");
-	create_stacked_bar(svg, vacnest, vac_scale, barchartheight/3);
-	create_stacked_bar(svg, placnest, plac_scale, 2*barchartheight/3);
+	svg.append("g")
+		.attr("class", "group axis")
+		.call(group_axis);
+	create_stacked_bar(svg, vacnest, vac_scale, 0);
+	create_stacked_bar(svg, placnest, plac_scale, 25);
+	svg.append("g")
+		.attr("transform", "translate(10,55)")
+		.attr("class", "mismatch axis")
+		.call(mismatch_axis);
 }
 
 function create_stacked_bar(svg, nest, scale, yloc)
