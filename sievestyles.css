@@ -17,11 +17,10 @@ body {
 	pointer-events: all;
 }
 
-.axis text {
+svg text {
 	font: 10px sans-serif;
 }
 .aatitle {
-	font: 10px sans-serif;
 	font-weight: bold;
 }
 
