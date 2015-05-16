@@ -4,9 +4,24 @@ var aacolor = d3.scale.ordinal()
 		'#0000FF','#FF3300','#FF6600','#99FF00','#00CCFF','#00FFCC'])
 	.domain(['A','C','D','E','F','G','H','I','K','L','M',
 		'N','P','Q','R','S','T','V','W','Y']);
+var barmargin = {top: 5, right: 10, bottom: 0, left: 10},
+	barwidth = 200,
+	barheight = 20,
+	barpadding = .1;
+var barchartmargin = {top: 5, right: 10, bottom: 10, left: 50},
+	barchartwidth = 250,
+	barchartheight = 70;
+		
+var plac_scale = d3.scale.linear()
+		.range([0, barwidth]);
+var vac_scale = plac_scale;
 		
 /** With data in hand, make the visualization */
 function generateVis(){
+	
+	plac_scale.domain([0, numplac]);
+	vac_scale.domain([0, numvac]);
+	
 	generateSiteSelector();
 }
 

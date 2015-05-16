@@ -1,21 +1,4 @@
-var barmargin = {top: 5, right: 10, bottom: 0, left: 10},
-	barwidth = 200,
-	barheight = 20,
-	barpadding = .1;
-var barchartmargin = {top: 5, right: 10, bottom: 10, left: 50},
-	barchartwidth = 250,
-	barchartheight = 70;
-
-var nplac = 66; //TODO: write these as part of text parsing
-var nvac = 43;
-	
-var plac_scale = d3.scale.linear()
-	.range([0, barwidth])
-	.domain([0, nplac]);
-
-var vac_scale = d3.scale.linear()
-	.range([0, barwidth])
-	.domain([0, nvac]);
+var fig3array = [6, 19, 169, 181, 268, 317, 343, 353, 369, 379, 413, 424]
 
 var group_axis = d3.svg.axis()
 	.scale(d3.scale.ordinal()
