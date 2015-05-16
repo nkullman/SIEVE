@@ -1,21 +1,4 @@
-var barmargin = {top: 5, right: 10, bottom: 0, left: 10},
-	barwidth = 200,
-	barheight = 20,
-	barpadding = .1;
-var barchartmargin = {top: 5, right: 10, bottom: 10, left: 50},
-	barchartwidth = 250,
-	barchartheight = 70;
-
-var nplac = 66; //TODO: write these as part of text parsing
-var nvac = 43;
-	
-var plac_scale = d3.scale.linear()
-	.range([0, barwidth])
-	.domain([0, nplac]);
-
-var vac_scale = d3.scale.linear()
-	.range([0, barwidth])
-	.domain([0, nvac]);
+var fig3array = [6, 19, 169, 181, 268, 317, 343, 353, 369, 379, 413, 424]
 
 var group_axis = d3.svg.axis()
 	.scale(d3.scale.ordinal()
@@ -30,29 +13,31 @@ var mismatch_axis = d3.svg.axis()
 	.orient("bottom")
 	.ticks(5);
 
-var sites_div = d3.select("#sites");
+var sites_svg = d3.select("#sites")
+	.append("svg")
+	.attr("width", barchartwidth + barchartmargin.left + barchartmargin.right)
+	.attr("height", 0);
 
 function create_selected_AAsites(sites)
 {
-	var AAsites = sites_div.selectAll(".AAsite")
+	var AAsites = sites_svg.selectAll(".AAsite")
 		.data(sites, function(d) { return d; });
+	sites_svg.transition()
+		.attr("height", AAsites[0].length*(barchartheight + barchartmargin.top + barchartmargin.bottom));
+	
+	AAsites.transition()
+		.attr("transform", AAsite_translate);
 	
 	AAsites.exit().transition()
-		.attr("height", 0)
+		.attr("transform", function(d, i) { return AAsite_shrink(d,i+1); })
 		.remove();
-	
-	AAsites.enter().append("svg")
+		
+	AAsites.enter().append("g")
 		.attr("class", "AAsite")
-		.attr("width", barchartwidth + barchartmargin.left + barchartmargin.right)
-		.attr("height", barchartheight + barchartmargin.top + barchartmargin.bottom)
-		.append("g")
-			.attr("transform", "translate(" + barchartmargin.left + "," + barchartmargin.top + ")")
-			.each(create_AAsite_chart);
-	
-	AAsites.sort(function(a, b)
-	{
-		return a > b;
-	});
+		.attr("transform", AAsite_shrink)
+		.each(create_AAsite_chart)
+		.transition()
+		.attr("transform", AAsite_translate);
 }
 
 function create_AAsite_chart(site)
@@ -107,4 +92,14 @@ function create_stacked_bar(svg, nest, scale, yloc)
 		.attr("height", barheight)
 		.attr("width", function(d) {return scale(d.x1) - scale(d.x0);})
 		.style("fill", function(d) {return aacolor(d.key);});
+}
+
+function AAsite_translate(d, i)
+{
+	return "translate(" + barchartmargin.left + "," + (i * (barchartheight + barchartmargin.top + barchartmargin.bottom) + barchartmargin.top) + ") scale(1,1)"; 
+}
+
+function AAsite_shrink(d, i)
+{
+	return "translate(" + barchartmargin.left + "," + (i * (barchartheight + barchartmargin.top + barchartmargin.bottom) + barchartmargin.top) + ") scale(1,0)";
 }
