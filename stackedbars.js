@@ -29,18 +29,33 @@ var mismatch_axis = d3.svg.axis()
 		.range([0, barwidth]))
 	.orient("bottom")
 	.ticks(5);
-	
-function create_AAsite_div(site)
+
+var sites_div = d3.select("#sites");
+
+function create_selected_AAsites(sites)
 {
-	//Create a div to put a AA site chart then put the chart inside
-	var location = d3.select("#sites")
-		.append("div")
-		.attr("id", site)
-		.attr("class", "AAsite");
-	create_AAsite_chart(location, site);
+	var AAsites = sites_div.selectAll(".AAsite")
+		.data(sites, function(d) { return d; });
+	
+	AAsites.exit().transition()
+		.attr("height", 0)
+		.remove();
+	
+	AAsites.enter().append("svg")
+		.attr("class", "AAsite")
+		.attr("width", barchartwidth + barchartmargin.left + barchartmargin.right)
+		.attr("height", barchartheight + barchartmargin.top + barchartmargin.bottom)
+		.append("g")
+			.attr("transform", "translate(" + barchartmargin.left + "," + barchartmargin.top + ")")
+			.each(create_AAsite_chart);
+	
+	AAsites.sort(function(a, b)
+	{
+		return a > b;
+	});
 }
 
-function create_AAsite_chart(location, site)
+function create_AAsite_chart(site)
 {
 	//Create a viz of two stacked horizontal stacked bar charts.
 	//Passed the location to append viz and the index of the site of interest
@@ -57,12 +72,8 @@ function create_AAsite_chart(location, site)
 		.entries(sequences.placebo[site].filter(function(d) {
 			return d!= vaccine.sequence[site];
 		}));
+	svg = d3.select(this);
 	
-	var svg = location.append("svg")
-		.attr("width", barchartwidth + barchartmargin.left + barchartmargin.right)
-		.attr("height", barchartheight + barchartmargin.top + barchartmargin.bottom)
-		.append("g")
-			.attr("transform", "translate(" + barchartmargin.left + "," + barchartmargin.top + ")");
 	svg.append("g")
 		.attr("class", "group axis")
 		.call(group_axis);
