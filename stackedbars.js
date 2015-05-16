@@ -43,20 +43,18 @@ function create_selected_AAsites(sites)
 		.attr("height", AAsites[0].length*(barchartheight + barchartmargin.top + barchartmargin.bottom));
 	
 	AAsites.transition()
-		.attr("transform", AAsite_transform);
+		.attr("transform", AAsite_translate);
 	
 	AAsites.exit().transition()
-		.attr("height", 0)
+		.attr("transform", function(d, i) { return AAsite_shrink(d,i+1); })
 		.remove();
 		
 	AAsites.enter().append("g")
 		.attr("class", "AAsite")
-		.attr("width", barchartwidth + barchartmargin.left + barchartmargin.right)
-		.attr("height", 0)
-		.attr("transform", AAsite_transform)
+		.attr("transform", AAsite_shrink)
 		.each(create_AAsite_chart)
 		.transition()
-		.attr("height", barchartheight + barchartmargin.top + barchartmargin.bottom);
+		.attr("transform", AAsite_translate);
 }
 
 function create_AAsite_chart(site)
@@ -113,7 +111,12 @@ function create_stacked_bar(svg, nest, scale, yloc)
 		.style("fill", function(d) {return aacolor(d.key);});
 }
 
-function AAsite_transform(d, i)
+function AAsite_translate(d, i)
 {
-	return "translate(" + barchartmargin.left + "," + (i * (barchartheight + barchartmargin.top + barchartmargin.bottom) + barchartmargin.top) + ")"; 
+	return "translate(" + barchartmargin.left + "," + (i * (barchartheight + barchartmargin.top + barchartmargin.bottom) + barchartmargin.top) + ") scale(1,1)"; 
+}
+
+function AAsite_shrink(d, i)
+{
+	return "translate(" + barchartmargin.left + "," + (i * (barchartheight + barchartmargin.top + barchartmargin.bottom) + barchartmargin.top) + ") scale(1,0)";
 }
