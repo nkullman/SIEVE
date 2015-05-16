@@ -13,8 +13,9 @@ var barchartmargin = {top: 5, right: 10, bottom: 10, left: 50},
 	barchartheight = 70;
 		
 var plac_scale = d3.scale.linear()
-		.range([0, barwidth]);
-var vac_scale = plac_scale;
+	.range([0, barwidth]);
+var vac_scale = d3.scale.linear()
+	.range([0, barwidth]);
 		
 /** With data in hand, make the visualization */
 function generateVis(){

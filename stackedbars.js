@@ -1,4 +1,4 @@
-var fig3array = [6, 19, 169, 181, 268, 317, 343, 353, 369, 379, 413, 424]
+var fig3array = [8, 21, 186, 198, 307, 358, 387, 399, 420, 330, 468, 480]
 
 var group_axis = d3.svg.axis()
 	.scale(d3.scale.ordinal()
