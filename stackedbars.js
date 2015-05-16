@@ -72,6 +72,14 @@ function create_AAsite_chart(site)
 		.attr("transform", "translate(10,55)")
 		.attr("class", "mismatch axis")
 		.call(mismatch_axis);
+	
+	//Create title
+	svg.append("text")
+		.attr("class", "aatitle")
+		.attr("text-anchor", "middle")
+		.attr("x", barchartwidth/2)
+		.attr("y", 0)
+		.text("Env " + envmap[site].hxb2Pos);
 }
 
 function create_stacked_bar(svg, nest, scale, yloc)
