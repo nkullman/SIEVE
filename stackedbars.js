@@ -30,29 +30,33 @@ var mismatch_axis = d3.svg.axis()
 	.orient("bottom")
 	.ticks(5);
 
-var sites_div = d3.select("#sites");
+var sites_svg = d3.select("#sites")
+	.append("svg")
+	.attr("width", barchartwidth + barchartmargin.left + barchartmargin.right)
+	.attr("height", 0);
 
 function create_selected_AAsites(sites)
 {
-	var AAsites = sites_div.selectAll(".AAsite")
+	var AAsites = sites_svg.selectAll(".AAsite")
 		.data(sites, function(d) { return d; });
+	sites_svg.transition()
+		.attr("height", AAsites[0].length*(barchartheight + barchartmargin.top + barchartmargin.bottom));
+	
+	AAsites.transition()
+		.attr("transform", AAsite_transform);
 	
 	AAsites.exit().transition()
 		.attr("height", 0)
 		.remove();
-	
-	AAsites.enter().append("svg")
+		
+	AAsites.enter().append("g")
 		.attr("class", "AAsite")
 		.attr("width", barchartwidth + barchartmargin.left + barchartmargin.right)
-		.attr("height", barchartheight + barchartmargin.top + barchartmargin.bottom)
-		.append("g")
-			.attr("transform", "translate(" + barchartmargin.left + "," + barchartmargin.top + ")")
-			.each(create_AAsite_chart);
-	
-	AAsites.sort(function(a, b)
-	{
-		return a > b;
-	});
+		.attr("height", 0)
+		.attr("transform", AAsite_transform)
+		.each(create_AAsite_chart)
+		.transition()
+		.attr("height", barchartheight + barchartmargin.top + barchartmargin.bottom);
 }
 
 function create_AAsite_chart(site)
@@ -107,4 +111,9 @@ function create_stacked_bar(svg, nest, scale, yloc)
 		.attr("height", barheight)
 		.attr("width", function(d) {return scale(d.x1) - scale(d.x0);})
 		.style("fill", function(d) {return aacolor(d.key);});
+}
+
+function AAsite_transform(d, i)
+{
+	return "translate(" + barchartmargin.left + "," + (i * (barchartheight + barchartmargin.top + barchartmargin.bottom) + barchartmargin.top) + ")"; 
 }
