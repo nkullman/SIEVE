@@ -82,19 +82,15 @@ function generateSiteSelector() {
 		.call(xAxis);
 	
 	function refresh() {
-		console.log(d3.event.scale);
-		console.log(d3.event.translate);
-		console.log("width = " + width);
-		
 		var t = d3.event.translate;
 		var s = d3.event.scale;
 		
-		if (t[0] > width/2)  { t[0] = width/2; }
-		if (t[0] < -(width*s - width/2)) { t[0] = -(width*s - width/2); }
+		if (t[0] > 0)  { t[0] = 0; }
+		if (t[0] < -(width*s - width)) { t[0] = -(width*s - width); }
 
 		zoom.translate(t);
 		
 		sitebars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
-		seqchart.select(".x.axis").call(xAxis);
+		seqchart.select(".x.axis").call(xAxis.scale(xScale));
 	}
 }
