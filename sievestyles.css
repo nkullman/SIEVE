@@ -17,8 +17,11 @@ body {
 	pointer-events: all;
 }
 
-.axis text {
+svg text {
 	font: 10px sans-serif;
+}
+.aatitle {
+	font-weight: bold;
 }
 
 .axis line,
@@ -26,8 +29,4 @@ body {
 	fill: none;
 	stroke: #000;
 	shape-rendering: crispEdges;
-}
-
-.AAsite {
-	display: block;
 }

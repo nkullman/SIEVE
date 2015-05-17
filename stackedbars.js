@@ -1,21 +1,7 @@
-var barmargin = {top: 5, right: 10, bottom: 0, left: 10},
-	barwidth = 200,
-	barheight = 20,
-	barpadding = .1;
-var barchartmargin = {top: 5, right: 10, bottom: 10, left: 50},
-	barchartwidth = 250,
-	barchartheight = 70;
+//This is an array of indices corresponding to the shown AA sites in figure 3 of the paper
+var fig3array = [8, 21, 186, 198, 307, 358, 387, 399, 420, 330, 468, 480]
 
-var nplac = 66; //TODO: write these as part of text parsing
-var nvac = 43;
-	
-var plac_scale = d3.scale.linear()
-	.range([0, barwidth])
-	.domain([0, nplac]);
-
-var vac_scale = d3.scale.linear()
-	.range([0, barwidth])
-	.domain([0, nvac]);
+var legendspacing = {x: 25, y: 15};
 
 var group_axis = d3.svg.axis()
 	.scale(d3.scale.ordinal()
@@ -30,29 +16,32 @@ var mismatch_axis = d3.svg.axis()
 	.orient("bottom")
 	.ticks(5);
 
-var sites_div = d3.select("#sites");
+var sites_svg = d3.select("#sites")
+	.append("svg")
+	.attr("width", barchartwidth + barchartmargin.left + barchartmargin.right)
+	.attr("height", 0);
 
-function create_selected_AAsites(sites)
+function update_AAsites(sites)
 {
-	var AAsites = sites_div.selectAll(".AAsite")
+	//Use enter() and exit() to create, move, and remove AA site charts around
+	var AAsites = sites_svg.selectAll(".AAsite")
 		.data(sites, function(d) { return d; });
+	sites_svg.transition() //makes the svg resize to fit charts
+		.attr("height", AAsites[0].length*(barchartheight + barchartmargin.top + barchartmargin.bottom));
 	
-	AAsites.exit().transition()
-		.attr("height", 0)
+	AAsites.transition() //moves charts which are staying to accomadate new/removed charts
+		.attr("transform", AAsite_translate);
+	
+	AAsites.exit().transition() //animates a removal by pushing chart downwards while scaling y component to 0
+		.attr("transform", function(d, i) { return AAsite_shrink(d,i+1); })
 		.remove();
-	
-	AAsites.enter().append("svg")
+		
+	AAsites.enter().append("g")
 		.attr("class", "AAsite")
-		.attr("width", barchartwidth + barchartmargin.left + barchartmargin.right)
-		.attr("height", barchartheight + barchartmargin.top + barchartmargin.bottom)
-		.append("g")
-			.attr("transform", "translate(" + barchartmargin.left + "," + barchartmargin.top + ")")
-			.each(create_AAsite_chart);
-	
-	AAsites.sort(function(a, b)
-	{
-		return a > b;
-	});
+		.attr("transform", AAsite_shrink) //start with 0 y scaling
+		.each(create_AAsite_chart)
+		.transition()
+		.attr("transform", AAsite_translate); //scale y component from 0 to 1
 }
 
 function create_AAsite_chart(site)
@@ -62,17 +51,19 @@ function create_AAsite_chart(site)
 	var vacnest = d3.nest()
 	//count aas of each type at this site
 		.key(function(d) { return d; })
+		.sortKeys(d3.ascending)
 		.rollup(function(d) { return d.length; })
 		.entries(sequences.vaccine[site].filter(function(d) {
 			return d != vaccine.sequence[site];
 		}));
 	var placnest = d3.nest()
 		.key(function(d, i) { return d; })
+		.sortKeys(d3.ascending)
 		.rollup(function(d) { return d.length; })
 		.entries(sequences.placebo[site].filter(function(d) {
 			return d!= vaccine.sequence[site];
 		}));
-	svg = d3.select(this);
+	var svg = d3.select(this);
 	
 	svg.append("g")
 		.attr("class", "group axis")
@@ -83,6 +74,35 @@ function create_AAsite_chart(site)
 		.attr("transform", "translate(10,55)")
 		.attr("class", "mismatch axis")
 		.call(mismatch_axis);
+	
+	//Create title
+	svg.append("text")
+		.attr("class", "aatitle")
+		.attr("text-anchor", "middle")
+		.attr("x", barchartwidth/2)
+		.attr("y", 0)
+		.text("Env " + envmap[site].hxb2Pos);
+	
+	//Create legend
+	var acids = d3.set() //assemble list of amino acids present in chart
+	vacnest.forEach(function(d) { acids.add(d.key); });
+	placnest.forEach(function(d) { acids.add(d.key); });
+	acids = acids.values().sort(d3.ascending);
+	var legend = svg.append("g")
+		.attr("class", "aalegend")
+		.attr("transform", "translate(" + (barwidth + barmargin.right + barmargin.left) + ", -10)");
+	acids.forEach(function(d,i)
+	{
+		var acid_g = legend.append("g")
+		.attr("transform", AAlegend_translate(i));
+		acid_g.append("rect")
+			.attr("width", 10)
+			.attr("height", 10)
+			.style("fill", aacolor(d));
+		acid_g.append("text")
+			.attr("transform", "translate(12,10)")
+			.text(d);
+	});
 }
 
 function create_stacked_bar(svg, nest, scale, yloc)
@@ -107,4 +127,19 @@ function create_stacked_bar(svg, nest, scale, yloc)
 		.attr("height", barheight)
 		.attr("width", function(d) {return scale(d.x1) - scale(d.x0);})
 		.style("fill", function(d) {return aacolor(d.key);});
+}
+
+function AAsite_translate(d, i)
+{
+	return "translate(" + barchartmargin.left + "," + (i * (barchartheight + barchartmargin.top + barchartmargin.bottom) + barchartmargin.top) + ") scale(1,1)"; 
+}
+
+function AAsite_shrink(d, i)
+{
+	return "translate(" + barchartmargin.left + "," + (i * (barchartheight + barchartmargin.top + barchartmargin.bottom) + barchartmargin.top) + ") scale(1,0)";
+}
+
+function AAlegend_translate(i)
+{
+	return "translate(" + (Math.floor(i/5) * legendspacing.x) + "," + ((i % 5) * legendspacing.y) + ")";
 }
