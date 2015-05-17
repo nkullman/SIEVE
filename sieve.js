@@ -27,9 +27,9 @@ function generateVis(){
 }
 
 function generateSiteSelector() {
-	var margin = {top: 100, right: 30, bottom: 30, left: 40},
+	var margin = {top: 10, right: 30, bottom: 30, left: 30},
 	width = 500 - margin.left - margin.right,
-	height = 200 - margin.top - margin.bottom;
+	height = 90 - margin.top - margin.bottom;
 	
 	var xScale = d3.scale.ordinal()
 		.domain(d3.range(vaccine.sequence.length))
@@ -42,18 +42,25 @@ function generateSiteSelector() {
 	var xAxis = d3.svg.axis()
 		.scale(xScale)
 		.orient("bottom");
+		
+	var zoom = d3.behavior.zoom().scaleExtent([0, 1000]).on("zoom", refresh);
 	
 	var seqchart = d3.select("#overview").append("svg")
 	    .attr("width", width + margin.left + margin.right)
 	    .attr("height", height + margin.top + margin.bottom)
+		.attr("id", "seqchart")
 	  .append("g")
+	  	.attr("id", "seqchartg")
+		.attr("width", width + margin.right)
+	    .attr("height", height + margin.bottom)
 	  	.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-	    .call(d3.behavior.zoom().scaleExtent([0, 1000]).on("zoom", zoom));
+	    .call(zoom);
 	
 	seqchart.append("rect")
 	    .attr("class", "overlay")
-	    .attr("width", width)
-	    .attr("height", height);
+		.attr("transform", "translate(" + (-margin.left) + "," + (-margin.top) + ")")
+	    .attr("width", width + margin.right + margin.left)
+	    .attr("height", height + margin.bottom + margin.top);
 	
 	var sitebars = seqchart.selectAll(".sitebars")
 	    .data(vaccine.sequence)
@@ -70,8 +77,24 @@ function generateSiteSelector() {
 		.attr("class", "x axis")
 		.attr("transform", "translate(0," + (height + 5) + ")")
 		.call(xAxis);
+		
+	/*setInterval(function() {
+	  var translate = zoom.translate(),
+	      scale = zoom.scale(),
+	      xdom = xScale.domain(),
+	      dx = 1;
+	  // Set a new x-domain: offset by dx.
+	  xdom[0] += dx;
+	  xdom[xdom.length-1] += dx;
+	  xScale.domain(xdom);
+	  // Set the zoom x-domain (this resets the domain at zoom scale=1).
+	  zoom.x(xScale.domain(xdom));
+	  // Reset the domain relative to the current zoom offsets.
+	  xScale.domain(xScale.range().map(function(x) { return (x - translate[0]) / scale; }).map(xScale.invert));
+	  refresh();
+	}, 1e3);*/
 	
-	function zoom() {
+	function refresh() {
 	  sitebars.attr("transform", "translate(" + d3.event.translate[0]+", 0)scale(" + d3.event.scale + ", 1)");
 	  seqchart.select(".x.axis").attr("transform", "translate(" + d3.event.translate[0]+","+(height + 5)+")")
        .call(xAxis.scale(xScale.rangeBands([0, width * d3.event.scale], 0.05)));
