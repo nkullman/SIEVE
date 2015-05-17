@@ -1,6 +1,8 @@
 //This is an array of indices corresponding to the shown AA sites in figure 3 of the paper
 var fig3array = [8, 21, 186, 198, 307, 358, 387, 399, 420, 330, 468, 480]
 
+var legendspacing = {x: 25, y: 15};
+
 var group_axis = d3.svg.axis()
 	.scale(d3.scale.ordinal()
 		.domain(["Vaccine", "Placebo"])
@@ -61,7 +63,7 @@ function create_AAsite_chart(site)
 		.entries(sequences.placebo[site].filter(function(d) {
 			return d!= vaccine.sequence[site];
 		}));
-	svg = d3.select(this);
+	var svg = d3.select(this);
 	
 	svg.append("g")
 		.attr("class", "group axis")
@@ -80,6 +82,27 @@ function create_AAsite_chart(site)
 		.attr("x", barchartwidth/2)
 		.attr("y", 0)
 		.text("Env " + envmap[site].hxb2Pos);
+	
+	//Create legend
+	var acids = d3.set() //assemble list of amino acids present in chart
+	vacnest.forEach(function(d) { acids.add(d.key); });
+	placnest.forEach(function(d) { acids.add(d.key); });
+	acids = acids.values().sort(d3.ascending);
+	var legend = svg.append("g")
+		.attr("class", "aalegend")
+		.attr("transform", "translate(" + (barwidth + barmargin.right + barmargin.left) + ", -10)");
+	acids.forEach(function(d,i)
+	{
+		var acid_g = legend.append("g")
+		.attr("transform", AAlegend_translate(i));
+		acid_g.append("rect")
+			.attr("width", 10)
+			.attr("height", 10)
+			.style("fill", aacolor(d));
+		acid_g.append("text")
+			.attr("transform", "translate(12,10)")
+			.text(d);
+	});
 }
 
 function create_stacked_bar(svg, nest, scale, yloc)
@@ -114,4 +137,9 @@ function AAsite_translate(d, i)
 function AAsite_shrink(d, i)
 {
 	return "translate(" + barchartmargin.left + "," + (i * (barchartheight + barchartmargin.top + barchartmargin.bottom) + barchartmargin.top) + ") scale(1,0)";
+}
+
+function AAlegend_translate(i)
+{
+	return "translate(" + (Math.floor(i/5) * legendspacing.x) + "," + ((i % 5) * legendspacing.y) + ")";
 }
