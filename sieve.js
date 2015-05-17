@@ -8,7 +8,7 @@ var barmargin = {top: 5, right: 10, bottom: 0, left: 10},
 	barwidth = 200,
 	barheight = 20,
 	barpadding = .1;
-var barchartmargin = {top: 15, right: 100, bottom: 10, left: 50},
+var barchartmargin = {top: 15, right: 10, bottom: 10, left: 50},
 	barchartwidth = 250,
 	barchartheight = 70;
 		
@@ -16,6 +16,8 @@ var plac_scale = d3.scale.linear()
 	.range([0, barwidth]);
 var vac_scale = d3.scale.linear()
 	.range([0, barwidth]);
+	
+var selected_sites = [];
 		
 /** With data in hand, make the visualization */
 function generateVis(){
@@ -27,13 +29,13 @@ function generateVis(){
 }
 
 function generateSiteSelector() {
-	var margin = {top: 100, right: 30, bottom: 30, left: 40},
+	var margin = {top: 10, right: 30, bottom: 30, left: 30},
 	width = 500 - margin.left - margin.right,
-	height = 200 - margin.top - margin.bottom;
-	
-	var xScale = d3.scale.ordinal()
-		.domain(d3.range(vaccine.sequence.length))
-		.rangeBands([0, width], 0.05);
+	height = 90 - margin.top - margin.bottom;
+		
+	var xScale = d3.scale.linear()
+		.domain([0, vaccine.sequence.length])
+		.range([0, width]);
 		
 	var yScale = d3.scale.linear()
 		.domain([0, 1])
@@ -42,38 +44,80 @@ function generateSiteSelector() {
 	var xAxis = d3.svg.axis()
 		.scale(xScale)
 		.orient("bottom");
+		
+	var zoom = d3.behavior.zoom().x(xScale).scaleExtent([1,100]).on("zoom", refresh);
 	
 	var seqchart = d3.select("#overview").append("svg")
 	    .attr("width", width + margin.left + margin.right)
 	    .attr("height", height + margin.top + margin.bottom)
+		.attr("id", "seqchart")
 	  .append("g")
+	  	.attr("id", "seqchartg")
+		.attr("width", width)
+	    .attr("height", height)
 	  	.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-	    .call(d3.behavior.zoom().scaleExtent([0, 1000]).on("zoom", zoom));
+	    .call(zoom);
 	
 	seqchart.append("rect")
 	    .attr("class", "overlay")
-	    .attr("width", width)
-	    .attr("height", height);
-	
+		.attr("transform", "translate(" + (-margin.left) + "," + (-margin.top) + ")")
+	    .attr("width", width + margin.right + margin.left)
+	    .attr("height", height + margin.bottom + margin.top);
+		
+	var barwidth = xScale.range()[1] / d3.max(xScale.domain()) - 0 * (d3.max(xScale.domain()) - 1);
+			  // = totalwidth/numbars - barspacing*(numbars-1)
+		
 	var sitebars = seqchart.selectAll(".sitebars")
 	    .data(vaccine.sequence)
 	  .enter().append("rect")
-	    .attr("x", function (d,i) { return xScale(i); })
+	    .attr("x", function (d,i) { return xScale(i) - barwidth/2; })
 		.attr("y", yScale(1))
-		.attr("width", xScale.rangeBand())
+		.attr("width", barwidth)
 		.attr("height", height - yScale(1))
 		.attr("fill", function (d) {
 			return aacolor(d);
-		});
+		})
+		.attr("opacity", 0.5)
+		.on("click", doOnClick);
 		
 	seqchart.append("g")
 		.attr("class", "x axis")
 		.attr("transform", "translate(0," + (height + 5) + ")")
 		.call(xAxis);
 	
-	function zoom() {
-	  sitebars.attr("transform", "translate(" + d3.event.translate[0]+", 0)scale(" + d3.event.scale + ", 1)");
-	  seqchart.select(".x.axis").attr("transform", "translate(" + d3.event.translate[0]+","+(height + 5)+")")
-       .call(xAxis.scale(xScale.rangeBands([0, width * d3.event.scale], 0.05)));
+	function refresh() {
+		var t = d3.event.translate;
+		var s = d3.event.scale;
+		
+		if (t[0] > 0)  { t[0] = 0; }
+		if (t[0] < -(width*s - width)) { t[0] = -(width*s - width); }
+
+		zoom.translate(t);
+		
+		sitebars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
+		seqchart.select(".x.axis").call(xAxis.scale(xScale));
+	}
+	
+	function doOnClick(d, i) {
+		if (!d3.select(this).classed("selected")) { // if not selected
+			// add to and sort array
+			selected_sites.push(i);
+			selected_sites.sort();
+			// change formatting and set selected to true
+			d3.select(this)
+				.attr("opacity", 1)
+				.attr("y", yScale(1.25))
+				.classed("selected",true);
+		} else { // if already selected
+			// remove from array
+			var index = selected_sites.indexOf(i);
+			selected_sites.splice(index, 1);
+			// reset formatting, set selected to false
+			d3.select(this)
+				.attr('opacity', 0.5)
+				.attr("y", yScale(1))
+				.classed("selected",false);
+		}
+		update_AAsites(selected_sites);
 	}
 }
