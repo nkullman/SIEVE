@@ -16,6 +16,8 @@ var plac_scale = d3.scale.linear()
 	.range([0, barwidth]);
 var vac_scale = d3.scale.linear()
 	.range([0, barwidth]);
+	
+var selected_sites = [];
 		
 /** With data in hand, make the visualization */
 function generateVis(){
@@ -74,7 +76,9 @@ function generateSiteSelector() {
 		.attr("height", height - yScale(1))
 		.attr("fill", function (d) {
 			return aacolor(d);
-		});
+		})
+		.attr("opacity", 0.5)
+		.on("click", doOnClick);
 		
 	seqchart.append("g")
 		.attr("class", "x axis")
@@ -92,5 +96,25 @@ function generateSiteSelector() {
 		
 		sitebars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
 		seqchart.select(".x.axis").call(xAxis.scale(xScale));
+	}
+	
+	function doOnClick(d, i) {
+		if (!d3.select(this).classed("selected")) { // if not selected
+			// add to and sort array
+			selected_sites.push(i);
+			selected_sites.sort();
+			// change formatting and set selected to true
+			d3.select(this)
+				.attr("opacity", 1)
+				.classed("selected",true);
+		} else { // if already selected
+			// remove from array
+			var index = selected_sites.indexOf(i);
+			selected_sites.splice(index, 1);
+			// reset formatting, set selected to false
+			d3.select(this)
+				.attr('opacity', 0.5)
+				.classed("selected",false);
+		}
 	}
 }
