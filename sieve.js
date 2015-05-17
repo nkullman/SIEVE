@@ -106,6 +106,7 @@ function generateSiteSelector() {
 			// change formatting and set selected to true
 			d3.select(this)
 				.attr("opacity", 1)
+				.attr("y", yScale(1.25))
 				.classed("selected",true);
 		} else { // if already selected
 			// remove from array
@@ -114,7 +115,9 @@ function generateSiteSelector() {
 			// reset formatting, set selected to false
 			d3.select(this)
 				.attr('opacity', 0.5)
+				.attr("y", yScale(1))
 				.classed("selected",false);
 		}
+		update_AAsites(selected_sites);
 	}
 }
