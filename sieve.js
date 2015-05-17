@@ -8,7 +8,7 @@ var barmargin = {top: 5, right: 10, bottom: 0, left: 10},
 	barwidth = 200,
 	barheight = 20,
 	barpadding = .1;
-var barchartmargin = {top: 15, right: 100, bottom: 10, left: 50},
+var barchartmargin = {top: 15, right: 10, bottom: 10, left: 50},
 	barchartwidth = 250,
 	barchartheight = 70;
 		
@@ -30,20 +30,20 @@ function generateSiteSelector() {
 	var margin = {top: 10, right: 30, bottom: 30, left: 30},
 	width = 500 - margin.left - margin.right,
 	height = 90 - margin.top - margin.bottom;
-	
-	var xScale = d3.scale.ordinal()
-		.domain(d3.range(vaccine.sequence.length))
-		.rangeBands([0, width], 0.05);
+		
+	var xLinScale = d3.scale.linear()
+		.domain([0, vaccine.sequence.length])
+		.range([0, width + margin.right + margin.left]);
 		
 	var yScale = d3.scale.linear()
 		.domain([0, 1])
 		.range([height, 0]);
 		
-	var xAxis = d3.svg.axis()
-		.scale(xScale)
+	var xLinAxis = d3.svg.axis()
+		.scale(xLinScale)
 		.orient("bottom");
 		
-	var zoom = d3.behavior.zoom().scaleExtent([0, 1000]).on("zoom", refresh);
+	var linzoom = d3.behavior.zoom().x(xLinScale).scaleExtent([1,100]).on("zoom", linrefresh);
 	
 	var seqchart = d3.select("#overview").append("svg")
 	    .attr("width", width + margin.left + margin.right)
@@ -54,20 +54,23 @@ function generateSiteSelector() {
 		.attr("width", width + margin.right)
 	    .attr("height", height + margin.bottom)
 	  	.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-	    .call(zoom);
+	    .call(linzoom);
 	
 	seqchart.append("rect")
 	    .attr("class", "overlay")
 		.attr("transform", "translate(" + (-margin.left) + "," + (-margin.top) + ")")
 	    .attr("width", width + margin.right + margin.left)
 	    .attr("height", height + margin.bottom + margin.top);
-	
-	var sitebars = seqchart.selectAll(".sitebars")
+		
+	var barwidth = xLinScale.range()[1] / d3.max(xLinScale.domain()) - 0 * (d3.max(xLinScale.domain()) - 1);
+			  // = totalwidth/numbars - barspacing*(numbars-1)
+		
+	var linsitebars = seqchart.selectAll(".linsitebars")
 	    .data(vaccine.sequence)
 	  .enter().append("rect")
-	    .attr("x", function (d,i) { return xScale(i); })
+	    .attr("x", function (d,i) { return xLinScale(i) - barwidth/2; })
 		.attr("y", yScale(1))
-		.attr("width", xScale.rangeBand())
+		.attr("width", barwidth)
 		.attr("height", height - yScale(1))
 		.attr("fill", function (d) {
 			return aacolor(d);
@@ -76,27 +79,10 @@ function generateSiteSelector() {
 	seqchart.append("g")
 		.attr("class", "x axis")
 		.attr("transform", "translate(0," + (height + 5) + ")")
-		.call(xAxis);
-		
-	/*setInterval(function() {
-	  var translate = zoom.translate(),
-	      scale = zoom.scale(),
-	      xdom = xScale.domain(),
-	      dx = 1;
-	  // Set a new x-domain: offset by dx.
-	  xdom[0] += dx;
-	  xdom[xdom.length-1] += dx;
-	  xScale.domain(xdom);
-	  // Set the zoom x-domain (this resets the domain at zoom scale=1).
-	  zoom.x(xScale.domain(xdom));
-	  // Reset the domain relative to the current zoom offsets.
-	  xScale.domain(xScale.range().map(function(x) { return (x - translate[0]) / scale; }).map(xScale.invert));
-	  refresh();
-	}, 1e3);*/
+		.call(xLinAxis);
 	
-	function refresh() {
-	  sitebars.attr("transform", "translate(" + d3.event.translate[0]+", 0)scale(" + d3.event.scale + ", 1)");
-	  seqchart.select(".x.axis").attr("transform", "translate(" + d3.event.translate[0]+","+(height + 5)+")")
-       .call(xAxis.scale(xScale.rangeBands([0, width * d3.event.scale], 0.05)));
+	function linrefresh() {
+		linsitebars.attr("transform", "translate(" + d3.event.translate[0]+", 0)scale(" + d3.event.scale + ", 1)");
+		seqchart.select(".x.axis").call(xLinAxis);
 	}
 }
