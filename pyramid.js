@@ -47,7 +47,7 @@ function drawPyramid(sites){
     );
       
     // CREATE SVG
-    var svg = d3.select('body').append('svg')
+    var svg = d3.select('#group').append('svg')
       .attr('width', margin.left + w + margin.right)
       .attr('height', margin.top + h + margin.bottom)
       // ADD A GROUP FOR THE SPACE WITHIN THE MARGINS
@@ -57,16 +57,16 @@ function drawPyramid(sites){
     // the xScale goes from 0 to the width of a region
     //  it will be reversed for the left x-axis
     var xScale = d3.scale.linear()
-      .domain([0, maxValue])
+      .domain([0, 1])
       .range([0, regionWidth])
       .nice();
 
     var xScaleLeft = d3.scale.linear()
-      .domain([0, maxValue])
+      .domain([0, 1])
       .range([regionWidth, 0]);
 
     var xScaleRight = d3.scale.linear()
-      .domain([0, maxValue])
+      .domain([0, 1])
       .range([0, regionWidth]);
 
     var yScale = d3.scale.ordinal()
@@ -111,10 +111,20 @@ function drawPyramid(sites){
       .attr('class', 'axis y right')
       .attr('transform', translation(pointB, 0))
       .call(yAxisRight);
+    
+    svg.append('text')
+      .text("Vaccine Group")
+      .attr('x',-5)
+      .attr('y',0);
+    svg.append('text')
+      .text("Placebo Group")
+      .attr('x',200)
+      .attr('y',0);
 
     svg.append('g')
       .attr('class', 'axis x left')
       .attr('transform', translation(0, h))
+      .text("Vaccine Group")
       .call(xAxisLeft);
 
     svg.append('g')
@@ -128,7 +138,7 @@ function drawPyramid(sites){
         .attr('class', 'bar left')
         .attr('x', 0)
         .attr('y', function(d) {return yScale(d.mismatches); })
-        .attr('width', function(d) { return xScale(d.vaccine); })
+        .attr('width', function(d) { return xScale(d.vaccine / numvac); })
         .attr('height', yScale.rangeBand())
         .style("fill","red");
 
@@ -138,7 +148,7 @@ function drawPyramid(sites){
         .attr('class', 'bar right')
         .attr('x', 0)
         .attr('y', function(d) { return yScale(d.mismatches); })
-        .attr('width', function(d) { return xScale(d.placebo); })
+        .attr('width', function(d) { return xScale(d.placebo / numplac); })
         .attr('height', yScale.rangeBand()).style("fill","blue");
     }
 function translation(x,y) {
