@@ -8,7 +8,7 @@ var barmargin = {top: 5, right: 10, bottom: 0, left: 10},
 	barwidth = 200,
 	barheight = 20,
 	barpadding = .1;
-var barchartmargin = {top: 15, right: 50, bottom: 10, left: 50},
+var barchartmargin = {top: 15, right: 100, bottom: 10, left: 50},
 	barchartwidth = 250,
 	barchartheight = 70;
 		
