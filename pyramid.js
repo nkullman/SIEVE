@@ -104,13 +104,11 @@ function updatePyramid(sites){
   var leftBars = PyramidDiv.select('.lgroup')
                            .selectAll('.bar.left')
                            .data(mdata,id);
-  console.log(leftBars.exit());
   leftBars.exit().remove();
   
   var rightBars = PyramidDiv.select('.rgroup')
                             .selectAll('.bar.right')
                             .data(mdata,id);
-  console.log(rightBars.exit()[0]);
   rightBars.exit().remove();
   leftBars.enter().append('rect')
         .attr('class','bar left')
