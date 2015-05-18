@@ -26,6 +26,7 @@ function generateVis(){
 	vac_scale.domain([0, numvac]);
 	
 	generateSiteSelector();
+  drawPyramid([]);
 }
 
 function generateSiteSelector() {
@@ -119,5 +120,6 @@ function generateSiteSelector() {
 				.classed("selected",false);
 		}
 		update_AAsites(selected_sites);
+    updatePyramid(selected_sites);
 	}
 }
