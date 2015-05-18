@@ -19,7 +19,7 @@ var vac_scale = d3.scale.linear()
 	
 var selected_sites = [];
 		
-/** With data in hand, make the visualization */
+/** Generate visualization */
 function generateVis(){
 	
 	plac_scale.domain([0, numplac]);
@@ -36,6 +36,12 @@ function generateSiteSelector() {
 	var xScale = d3.scale.linear()
 		.domain([0, vaccine.sequence.length])
 		.range([0, width]);
+	
+	var seq_selection = [];
+	var seqbrush = d3.svg.brush()
+		.x(xScale)
+		.extent([169,177])
+		.on("brush", brushed);
 		
 	var yScale = d3.scale.linear()
 		.domain([0, 1])
@@ -64,8 +70,8 @@ function generateSiteSelector() {
 	    .attr("width", width + margin.right + margin.left)
 	    .attr("height", height + margin.bottom + margin.top);
 		
-	var barwidth = xScale.range()[1] / d3.max(xScale.domain()) - 0 * (d3.max(xScale.domain()) - 1);
-			  // = totalwidth/numbars - barspacing*(numbars-1)
+	var barwidth = xScale.range()[1] / d3.max(xScale.domain());
+			  // = totalwidth/numbars
 		
 	var sitebars = seqchart.selectAll(".sitebars")
 	    .data(vaccine.sequence)
@@ -77,13 +83,20 @@ function generateSiteSelector() {
 		.attr("fill", function (d) {
 			return aacolor(d);
 		})
-		.attr("opacity", 0.5)
-		.on("click", doOnClick);
+		.attr("opacity", 0.5);
+		//.on("click", doOnClick);
 		
 	seqchart.append("g")
 		.attr("class", "x axis")
 		.attr("transform", "translate(0," + (height + 5) + ")")
 		.call(xAxis);
+		
+	var gBrush = seqchart.append("g")
+		.attr("class", "brush")
+		.call(seqbrush);
+		
+	gBrush.selectAll("rect")
+		.attr("height", height);
 	
 	function refresh() {
 		var t = d3.event.translate;
@@ -95,10 +108,38 @@ function generateSiteSelector() {
 		zoom.translate(t);
 		
 		sitebars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
+		seqchart.select(".brush").attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
 		seqchart.select(".x.axis").call(xAxis.scale(xScale));
 	}
 	
-	function doOnClick(d, i) {
+	function brushed() {
+		var extent0 = seqbrush.extent(),
+			extent1;
+		
+		// if dragging, preserve width
+		if (d3.event.mode === "move") {
+			var d0 = Math.round(extent0[0]),
+				d1 = Math.round(extent0[1]);
+			extent1 = [d0, d1];
+		}
+		// otherwise, if resizing, round both sides
+		else {
+			extent1 = extent0.map(function(d) {return Math.round(d); });
+			
+			// in case empty when rounded, use floor & ceil instead
+			if (extent1[0] >= extent1[1]) {
+				extent1[0] = Math.floor(extent0[0]);
+				extent1[1] = Math.ceil(extent0[1]);
+			}
+		}
+		
+		d3.select(this).call(seqbrush.extent(extent1));
+		selected_sites = d3.range(extent1[0], extent1[1]);
+		update_AAsites(selected_sites);
+		drawPyramid(selected_sites);
+	}
+	
+	/*function doOnClick(d, i) {
 		if (!d3.select(this).classed("selected")) { // if not selected
 			// add to and sort array
 			selected_sites.push(i);
@@ -119,5 +160,6 @@ function generateSiteSelector() {
 				.classed("selected",false);
 		}
 		update_AAsites(selected_sites);
-	}
+		drawPyramid(selected_sites);
+	}*/
 }

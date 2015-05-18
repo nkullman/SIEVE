@@ -30,3 +30,9 @@ svg text {
 	stroke: #000;
 	shape-rendering: crispEdges;
 }
+
+.brush .extent {
+  stroke: steelblue;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
