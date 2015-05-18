@@ -85,7 +85,7 @@ function create_AAsite_chart(site)
 		.text("Env " + envmap[site].hxb2Pos + " (" + vaccine.sequence[site]+ ") Mismatches");
 	
 	//Create legend
-	var acids = d3.set() //assemble list of amino acids present in chart
+	var acids = d3.set(); //assemble list of amino acids present in chart
 	vacnest.forEach(function(d) { acids.add(d.key); });
 	placnest.forEach(function(d) { acids.add(d.key); });
 	acids = acids.values().sort(d3.ascending);
@@ -95,7 +95,7 @@ function create_AAsite_chart(site)
 	acids.forEach(function(d,i)
 	{
 		var acid_g = legend.append("g")
-		.attr("transform", AAlegend_translate(i));
+			.attr("transform", AAlegend_translate(i));
 		acid_g.append("rect")
 			.attr("width", 10)
 			.attr("height", 10)

@@ -8,7 +8,7 @@ var barmargin = {top: 5, right: 10, bottom: 0, left: 10},
 	barwidth = 200,
 	barheight = 20,
 	barpadding = .1;
-var barchartmargin = {top: 15, right: 10, bottom: 10, left: 50},
+var barchartmargin = {top: 15, right: 100, bottom: 10, left: 50},
 	barchartwidth = 250,
 	barchartheight = 70;
 		
@@ -26,6 +26,7 @@ function generateVis(){
 	vac_scale.domain([0, numvac]);
 	
 	generateSiteSelector();
+  drawPyramid([]);
 }
 
 function generateSiteSelector() {
@@ -160,6 +161,11 @@ function generateSiteSelector() {
 				.classed("selected",false);
 		}
 		update_AAsites(selected_sites);
+<<<<<<< HEAD
 		drawPyramid(selected_sites);
 	}*/
+=======
+    updatePyramid(selected_sites);
+	}
+>>>>>>> upstream/master
 }
