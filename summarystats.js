@@ -83,47 +83,21 @@ function tstat(array1,array2){
     return tstat;
 }
 
-// Shuffles the entries of an array
-function shuffle(array){
-    var a = [].concat(array);
-    var n = a.length, t, i;
-    while(n){
-        i = Math.floor(Math.random() * n--);
-        t = a[n];
-        a[i] = t;
-    }
-    return a;
-}
-
 // Computes mismatch vectors for ttest:
 function mmprocess(site){
-  var vacc = [];
-  var plac = [];
-  for(var patient in seqID_lookup){
-    if(seqID_lookup[patient].vaccine){
-      if(seqID_lookup[patient].mismatch != undefined){
-        vacc.push(seqID_lookup[patient].mismatch[site]);
-        }
-    } else {
-      if(seqID_lookup[patient].mismatch != undefined){
-        plac.push(seqID_lookup[patient].mismatch[site]);
-      }
-    }
-  }
+  var vacc = sequences.vaccine[site].map(function(d) {return d == vaccine.sequence[site] ? 0 : 1; });
+  var plac = sequences.placebo[site].map(function(d) {return d == vaccine.sequence[site] ? 0 : 1; });
   return [vacc,plac];
 }
 // Performs a monte carlo approximation for permutation t-test
 function ttest(array1,array2){
-    fullarray = array1.concat(array2);
-    var teststatistic = tstat(array1,array2);
-    var ts = [];
+    var fullarray = array1.concat(array2);
+    var ts = [], shuffledata, part1, part2;
     for(var i = 0; i < 1000; i++){
-        var shuffledata = shuffle(fullarray);
-        var part1 = shuffledata.slice(0,array1.length);
-        var part2 = shuffledata.slice(array1.length);
+        shuffledata = d3.shuffle(fullarray);
+        part1 = shuffledata.slice(0,array1.length);
+        part2 = shuffledata.slice(array1.length);
         ts.push(tstat(part1,part2));
-        shuffledata = null;
-        delete shuffledata;
     }
     var p = percentile(-Math.abs(tstat(array1,array2)),ts,true);
     p += 1 - percentile(Math.abs(tstat(array1,array2)),ts,false);

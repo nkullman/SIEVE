@@ -11,10 +11,11 @@ var group_axis = d3.svg.axis()
 
 var mismatch_axis = d3.svg.axis()
 	.scale(d3.scale.linear()
-		.domain([0,100])
+		.domain([0,1])
 		.range([0, barwidth]))
 	.orient("bottom")
-	.ticks(5);
+	.ticks(5)
+	.tickFormat(d3.format(".0%"));
 
 var sites_svg = d3.select("#sites")
 	.append("svg")
@@ -81,10 +82,10 @@ function create_AAsite_chart(site)
 		.attr("text-anchor", "middle")
 		.attr("x", barchartwidth/2)
 		.attr("y", 0)
-		.text("Env " + envmap[site].hxb2Pos);
+		.text("Env " + envmap[site].hxb2Pos + " (" + vaccine.sequence[site]+ ") Mismatches");
 	
 	//Create legend
-	var acids = d3.set() //assemble list of amino acids present in chart
+	var acids = d3.set(); //assemble list of amino acids present in chart
 	vacnest.forEach(function(d) { acids.add(d.key); });
 	placnest.forEach(function(d) { acids.add(d.key); });
 	acids = acids.values().sort(d3.ascending);
@@ -94,13 +95,13 @@ function create_AAsite_chart(site)
 	acids.forEach(function(d,i)
 	{
 		var acid_g = legend.append("g")
-		.attr("transform", AAlegend_translate(i));
+			.attr("transform", AAlegend_translate(i));
 		acid_g.append("rect")
 			.attr("width", 10)
 			.attr("height", 10)
 			.style("fill", aacolor(d));
 		acid_g.append("text")
-			.attr("transform", "translate(12,10)")
+			.attr("transform", "translate(12,9)")
 			.text(d);
 	});
 }
