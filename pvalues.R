@@ -18,3 +18,8 @@ for(i in 1:length(pvalues)){
     pvalues[i] = 1
   }
 }
+
+temp = data.frame(pvalues)
+names(temp)[1] = "pvalue"
+
+write.csv(temp,"pvalues.csv",row.names=F)

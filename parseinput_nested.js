@@ -26,7 +26,8 @@ var pvalues =[];
 
 d3.text("env.aa.92TH023.fasta", function(vacdata) {
 	dovacparsing(vacdata);
-  d3.csv("pvalues.csv").row(function(d) {pvalues.push(+d.pvalue);});
+  d3.csv("pvalues.csv").row(function(d) {pvalues.push(+d.pvalue);})
+    .get(function(error, rows) {;});
 	d3.csv("rv144_trt_lookup.csv", function(trt_lookup_data) {
 		createdictionary(trt_lookup_data);
 		d3.csv("rv144.env.mismatch.distance.csv", function(mmdata) {
