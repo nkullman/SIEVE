@@ -19,58 +19,74 @@ var vac_scale = d3.scale.linear()
 	
 var selected_sites = [];
 		
-/** With data in hand, make the visualization */
+/** Generate visualization */
 function generateVis(){
 	
 	plac_scale.domain([0, numplac]);
 	vac_scale.domain([0, numvac]);
 	
 	generateSiteSelector();
-  drawPyramid([]);
+	drawPyramid([]);
 }
 
 function generateSiteSelector() {
-	var margin = {top: 10, right: 30, bottom: 30, left: 30},
-	width = 500 - margin.left - margin.right,
-	height = 90 - margin.top - margin.bottom;
+	var margin =  {top: 10, right: 10, bottom: 100, left: 40},
+		margin2 = {top: 430, right: 10, bottom: 20, left: 40},
+		width = 900 - margin.left - margin.right,
+		height =  500 - margin.top - margin.bottom,
+		height2 = 500 - margin2.top - margin2.bottom;
 		
 	var xScale = d3.scale.linear()
-		.domain([0, vaccine.sequence.length])
-		.range([0, width]);
-		
-	var yScale = d3.scale.linear()
-		.domain([0, 1])
-		.range([height, 0]);
-		
+			.domain([0, vaccine.sequence.length])
+			.range([0, width]),
+		x2Scale = d3.scale.linear()
+			.domain(xScale.domain())
+			.range([0, width]),
+		yScale = d3.scale.linear()
+			.domain([0, 1])
+			.range([height, 0]),
+		y2Scale = d3.scale.linear()
+			.domain(yScale.domain())
+			.range([height2, 0]);
+			
 	var xAxis = d3.svg.axis()
-		.scale(xScale)
-		.orient("bottom");
-		
-	var zoom = d3.behavior.zoom().x(xScale).scaleExtent([1,100]).on("zoom", refresh);
+			.scale(xScale)
+			.orient("bottom"),
+		x2Axis = d3.svg.axis()
+			.scale(x2Scale)
+			.orient("bottom");
+
+	var x2brush = d3.svg.brush()
+			.x(x2Scale)
+			.on("brush", brushed);
+			
+	var barwidth = xScale.range()[1] / d3.max(xScale.domain());
+			// = totalwidth/numbars
 	
-	var seqchart = d3.select("#overview").append("svg")
+	var siteselSVG = d3.select("#overview").append("svg")
 	    .attr("width", width + margin.left + margin.right)
 	    .attr("height", height + margin.top + margin.bottom)
-		.attr("id", "seqchart")
-	  .append("g")
-	  	.attr("id", "seqchartg")
-		.attr("width", width)
-	    .attr("height", height)
-	  	.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-	    .call(zoom);
-	
-	seqchart.append("rect")
-	    .attr("class", "overlay")
-		.attr("transform", "translate(" + (-margin.left) + "," + (-margin.top) + ")")
-	    .attr("width", width + margin.right + margin.left)
-	    .attr("height", height + margin.bottom + margin.top);
+		.attr("id", "siteselSVG");
 		
-	var barwidth = xScale.range()[1] / d3.max(xScale.domain()) - 0 * (d3.max(xScale.domain()) - 1);
-			  // = totalwidth/numbars - barspacing*(numbars-1)
+	siteselSVG.append("defs").append("clipPath")
+		.attr("id", "clip")
+		.append("rect")
+			.attr("width", width)
+			.attr("height", height);
+	// focus group
+	var focus = siteselSVG.append("g")
+		.attr("class", "focus")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	// context group
+	var context = siteselSVG.append("g")
+		.attr("class", "context")
+		.attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 		
-	var sitebars = seqchart.selectAll(".sitebars")
+	// append focus drawings (we could use y-dimension for an encoding)
+	var focusbars = focus.selectAll(".sitebar")
 	    .data(vaccine.sequence)
 	  .enter().append("rect")
+	  	.attr("class", "focus sitebar")
 	    .attr("x", function (d,i) { return xScale(i) - barwidth/2; })
 		.attr("y", yScale(1))
 		.attr("width", barwidth)
@@ -78,26 +94,118 @@ function generateSiteSelector() {
 		.attr("fill", function (d) {
 			return aacolor(d);
 		})
-		.attr("opacity", 0.5)
-		.on("click", doOnClick);
-		
-	seqchart.append("g")
+		.attr("opacity", 0.5);
+	// append focus axis
+	focus.append("g")
 		.attr("class", "x axis")
 		.attr("transform", "translate(0," + (height + 5) + ")")
 		.call(xAxis);
 	
-	function refresh() {
-		var t = d3.event.translate;
-		var s = d3.event.scale;
+	// append context drawings
+	var contextbars = context.selectAll(".sitebar")
+	    .data(vaccine.sequence)
+	  .enter().append("rect")
+	  	.attr("class", "context sitebar")
+	    .attr("x", function (d,i) { return x2Scale(i) - barwidth/2; })
+		.attr("y", y2Scale(1))
+		.attr("width", barwidth)
+		.attr("height", height2 - y2Scale(1))
+		.attr("fill", "steelblue")
+		.attr("opacity", 0.5);
+	// append context axis
+	context.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(0," + (height2 + 2) + ")")
+		.call(x2Axis);
+	// append context brush
+	context.append("g")
+		.attr("class", "x brush")
+		.call(x2brush)
+		.selectAll("rect")
+		.attr("y", -6)
+		.attr("height", height2 + 7);
+	
+	var sitelist_svg = d3.select("#overview").append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", 0);
 		
-		if (t[0] > 0)  { t[0] = 0; }
-		if (t[0] < -(width*s - width)) { t[0] = -(width*s - width); }
-
-		zoom.translate(t);
+	// draw charts for initial (default) selection
+	selected_sites = d3.range(x2brush.extent()[0], x2brush.extent()[1]+1);
+	update_AAsites(selected_sites);
+	updatePyramid(selected_sites);
+	update_sitelisttext(selected_sites);
+	
+	function brushed() {
+		var extent0 = x2brush.extent(),
+			extent1;
 		
-		sitebars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
-		seqchart.select(".x.axis").call(xAxis.scale(xScale));
+		// if dragging, preserve width
+		if (d3.event.mode === "move") {
+			var d0 = Math.round(extent0[0]),
+				d1 = Math.round(extent0[1]);
+			extent1 = [d0, d1];
+		}
+		// otherwise, if resizing, round both sides
+		else {
+			extent1 = extent0.map(function(d) {return Math.round(d); });
+			
+			// in case empty when rounded, use floor & ceil instead
+			if (extent1[0] >= extent1[1]) {
+				extent1[0] = Math.floor(extent0[0]);
+				extent1[1] = Math.ceil(extent0[1]);
+			}
+		}
+		
+		// redefine xScale's domain, barwidth, then redraw bars, then redraw axis
+		xScale.domain(extent1);
+		barwidth = (xScale.range()[1] - xScale.range()[0]) / (extent1[1] - extent1[0]);
+		focus.selectAll(".sitebar")
+			.attr("transform", function (d,i) { return "translate(" + (xScale(i) - barwidth/2) + ",0)"; })
+			.attr("width", barwidth);
+		focus.select(".x.axis").call(xAxis);
+		
+		// then update the brush's extent, define which sites are selected, and redraw all the graphs
+		d3.select(this).call(x2brush.extent(extent1));
+		selected_sites = d3.range(extent1[0], extent1[1]);
+		update_AAsites(selected_sites);
+		updatePyramid(selected_sites);
+		update_sitelisttext(selected_sites);
 	}
+	
+	function update_sitelisttext(sitelist){
+		var sitetexts = sitelist_svg.selectAll(".sitetext")
+			.data(sitelist, function(d) { return d; });
+		
+		sitelist_svg.transition() // update the SVG
+			.attr("height", ((sitelist.length+1)*10 + (sitelist.length)*3) + "px");
+		
+		sitetexts.transition() // update sites in list
+			.attr("transform", sitetext_translate);
+		sitetexts.exit().transition() // exiting sites
+			.attr("transform", function(d,i) { return sitetext_shrink(d,i+1); })
+			.remove();
+		sitetexts.enter().append("g") // entering sites
+			.attr("class", "sitetext")
+			.attr("transform", sitetext_shrink)
+			.each(write_sitetext)
+			.transition()
+			.attr("transform", sitetext_translate);
+	}
+		
+	function sitetext_translate(d, i) {
+		return "translate(" + margin.left + "," + ((i+1) * 12) + ") scale(1,1)";
+	}
+	function sitetext_shrink(d,i) {
+		return "translate(" + margin.left + "," + ((i+1) * 12) + ") scale(1,0)";
+	}
+	function write_sitetext(d,i) {
+		var siteSVG = d3.select(this);
+		siteSVG.append("text")
+			.text(function(d) {return d;});
+	}
+	
+	/* Some modification of the following will be used for site selection
+		on rectangles in the focus view
 	
 	function doOnClick(d, i) {
 		if (!d3.select(this).classed("selected")) { // if not selected
@@ -120,6 +228,22 @@ function generateSiteSelector() {
 				.classed("selected",false);
 		}
 		update_AAsites(selected_sites);
-    updatePyramid(selected_sites);
-	}
+		updatePyramid(selected_sites);
+	}*/
+	
+	/* Demo for logging keystrokes. May be useful
+		later in site selection functionality
+	
+	d3.select("body")
+    .on("keydown", function() {
+        d3.select("#seqchart").append("text")
+            .attr("x", (width/2) + "px")
+            .attr("y", (height) + "px")
+            .style("font-size","50px")
+            .text("keyCode: " + d3.event.keyCode)  
+          .transition().duration(2000)
+            .style("font-size","5px")
+            .style("fill-opacity",".1")
+          .remove();
+    });*/
 }
