@@ -1,82 +1,249 @@
 var aacolor = d3.scale.ordinal()
 	.range(['#CCFF00','#FFFF00','#FF0000','#FF0066','#00FF66','#FF9900','#0066FF',
 		'#66FF00','#6600FF','#33FF00','#00FF00','#CC00FF','#FFCC00','#FF00CC',
-		'#0000FF','#FF3300','#FF6600','#99FF00','#00CCFF','#00FFCC'])
+		'#0000FF','#FF3300','#FF6600','#99FF00','#00CCFF','#00FFCC','#000000'])
 	.domain(['A','C','D','E','F','G','H','I','K','L','M',
-		'N','P','Q','R','S','T','V','W','Y']);
+		'N','P','Q','R','S','T','V','W','Y','-']);
+var barmargin = {top: 5, right: 10, bottom: 0, left: 10},
+	barwidth = 200,
+	barheight = 20,
+	barpadding = .1;
+var barchartmargin = {top: 15, right: 100, bottom: 10, left: 50},
+	barchartwidth = 250,
+	barchartheight = 70;
 		
-/** With data in hand, make the visualization */
+var plac_scale = d3.scale.linear()
+	.range([0, barwidth]);
+var vac_scale = d3.scale.linear()
+	.range([0, barwidth]);
+	
+var selected_sites = [];
+		
+/** Generate visualization */
 function generateVis(){
+	
+	plac_scale.domain([0, numplac]);
+	vac_scale.domain([0, numvac]);
+	
 	generateSiteSelector();
+	drawPyramid([]);
 }
 
 function generateSiteSelector() {
-	var width = 960,
-	    height = 500;
-	
-	var randomX = d3.random.normal(width / 2, 80),
-	    randomY = d3.random.normal(height / 2, 80);
-	
-	var data = d3.range(2000).map(function() {
-	  return [
-	    randomX(),
-	    randomY()
-	  ];
-	});
-	
-	//
-	var xScale = d3.scale.ordinal()
-		.domain(d3.range(vaccine.sequence.length))
-		.rangeBands([0,width], 0.05);
+	var margin =  {top: 10, right: 10, bottom: 100, left: 40},
+		margin2 = {top: 430, right: 10, bottom: 20, left: 40},
+		width = 900 - margin.left - margin.right,
+		height =  500 - margin.top - margin.bottom,
+		height2 = 500 - margin2.top - margin2.bottom;
 		
-	var yScale = d3.scale.linear()
-		.domain([0, 1])
-		.range([height, 0]);
-	/*
-	var exScale = d3.scale.linear()
-	    .domain([0, width])
-	    .range([0, width]);
+	var xScale = d3.scale.linear()
+			.domain([0, vaccine.sequence.length])
+			.range([0, width]),
+		x2Scale = d3.scale.linear()
+			.domain(xScale.domain())
+			.range([0, width]),
+		yScale = d3.scale.linear()
+			.domain([0, 1])
+			.range([height, 0]),
+		y2Scale = d3.scale.linear()
+			.domain(yScale.domain())
+			.range([height2, 0]);
+			
+	var xAxis = d3.svg.axis()
+			.scale(xScale)
+			.orient("bottom"),
+		x2Axis = d3.svg.axis()
+			.scale(x2Scale)
+			.orient("bottom");
+
+	var x2brush = d3.svg.brush()
+			.x(x2Scale)
+			.on("brush", brushed);
+			
+	var barwidth = xScale.range()[1] / d3.max(xScale.domain());
+			// = totalwidth/numbars
 	
-	var eyScale = d3.scale.linear()
-	    .domain([0, height])
-	    .range([height, 0]);*/
-	
-	var svg = d3.select("#overview").append("svg")
-	    .attr("width", width)
-	    .attr("height", height)
-	  .append("g")
-	    .call(d3.behavior.zoom().x(xScale).y(eyScale).scaleExtent([1, 8]).on("zoom", zoom));
-	
-	svg.append("rect")
-	    .attr("class", "overlay")
-	    .attr("width", width)
-	    .attr("height", height);
-	
-	/*var circle = svg.selectAll("circle")
-	    .data(data)
-	  .enter().append("circle")
-	    .attr("r", 2.5)
-	    .attr("transform", transform);*/
+	var siteselSVG = d3.select("#overview").append("svg")
+	    .attr("width", width + margin.left + margin.right)
+	    .attr("height", height + margin.top + margin.bottom)
+		.attr("id", "siteselSVG");
 		
-	var rectangle = svg.selectAll("rect")
-		.data(vaccine.sequence)
-		.enter().append("rect")
-		  .attr("x", function (d,i) { return xScale(i); })
-		  .attr("y", yScale(0) );
+	siteselSVG.append("defs").append("clipPath")
+		.attr("id", "clip")
+		.append("rect")
+			.attr("width", width)
+			.attr("height", height);
+	// focus group
+	var focus = siteselSVG.append("g")
+		.attr("class", "focus")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	// context group
+	var context = siteselSVG.append("g")
+		.attr("class", "context")
+		.attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+		
+	// append focus drawings (we could use y-dimension for an encoding)
+	var focusbars = focus.selectAll(".sitebar")
+	    .data(vaccine.sequence)
+	  .enter().append("rect")
+	  	.attr("class", "focus sitebar")
+	    .attr("x", function (d,i) { return xScale(i) - barwidth/2; })
+		.attr("y", yScale(1))
+		.attr("width", barwidth)
+		.attr("height", height - yScale(1))
+		.attr("fill", function (d) {
+			return aacolor(d);
+		})
+		.attr("opacity", 0.5);
+	// append focus axis
+	focus.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(0," + (height + 5) + ")")
+		.call(xAxis);
 	
-	/*function zoom() {
-	  circle.attr("transform", transform);
+	// append context drawings
+	var contextbars = context.selectAll(".sitebar")
+	    .data(vaccine.sequence)
+	  .enter().append("rect")
+	  	.attr("class", "context sitebar")
+	    .attr("x", function (d,i) { return x2Scale(i) - barwidth/2; })
+		.attr("y", y2Scale(1))
+		.attr("width", barwidth)
+		.attr("height", height2 - y2Scale(1))
+		.attr("fill", "steelblue")
+		.attr("opacity", 0.5);
+	// append context axis
+	context.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(0," + (height2 + 2) + ")")
+		.call(x2Axis);
+	// append context brush
+	context.append("g")
+		.attr("class", "x brush")
+		.call(x2brush)
+		.selectAll("rect")
+		.attr("y", -6)
+		.attr("height", height2 + 7);
+		
+	var sitelist_svg = d3.select("#overview").append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", 0);
+		
+	// draw charts for initial (default) selection
+	selected_sites = d3.range(x2brush.extent()[0], x2brush.extent()[1]+1);
+	update_AAsites(selected_sites);
+	updatePyramid(selected_sites);
+	update_sitelisttext(selected_sites);
+	
+	function brushed() {
+		var extent0 = x2brush.extent(),
+			extent1;
+		
+		// if dragging, preserve width
+		if (d3.event.mode === "move") {
+			var d0 = Math.round(extent0[0]),
+				d1 = Math.round(extent0[1]);
+			extent1 = [d0, d1];
+		}
+		// otherwise, if resizing, round both sides
+		else {
+			extent1 = extent0.map(function(d) {return Math.round(d); });
+			
+			// in case empty when rounded, use floor & ceil instead
+			if (extent1[0] >= extent1[1]) {
+				extent1[0] = Math.floor(extent0[0]);
+				extent1[1] = Math.ceil(extent0[1]);
+			}
+		}
+		
+		// redefine xScale's domain, barwidth, then redraw bars, then redraw axis
+		xScale.domain(extent1);
+		barwidth = (xScale.range()[1] - xScale.range()[0]) / (extent1[1] - extent1[0]);
+		focus.selectAll(".sitebar")
+			.attr("transform", function (d,i) { return "translate(" + (xScale(i) - barwidth/2) + ",0)"; })
+			.attr("width", barwidth);
+		focus.select(".x.axis").call(xAxis);
+		
+		// then update the brush's extent, define which sites are selected, and redraw all the graphs
+		d3.select(this).call(x2brush.extent(extent1));
+		selected_sites = d3.range(extent1[0], extent1[1]);
+		update_AAsites(selected_sites);
+		updatePyramid(selected_sites);
+		update_sitelisttext(selected_sites);
 	}
 	
-	function transform(d) {
-	  return "translate(" + exScale(d[0]) + "," + eyScale(d[1]) + ")";
+	function update_sitelisttext(sitelist){
+		var sitetexts = sitelist_svg.selectAll(".sitetext")
+			.data(sitelist, function(d) { return d; });
+		
+		sitelist_svg.transition() // update the SVG
+			.attr("height", ((sitelist.length+1)*10 + (sitelist.length)*3) + "px");
+		
+		sitetexts.transition() // update sites in list
+			.attr("transform", sitetext_translate);
+		sitetexts.exit().transition() // exiting sites
+			.attr("transform", function(d,i) { return sitetext_shrink(d,i+1); })
+			.remove();
+		sitetexts.enter().append("g") // entering sites
+			.attr("class", "sitetext")
+			.attr("transform", sitetext_shrink)
+			.each(write_sitetext)
+			.transition()
+			.attr("transform", sitetext_translate);
+	}
+		
+	function sitetext_translate(d, i) {
+		return "translate(" + margin.left + "," + ((i+1) * 12) + ") scale(1,1)";
+	}
+	function sitetext_shrink(d,i) {
+		return "translate(" + margin.left + "," + ((i+1) * 12) + ") scale(1,0)";
+	}
+	function write_sitetext(d,i) {
+		var siteSVG = d3.select(this);
+		siteSVG.append("text")
+			.text(function(d) {return d;});
+	}
+	
+	/* Some modification of the following will be used for site selection
+		on rectangles in the focus view
+	
+	function doOnClick(d, i) {
+		if (!d3.select(this).classed("selected")) { // if not selected
+			// add to and sort array
+			selected_sites.push(i);
+			selected_sites.sort();
+			// change formatting and set selected to true
+			d3.select(this)
+				.attr("opacity", 1)
+				.attr("y", yScale(1.25))
+				.classed("selected",true);
+		} else { // if already selected
+			// remove from array
+			var index = selected_sites.indexOf(i);
+			selected_sites.splice(index, 1);
+			// reset formatting, set selected to false
+			d3.select(this)
+				.attr('opacity', 0.5)
+				.attr("y", yScale(1))
+				.classed("selected",false);
+		}
+		update_AAsites(selected_sites);
+		updatePyramid(selected_sites);
 	}*/
 	
-	function zoom() {
-	  rectangle.attr("transform", transform);
-	}
+	/* Demo for logging keystrokes. May be useful
+		later in site selection functionality
 	
-	function transform(d, i) {
-	  return "translate(" + xScale(i) + "," + yScale(0) + ")";
-	}
+	d3.select("body")
+    .on("keydown", function() {
+        d3.select("#seqchart").append("text")
+            .attr("x", (width/2) + "px")
+            .attr("y", (height) + "px")
+            .style("font-size","50px")
+            .text("keyCode: " + d3.event.keyCode)  
+          .transition().duration(2000)
+            .style("font-size","5px")
+            .style("fill-opacity",".1")
+          .remove();
+    });*/
 }

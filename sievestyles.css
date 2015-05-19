@@ -12,13 +12,11 @@ body {
 	margin-left: 50%;
 }
 
-.overlay {
-	fill: none;
-	pointer-events: all;
-}
-
-.axis text {
+svg text {
 	font: 10px sans-serif;
+}
+.aatitle {
+	font-weight: bold;
 }
 
 .axis line,
@@ -28,6 +26,8 @@ body {
 	shape-rendering: crispEdges;
 }
 
-.AAsite {
-	display: block;
+.brush .extent {
+  stroke: steelblue;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
 }
