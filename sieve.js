@@ -26,7 +26,7 @@ function generateVis(){
 	vac_scale.domain([0, numvac]);
 	
 	generateSiteSelector();
-  drawPyramid([]);
+	drawPyramid([]);
 }
 
 function generateSiteSelector() {
@@ -64,6 +64,11 @@ function generateSiteSelector() {
 	    .attr("height", height)
 	  	.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 	    .call(zoom);
+		
+	var sitelist_svg = d3.select("#overview")
+		.append("svg")
+			.attr("width", width + margin.left + margin.right)
+			.attr("height", 0);
 	
 	seqchart.append("rect")
 	    .attr("class", "overlay")
@@ -98,6 +103,12 @@ function generateSiteSelector() {
 		
 	gBrush.selectAll("rect")
 		.attr("height", height);
+		
+	// draw charts for initial (default) selection
+	selected_sites = d3.range(seqbrush.extent()[0], seqbrush.extent()[1]+1);
+	update_AAsites(selected_sites);
+	updatePyramid(selected_sites);
+	update_sitelisttext(selected_sites);
 	
 	function refresh() {
 		var t = d3.event.translate;
@@ -137,7 +148,41 @@ function generateSiteSelector() {
 		d3.select(this).call(seqbrush.extent(extent1));
 		selected_sites = d3.range(extent1[0], extent1[1]);
 		update_AAsites(selected_sites);
-		drawPyramid(selected_sites);
+		updatePyramid(selected_sites);
+		update_sitelisttext(selected_sites);
+	}
+	
+	function update_sitelisttext(sitelist){
+	
+		var sitetexts = sitelist_svg.selectAll(".sitetext")
+			.data(sitelist, function(d) { return d; });
+		
+		sitelist_svg.transition() // update the SVG
+			.attr("height", ((sitelist.length+1)*10 + (sitelist.length)*3) + "px");
+		
+		sitetexts.transition() // update sites
+			.attr("transform", sitetext_translate);
+		sitetexts.exit().transition() //exit sites
+			.attr("transform", function(d,i) { return sitetext_shrink(d,i+1); })
+			.remove();
+		sitetexts.enter().append("g")
+			.attr("class", "sitetext")
+			.attr("transform", sitetext_shrink)
+			.each(write_sitetext)
+			.transition()
+			.attr("transform", sitetext_translate);
+	}
+		
+	function sitetext_translate(d, i) {
+		return "translate(" + margin.left + "," + ((i+1) * 12) + ") scale(1,1)";
+	}
+	function sitetext_shrink(d,i) {
+		return "translate(" + margin.left + "," + ((i+1) * 12) + ") scale(1,0)";
+	}
+	function write_sitetext(d,i) {
+		var siteSVG = d3.select(this);
+		siteSVG.append("text")
+			.text(function(d) {return d;});
 	}
 	
 	/*function doOnClick(d, i) {
@@ -161,11 +206,6 @@ function generateSiteSelector() {
 				.classed("selected",false);
 		}
 		update_AAsites(selected_sites);
-<<<<<<< HEAD
-		drawPyramid(selected_sites);
+		updatePyramid(selected_sites);
 	}*/
-=======
-    updatePyramid(selected_sites);
-	}
->>>>>>> upstream/master
 }
