@@ -93,7 +93,7 @@ function mmprocess(site){
 function ttest(array1,array2){
     var fullarray = array1.concat(array2);
     var ts = [], shuffledata, part1, part2;
-    for(var i = 0; i < 1000; i++){
+    for(var i = 0; i < 500; i++){
         shuffledata = d3.shuffle(fullarray);
         part1 = shuffledata.slice(0,array1.length);
         part2 = shuffledata.slice(array1.length);

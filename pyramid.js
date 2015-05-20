@@ -252,7 +252,7 @@ function drawPyramid(sites){
       .attr('y',0);
     svg.append('text')
       .text("Placebo Group")
-      .attr('x',200)
+      .attr('x',235)
       .attr('y',0);
 
     svg.append('g')
