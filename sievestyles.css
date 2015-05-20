@@ -12,22 +12,12 @@ body {
 	margin-left: 50%;
 }
 
-svg text {
-	font: 10px sans-serif;
-}
-.aatitle {
-	font-weight: bold;
-}
-
-.axis line,
-.axis path {
-	fill: none;
-	stroke: #000;
-	shape-rendering: crispEdges;
-}
-
 .brush .extent {
   stroke: steelblue;
   fill-opacity: .125;
   shape-rendering: crispEdges;
+}
+
+#export_button {
+	display: block;
 }
