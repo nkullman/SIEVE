@@ -31,10 +31,10 @@ function generateVis(){
 
 function generateSiteSelector() {
 	var margin =  {top: 10, right: 10, bottom: 100, left: 40},
-		margin2 = {top: 430, right: 10, bottom: 20, left: 40},
-		width = 900 - margin.left - margin.right,
-		height =  500 - margin.top - margin.bottom,
-		height2 = 500 - margin2.top - margin2.bottom;
+		margin2 = {top: 250, right: 10, bottom: 20, left: 40},
+		width = 500 - margin.left - margin.right,
+		height =  300 - margin.top - margin.bottom,
+		height2 = 300 - margin2.top - margin2.bottom;
 		
 	var xScale = d3.scale.linear()
 			.domain([0, vaccine.sequence.length])
@@ -87,14 +87,15 @@ function generateSiteSelector() {
 	    .data(vaccine.sequence)
 	  .enter().append("rect")
 	  	.attr("class", "focus sitebar")
-	    .attr("x", function (d,i) { return xScale(i) - barwidth/2; })
+	    .attr("x", function (d,i) { return xScale(i) - barwidth/2 })
 		.attr("y", yScale(1))
 		.attr("width", barwidth)
 		.attr("height", height - yScale(1))
 		.attr("fill", function (d) {
 			return aacolor(d);
 		})
-		.attr("opacity", 0.5);
+		.attr("opacity", 0.5)
+    .on("click",doOnClick);
 	// append focus axis
 	focus.append("g")
 		.attr("class", "x axis")
@@ -138,7 +139,7 @@ function generateSiteSelector() {
 	function brushed() {
 		var extent0 = x2brush.extent(),
 			extent1;
-		
+		console.log(extent0);
 		// if dragging, preserve width
 		if (d3.event.mode === "move") {
 			var d0 = Math.round(extent0[0]),
@@ -160,16 +161,12 @@ function generateSiteSelector() {
 		xScale.domain(extent1);
 		barwidth = (xScale.range()[1] - xScale.range()[0]) / (extent1[1] - extent1[0]);
 		focus.selectAll(".sitebar")
-			.attr("transform", function (d,i) { return "translate(" + (xScale(i) - barwidth/2) + ",0)"; })
+			.attr("transform", function (d,i) { return "translate(" + (xScale(i) - barwidth/2) +  ",0)"; })
 			.attr("width", barwidth);
 		focus.select(".x.axis").call(xAxis);
-		
+		console.log(xScale.range());
 		// then update the brush's extent, define which sites are selected, and redraw all the graphs
 		d3.select(this).call(x2brush.extent(extent1));
-		selected_sites = d3.range(extent1[0], extent1[1]);
-		update_AAsites(selected_sites);
-		updatePyramid(selected_sites);
-		update_sitelisttext(selected_sites);
 	}
 	
 	function update_sitelisttext(sitelist){
@@ -204,9 +201,6 @@ function generateSiteSelector() {
 			.text(function(d) {return d;});
 	}
 	
-	/* Some modification of the following will be used for site selection
-		on rectangles in the focus view
-	
 	function doOnClick(d, i) {
 		if (!d3.select(this).classed("selected")) { // if not selected
 			// add to and sort array
@@ -229,7 +223,8 @@ function generateSiteSelector() {
 		}
 		update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
-	}*/
+    update_sitelisttext(selected_sites);
+	}
 	
 	/* Demo for logging keystrokes. May be useful
 		later in site selection functionality
