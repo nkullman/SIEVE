@@ -125,7 +125,7 @@ function generateSiteSelector() {
 		.selectAll("rect")
 		.attr("y", -6)
 		.attr("height", height2 + 7);
-	
+		
 	var sitelist_svg = d3.select("#overview").append("svg")
 		.attr("width", width + margin.left + margin.right)
 		.attr("height", 0);
