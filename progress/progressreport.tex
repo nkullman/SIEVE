@@ -8,15 +8,21 @@
 \usepackage[margin=0.9in, paperwidth=8.5in, paperheight=11in]{geometry}
 \begin{document}
 \title{S.I.E.V.E. Progress Report}
-\author{Wayne Yang \\ Nick Kullman \\ Graham Clenaghan}
+\author{Graham Clenaghan \\ Nick Kullman \\ Wayne Yang}
 \date{Spring 2015}
 \maketitle
 
 \section{Sieve Analysis for Vaccine Trials}
 
+Sieve analysis is a statistical tool that aims to improve vaccine efficacy by providing information regarding how vaccine efficacy depends on characteristics of an exposing pathogen. 
+Since the mid 1990s, it has been used in vaccine trials for cholera, HIV-1, hepatitis B, rotavirus, and pneumococcus. 
+The metaphorical ``sieve'' in sieve analysis is the vaccine's genomic / proteomic sequence-specific immunity barrier to disease. The pathogen penetrates the vaccine's immunity barrier through ``holes'' in the ``sieve'' to cause disease \cite{gilbert2001sieve}.
+Determining which characteristics of the pathogen's genomic / proteomic sequence allow it to pass through the holes will suggest antigens to include in future vaccine constructions to fight the pathogen.
+Determining these characteristics is the purpose of sieve analysis. 
+\\
 Our project aims to help vaccine researchers explore data from trials and and aid in performing sieve analysis of the results, which involves a comparison of the genomes of strains infecting patients administered a vaccine and patients administered a placebo.
 
-While there some existing visualizations, none of them completely fulfill this task and do not allow easy manipulation of the graphic and exploration of the data at the level we hope to accomplish. We also aim to make the tool extensible and the final product polished enough to be used by researchers in the field for use in publications in further vaccine studies.
+While there are some existing visualizations, none of them completely fulfill this task and do not allow easy manipulation of the graphic and exploration of the data at the level we hope to accomplish. We also aim to make the tool extensible and the final product polished enough to be used by researchers in the field for use in publications in further vaccine studies.
 
 \section{Sequence Data Visualization Tools}
 
@@ -41,7 +47,7 @@ While a graphic can be automatically generated, the user has to be quite specifi
 \newline
 \noindent Another tool that came up in our discussions with Dr. Gartland is the HIV Genome Browser, which allows users to browse reference data hosted online \cite{hivgenomebrowser}.   The browser is highly interactive and allows a user to explore the available sequences.   However, this visualization does not easily allow a user to import their own data and compare across patients and treatment groups as required by sieve analysis.  
 
-The main inspiration for the project is from the paper \cite{comprehensive}, which performs sieve analysis on a HIV vaccine trial. Graphics generated in this paper include an overview of the HIV genome with statistically significant sites annotated:
+The main inspiration for the project is from the paper \cite{edlefsen2014comprehensive}, which performs sieve analysis on an HIV vaccine trial. Graphics generated in this paper include an overview of the HIV genome with statistically significant sites annotated:
 \begin{center}
 	\includegraphics[width=7in]{fig2}
 \end{center}
@@ -61,7 +67,7 @@ The remaining tasks are roughly:
 \begin{itemize}
 \item Finalize the site selection mechanism / interface.  Primary member: Nick.
 \item Color palette selection menu.  Primary member: Graham.
-\item Incorporate p-values / entropy calculations. Wayne
+\item Incorporate p-values / entropy calculations. Primary member: Wayne.
 \item Enable exporting of graphics. 
 \item General polish / optimizations. 
 \end{itemize}
@@ -70,6 +76,3 @@ The remaining tasks are roughly:
 \bibliography{progress}
 
 \end{document}
-
-http://www.ncbi.nlm.nih.gov/pubmed/25095880
-
