@@ -160,5 +160,5 @@ function AAlegend_translate(i)
 
 function export_AAsites()
 {
-	window.open("data:image/svg+svg;base64," + btoa(sites_svg.node().parentNode.innerHTML), "_blank");
+	window.open("data:image/svg+xml;base64," + btoa(sites_svg.node().parentNode.innerHTML), "_blank");
 }
