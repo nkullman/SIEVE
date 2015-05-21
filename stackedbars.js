@@ -95,7 +95,7 @@ function create_AAsite_chart(site)
 		.attr("text-anchor", "middle")
 		.attr("x", barchartwidth/2)
 		.attr("y", 0)
-		.text("Env " + envmap[site].hxb2Pos + " (" + vaccine.sequence[site]+ ") Mismatches");
+		.text("Env " + envmap[site].hxb2Pos + " (" + vaccine.sequence[site]+ ") Mismatches (p=" + pvalues[site].toPrecision(2) + ")");
 	
 	//Create legend
 	var acids = d3.set(); //assemble list of amino acids present in chart
