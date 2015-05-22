@@ -27,11 +27,12 @@ function generateVis(){
 	
 	generateSiteSelector();
 	drawPyramid([]);
+  generateTable();
 }
 
 function generateSiteSelector() {
-	var margin =  {top: 10, right: 10, bottom: 100, left: 20},
-		margin2 = {top: 250, right: 10, bottom: 20, left: 20},
+	var margin =  {top: 10, right: 10, bottom: 100, left: 40},
+		margin2 = {top: 250, right: 10, bottom: 20, left: 40},
 		width = 500 - margin.left - margin.right,
 		height =  300 - margin.top - margin.bottom,
 		height2 = 300 - margin2.top - margin2.bottom;
@@ -134,8 +135,7 @@ function generateSiteSelector() {
 	selected_sites = [];
 	update_AAsites(selected_sites);
 	updatePyramid(selected_sites);
-	//update_sitelisttext(selected_sites);
-  generateTable();
+  updateTable(selected_sites);
 	
 	function brushed() {
 		var extent0 = x2brush.extent(),
@@ -222,7 +222,6 @@ function generateSiteSelector() {
 		}
 		update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
-    //update_sitelisttext(selected_sites);
     updateTable(selected_sites);
 	}
 	

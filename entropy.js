@@ -1,9 +1,9 @@
-var tmargin = {top: 20, right: 10, bottom: 20, left: 20},
+var tmargin = {top: 20, right: 10, bottom: 20, left: 40},
     width = 500 - tmargin.left - tmargin.right,
     height = 100 - tmargin.top - tmargin.bottom;
     
 var fieldHeight = 25;
-var fieldWidth = 118;
+var fieldWidth = 113;
 
 var colnames = ['Site','Vaccine Group','Placebo Group','Full Data'];
 
