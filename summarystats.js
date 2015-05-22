@@ -9,7 +9,7 @@ function jointentropy(indices,data,patientcount) {
     for (var i = 0; i < N; i++){
         var obs = [];
         for(var j = 0; j < indices.length; j++){
-            obs.push(data[i][indices[j]]);
+            obs.push(data[indices[j]][i]);
         }
         if(obs in counts){
             counts[obs] += 1.0/N;
@@ -18,7 +18,7 @@ function jointentropy(indices,data,patientcount) {
         }
     }
     for(var key in counts){
-        entropy += counts[key]*Math.log(counts[key]);
+        entropy += -1*counts[key]*Math.log(counts[key]);
     }
     return(entropy);
 }
