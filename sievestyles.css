@@ -1,9 +1,10 @@
+
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 #overview {
-	position: fixed;
+	position: absolute;
 	left: 20px;
 	width: 50%;
 }
@@ -12,21 +13,12 @@ body {
 	margin-left: 50%;
 }
 
-.overlay {
-	fill: rgba(0, 0, 0, .1);;
-	pointer-events: all;
+.brush .extent {
+  stroke: steelblue;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
 }
 
-svg text {
-	font: 10px sans-serif;
-}
-.aatitle {
-	font-weight: bold;
-}
-
-.axis line,
-.axis path {
-	fill: none;
-	stroke: #000;
-	shape-rendering: crispEdges;
+#export_button {
+	display: block;
 }

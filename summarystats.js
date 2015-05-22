@@ -9,7 +9,7 @@ function jointentropy(indices,data,patientcount) {
     for (var i = 0; i < N; i++){
         var obs = [];
         for(var j = 0; j < indices.length; j++){
-            obs.push(data[i][indices[j]]);
+            obs.push(data[indices[j]][i]);
         }
         if(obs in counts){
             counts[obs] += 1.0/N;
@@ -18,7 +18,7 @@ function jointentropy(indices,data,patientcount) {
         }
     }
     for(var key in counts){
-        entropy += counts[key]*Math.log(counts[key]);
+        entropy += -1*counts[key]*Math.log(counts[key]);
     }
     return(entropy);
 }
@@ -93,7 +93,7 @@ function mmprocess(site){
 function ttest(array1,array2){
     var fullarray = array1.concat(array2);
     var ts = [], shuffledata, part1, part2;
-    for(var i = 0; i < 1000; i++){
+    for(var i = 0; i < 500; i++){
         shuffledata = d3.shuffle(fullarray);
         part1 = shuffledata.slice(0,array1.length);
         part2 = shuffledata.slice(array1.length);

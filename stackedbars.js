@@ -20,7 +20,20 @@ var mismatch_axis = d3.svg.axis()
 var sites_svg = d3.select("#sites")
 	.append("svg")
 	.attr("width", barchartwidth + barchartmargin.left + barchartmargin.right)
-	.attr("height", 0);
+	.attr("height", 0)
+	.attr("title", "Amino Acid Site Mismatches")
+	.attr("version", 1.1)
+	.attr("xmlns", "http://www.w3.org/2000/svg")
+	.attr("shape-rendering", "crispEdges");
+
+sites_svg.append("style")
+	.attr("type", "text/css")
+	.text("text { font-size: 10px; font-family: sans-serif;}" +
+		".aatitle { font-weight: bold; }" +
+		".axis line, .axis path { stroke: #000; fill: none; }");
+
+var export_button = d3.select("#export_button")
+	.on("click", export_AAsites);
 
 function update_AAsites(sites)
 {
@@ -143,4 +156,9 @@ function AAsite_shrink(d, i)
 function AAlegend_translate(i)
 {
 	return "translate(" + (Math.floor(i/5) * legendspacing.x) + "," + ((i % 5) * legendspacing.y) + ")";
+}
+
+function export_AAsites()
+{
+	window.open("data:image/svg+xml;base64," + btoa(sites_svg.node().parentNode.innerHTML), "_blank");
 }
