@@ -3,6 +3,8 @@ var fig3array = [8, 21, 186, 198, 307, 358, 387, 399, 420, 330, 468, 480]
 
 var legendspacing = {x: 25, y: 15};
 
+var selected_sites = [];
+
 var group_axis = d3.svg.axis()
 	.scale(d3.scale.ordinal()
 		.domain(["Vaccine", "Placebo"])
@@ -37,6 +39,7 @@ var export_button = d3.select("#export_button")
 
 function update_AAsites(sites)
 {
+	selected_sites = sites;
 	//Use enter() and exit() to create, move, and remove AA site charts around
 	var AAsites = sites_svg.selectAll(".AAsite")
 		.data(sites, function(d) { return d; });
@@ -141,6 +144,14 @@ function create_stacked_bar(svg, nest, scale, yloc)
 		.attr("height", barheight)
 		.attr("width", function(d) {return scale(d.x1) - scale(d.x0);})
 		.style("fill", function(d) {return aacolor(d.key);});
+}
+
+function update_aasite_colors(palette)
+{
+	aacolor.range(aacolor.domain().map(function(d) { return aa_to_color(palette, d); }));
+	
+	sites_svg.selectAll(".AAsite").remove();
+	update_AAsites(selected_sites);
 }
 
 function AAsite_translate(d, i)
