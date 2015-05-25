@@ -22,3 +22,9 @@ body {
 #export_button {
 	display: block;
 }
+
+#options {
+	position: absolute;
+	right: 20px;
+	width: 300px;
+}

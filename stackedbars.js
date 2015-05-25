@@ -36,6 +36,8 @@ sites_svg.append("style")
 
 var export_button = d3.select("#export_button")
 	.on("click", export_AAsites);
+var color_selector = d3.select("#color_selector")
+	.on("input", update_aasite_colors);
 
 function update_AAsites(sites)
 {
@@ -146,10 +148,9 @@ function create_stacked_bar(svg, nest, scale, yloc)
 		.style("fill", function(d) {return aacolor(d.key);});
 }
 
-function update_aasite_colors(palette)
+function update_aasite_colors()
 {
-	aacolor.range(aacolor.domain().map(function(d) { return aa_to_color(palette, d); }));
-	
+	aacolor.range(aacolor.domain().map(function(d) { return aa_to_color(d3.event.target.value, d); }));
 	sites_svg.selectAll(".AAsite").remove();
 	update_AAsites(selected_sites);
 }
