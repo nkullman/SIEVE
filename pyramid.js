@@ -124,7 +124,7 @@ function updatePyramid(sites){
         .attr('y', function(d) {return yScale(d.mismatches); })
         .attr('width', function(d) {return xScale(d.vaccine / numvac); })
         .attr('height', yScale.rangeBand())
-        .style("fill","blue");
+        .style("fill","steelblue");
   leftBars.transition()
           .attr('y', function(d) {return yScale(d.mismatches); })
           .attr('width', function(d) {return xScale(d.vaccine / numvac); })
@@ -283,7 +283,7 @@ function drawPyramid(sites){
         .attr('x', 0)
         .attr('y', function(d) { return yScale(d.mismatches); })
         .attr('width', function(d) { return xScale(d.placebo / numplac); })
-        .attr('height', yScale.rangeBand()).style("fill","blue");
+        .attr('height', yScale.rangeBand()).style("fill","steelblue");
     }
 function translation(x,y) {
   return 'translate(' + x + ',' + y + ')';

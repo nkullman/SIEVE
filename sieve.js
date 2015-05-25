@@ -31,8 +31,8 @@ function generateVis(){
 }
 
 function generateSiteSelector() {
-	var margin =  {top: 10, right: 10, bottom: 100, left: 40},
-		margin2 = {top: 250, right: 10, bottom: 20, left: 40},
+	var margin =  {top: 10, right: 10, bottom: 100, left: 20},
+		margin2 = {top: 250, right: 10, bottom: 20, left: 20},
 		width = 500 - margin.left - margin.right,
 		height =  300 - margin.top - margin.bottom,
 		height2 = 300 - margin2.top - margin2.bottom;
@@ -141,15 +141,15 @@ function generateSiteSelector() {
 		.attr("height", 0);
 		
 	// draw charts for initial (default) selection
-	selected_sites = d3.range(x2brush.extent()[0], x2brush.extent()[1]+1);
+	selected_sites = [];
 	update_AAsites(selected_sites);
 	updatePyramid(selected_sites);
-	update_sitelisttext(selected_sites);
+	//update_sitelisttext(selected_sites);
+  generateTable();
 	
 	function brushed() {
 		var extent0 = x2brush.extent(),
 			extent1;
-		console.log(extent0);
 		// if dragging, preserve width
 		if (d3.event.mode === "move") {
 			var d0 = Math.round(extent0[0]),
@@ -174,7 +174,6 @@ function generateSiteSelector() {
 			.attr("transform", function (d,i) { return "translate(" + (xScale(i) - barwidth/2) +  ",0)"; })
 			.attr("width", barwidth);
 		focus.select(".x.axis").call(xAxis);
-		console.log(xScale.range());
 		// then update the brush's extent, define which sites are selected, and redraw all the graphs
 		d3.select(this).call(x2brush.extent(extent1));
 	}
@@ -233,7 +232,8 @@ function generateSiteSelector() {
 		}
 		update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
-    update_sitelisttext(selected_sites);
+    //update_sitelisttext(selected_sites);
+    updateTable(selected_sites);
 	}
 	
 	/* Demo for logging keystrokes. May be useful
