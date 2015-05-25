@@ -60,7 +60,7 @@ function generateSiteSelector() {
 			.x(x2Scale)
 			.on("brush", brushed);
 			
-	var barwidth = xScale.range()[1] / d3.max(xScale.domain());
+	var sitebarwidth = xScale.range()[1] / d3.max(xScale.domain());
 			// = totalwidth/numbars
 	
 	var siteselSVG = d3.select("#overview").append("svg")
@@ -87,9 +87,8 @@ function generateSiteSelector() {
 	    .data(vaccine.sequence)
 	  .enter().append("rect")
 	  	.attr("class", "focus sitebar")
-	    .attr("x", function (d,i) { return xScale(i) - barwidth/2; })
-		.attr("y", yScale(1))
-		.attr("width", barwidth)
+	    .attr("transform", function (d,i) { return "translate(" + (xScale(i) - sitebarwidth/2) +  ",0)"; })
+		.attr("width", sitebarwidth)
 		.attr("height", height - yScale(1))
 		.attr("fill", function (d) {
 			return aacolor(d);
@@ -107,9 +106,9 @@ function generateSiteSelector() {
 	    .data(vaccine.sequence)
 	  .enter().append("rect")
 	  	.attr("class", "context sitebar")
-	    .attr("x", function (d,i) { return x2Scale(i) - barwidth/2; })
+	    .attr("x", function (d,i) { return x2Scale(i) - sitebarwidth/2; })
 		.attr("y", y2Scale(1))
-		.attr("width", barwidth)
+		.attr("width", sitebarwidth)
 		.attr("height", height2 - y2Scale(1))
 		.attr("fill", "steelblue")
 		.attr("opacity", 0.5);
@@ -157,24 +156,25 @@ function generateSiteSelector() {
 			}
 		}
 		
-		// redefine xScale's domain, barwidth
+		// redefine xScale's domain, barwidth, brush's extent
 		xScale.domain(extent1);
-		barwidth = (xScale.range()[1] - xScale.range()[0]) / (extent1[1] - extent1[0]);
+		sitebarwidth = (xScale.range()[1] - xScale.range()[0]) / (extent1[1] - extent1[0]);
+		d3.select(this).call(x2brush.extent(extent1));
 		
 		// redraw bars
-		focusbars = focus.selectAll(".sitebar") // selection
-			.data(vaccine.sequence.slice(x2brush.extent()[0], x2brush.extent()[1] + 1)/*, function(d,i) { return (i+x2brush.extent()[0]); }*/);
+		var newfocusbars = focus.selectAll(".sitebar") // selection
+			.data(vaccine.sequence.slice(extent1[0], extent1[1] + 1)/*, function(d,i) { return (i+x2brush.extent()[0]); }*/);
 			
-		focusbars.transition() // updaters
-			.attr("transform", function (d,i) { return "translate(" + (xScale(i) - barwidth/2) +  ",0)"; })
-			.attr("width", barwidth);
-		focusbars.exit().transition() //exiters
-			.attr("transform", function (d,i) { return "translate(" + (xScale(i) - barwidth/2) +  ",0)"; })
+		newfocusbars.transition() // updaters
+			.attr("transform", function (d,i) { return "translate(" + (xScale(i) - sitebarwidth/2) +  ",0)"; })
+			.attr("width", sitebarwidth);
+		newfocusbars.exit().transition() //exiters
+			.attr("transform", function (d,i) { return "translate(" + (xScale(i) - sitebarwidth/2) +  ",0)"; })
 			.remove();
-		focusbars.enter().append("rect") //enterers
+		newfocusbars.enter().append("rect") //enterers
 	  		.attr("class", "focus sitebar")
-	    	.attr("transform", function (d,i) { return "translate(" + (xScale(i) - barwidth/2) +  ",0)"; })
-			.attr("width", barwidth)
+	    	.attr("transform", function (d,i) { return "translate(" + (xScale(i) - sitebarwidth/2) +  ",0)"; })
+			.attr("width", sitebarwidth)
 			.attr("height", height - yScale(1))
 			.attr("fill", function (d) {
 				return aacolor(d);
@@ -184,8 +184,6 @@ function generateSiteSelector() {
 			
 		// redraw axis
 		focus.select(".x.axis").call(xAxis);
-		// then update the brush's extent
-		d3.select(this).call(x2brush.extent(extent1));
 	}
 	
 	function doOnClick(d, i) {
