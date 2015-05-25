@@ -32,10 +32,10 @@ function generateVis(){
 
 function generateSiteSelector() {
 	var margin =  {top: 10, right: 10, bottom: 100, left: 20},
-		margin2 = {top: 250, right: 10, bottom: 20, left: 20},
+		margin2 = {top: 150, right: 10, bottom: 20, left: 20},
 		width = 500 - margin.left - margin.right,
-		height =  300 - margin.top - margin.bottom,
-		height2 = 300 - margin2.top - margin2.bottom;
+		height =  200 - margin.top - margin.bottom,
+		height2 = 200 - margin2.top - margin2.bottom;
 		
 	var xScale = d3.scale.linear()
 			.domain([0, vaccine.sequence.length])
@@ -88,7 +88,7 @@ function generateSiteSelector() {
 	    .data(vaccine.sequence)
 	  .enter().append("rect")
 	  	.attr("class", "focus sitebar")
-	    .attr("x", function (d,i) { return xScale(i) - barwidth/2 })
+	    .attr("x", function (d,i) { return xScale(i) - barwidth/2; })
 		.attr("y", yScale(1))
 		.attr("width", barwidth)
 		.attr("height", height - yScale(1))
@@ -167,47 +167,35 @@ function generateSiteSelector() {
 			}
 		}
 		
-		// redefine xScale's domain, barwidth, then redraw bars, then redraw axis
+		// redefine xScale's domain, barwidth
 		xScale.domain(extent1);
 		barwidth = (xScale.range()[1] - xScale.range()[0]) / (extent1[1] - extent1[0]);
-		focus.selectAll(".sitebar")
+		
+		// redraw bars
+		focusbars = focus.selectAll(".sitebar") // selection
+			.data(vaccine.sequence.slice(x2brush.extent()[0], x2brush.extent()[1] + 1)/*, function(d,i) { return (i+x2brush.extent()[0]); }*/);
+			
+		focusbars.transition() // updaters
 			.attr("transform", function (d,i) { return "translate(" + (xScale(i) - barwidth/2) +  ",0)"; })
 			.attr("width", barwidth);
-		focus.select(".x.axis").call(xAxis);
-		// then update the brush's extent, define which sites are selected, and redraw all the graphs
-		d3.select(this).call(x2brush.extent(extent1));
-	}
-	
-	function update_sitelisttext(sitelist){
-		var sitetexts = sitelist_svg.selectAll(".sitetext")
-			.data(sitelist, function(d) { return d; });
-		
-		sitelist_svg.transition() // update the SVG
-			.attr("height", ((sitelist.length+1)*10 + (sitelist.length)*3) + "px");
-		
-		sitetexts.transition() // update sites in list
-			.attr("transform", sitetext_translate);
-		sitetexts.exit().transition() // exiting sites
-			.attr("transform", function(d,i) { return sitetext_shrink(d,i+1); })
+		focusbars.exit().transition() //exiters
+			.attr("transform", function (d,i) { return "translate(" + (xScale(i) - barwidth/2) +  ",0)"; })
 			.remove();
-		sitetexts.enter().append("g") // entering sites
-			.attr("class", "sitetext")
-			.attr("transform", sitetext_shrink)
-			.each(write_sitetext)
-			.transition()
-			.attr("transform", sitetext_translate);
-	}
-		
-	function sitetext_translate(d, i) {
-		return "translate(" + margin.left + "," + ((i+1) * 12) + ") scale(1,1)";
-	}
-	function sitetext_shrink(d,i) {
-		return "translate(" + margin.left + "," + ((i+1) * 12) + ") scale(1,0)";
-	}
-	function write_sitetext(d,i) {
-		var siteSVG = d3.select(this);
-		siteSVG.append("text")
-			.text(function(d) {return d;});
+		focusbars.enter().append("rect") //enterers
+	  		.attr("class", "focus sitebar")
+	    	.attr("transform", function (d,i) { return "translate(" + (xScale(i) - barwidth/2) +  ",0)"; })
+			.attr("width", barwidth)
+			.attr("height", height - yScale(1))
+			.attr("fill", function (d) {
+				return aacolor(d);
+			})
+			.attr("opacity", 0.5)
+    		.on("click",doOnClick);
+			
+		// redraw axis
+		focus.select(".x.axis").call(xAxis);
+		// then update the brush's extent
+		d3.select(this).call(x2brush.extent(extent1));
 	}
 	
 	function doOnClick(d, i) {
@@ -232,8 +220,7 @@ function generateSiteSelector() {
 		}
 		update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
-    //update_sitelisttext(selected_sites);
-    updateTable(selected_sites);
+    	updateTable(selected_sites);
 	}
 	
 	/* Demo for logging keystrokes. May be useful
