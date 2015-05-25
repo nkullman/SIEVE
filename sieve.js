@@ -19,6 +19,8 @@ var vac_scale = d3.scale.linear()
 	.range([0, barwidth]);
 	
 var selected_sites = [];
+
+var mouse_down = false;
 		
 /** Generate visualization */
 function generateVis(){
@@ -96,7 +98,9 @@ function generateSiteSelector() {
 			return aacolor(d);
 		})
 		.attr("opacity", 0.5)
-    .on("click",doOnClick);
+		.on("mouseover", bar_mousedover)
+		.on("mousedown", function(d,i) { mouse_down = true; this.f = bar_mousedover; this.f(d,i);})
+		.on("mouseup", function() {mouse_down = false; });
 	// append focus axis
 	focus.append("g")
 		.attr("class", "x axis")
@@ -190,15 +194,20 @@ function generateSiteSelector() {
 				return aacolor(d);
 			})
 			.attr("opacity", 0.5)
-    		.on("click",doOnClick);
+    		.on("mouseover", bar_mousedover)
+			.on("mousedown", function(d,i) { mouse_down = true; this.f = bar_mousedover; this.f(d,i);})
+			.on("mouseup", function() {mouse_down = false; });
 			
 		// redraw axis
 		focus.select(".x.axis").call(xAxis);
 		// then update the brush's extent
 		d3.select(this).call(x2brush.extent(extent1));
 	}
-	
-	function doOnClick(d, i) {
+	function bar_mousedover(d, i) {
+		if (!mouse_down)
+		{
+			return;
+		}
 		if (!d3.select(this).classed("selected")) { // if not selected
 			// add to and sort array
 			selected_sites.push(i);
