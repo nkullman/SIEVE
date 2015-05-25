@@ -208,13 +208,13 @@ function generateSiteSelector() {
 		{
 			return;
 		}
-		if (!d3.select(this).classed("selected")) { // if not selected
+		var bar = d3.select(this);
+		if (!bar.classed("selected")) { // if not selected
 			// add to and sort array
 			selected_sites.push(i);
 			selected_sites.sort();
 			// change formatting and set selected to true
-			d3.select(this)
-				.attr("opacity", 1)
+			bar.attr("opacity", 1)
 				.attr("y", yScale(1.25))
 				.classed("selected",true);
 		} else { // if already selected
@@ -222,8 +222,7 @@ function generateSiteSelector() {
 			var index = selected_sites.indexOf(i);
 			selected_sites.splice(index, 1);
 			// reset formatting, set selected to false
-			d3.select(this)
-				.attr('opacity', 0.5)
+			bar.attr('opacity', 0.5)
 				.attr("y", yScale(1))
 				.classed("selected",false);
 		}
