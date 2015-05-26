@@ -28,3 +28,7 @@ body {
 	right: 20px;
 	width: 300px;
 }
+
+table {
+	border-spacing: 5px 10px;
+}

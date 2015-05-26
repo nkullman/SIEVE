@@ -19,6 +19,8 @@ var vac_scale = d3.scale.linear()
 	.range([0, barwidth]);
 	
 var selected_sites = [];
+
+var mouse_down = false;
 		
 /** Generate visualization */
 function generateVis(){
@@ -95,7 +97,9 @@ function generateSiteSelector() {
 			return aacolor(d);
 		})
 		.attr("opacity", 0.5)
-    .on("click",doOnClick);
+		.on("mouseover", bar_mousedover)
+		.on("mousedown", function(d,i) { mouse_down = true; this.f = bar_mousedover; this.f(d,i);})
+		.on("mouseup", function() {mouse_down = false; });
 	// append focus axis
 	focus.append("g")
 		.attr("class", "x axis")
@@ -193,20 +197,25 @@ function generateSiteSelector() {
 			.attr("height", height - yScale(1))
 			.attr("fill", function (d) { return aacolor(d); })
 			.attr("opacity", 0.5)
-    		.on("click", function(d,i) {doOnClick(d, extent1[0]+i);}); // how do I pass (d, extent1[0]+i)?
+    		.on("mouseover", bar_mousedover)
+			.on("mousedown", function(d,i) { mouse_down = true; this.f = bar_mousedover; this.f(d,i);})
+			.on("mouseup", function() {mouse_down = false; });
 			
 		// redraw axis
 		focus.select(".x.axis").call(xAxis);
 	}
-	
-	function doOnClick(d, i) {
-		if (!d3.select(this).classed("selected")) { // if not selected
+	function bar_mousedover(d, i) {
+		if (!mouse_down)
+		{
+			return;
+		}
+		var bar = d3.select(this);
+		if (!bar.classed("selected")) { // if not selected
 			// add to and sort array
 			selected_sites.push(i);
 			selected_sites.sort();
 			// change formatting and set selected to true
-			d3.select(this)
-				.attr("opacity", 1)
+			bar.attr("opacity", 1)
 				.attr("y", yScale(1.25))
 				.classed("selected",true);
 		} else { // if already selected
@@ -214,8 +223,7 @@ function generateSiteSelector() {
 			var index = selected_sites.indexOf(i);
 			selected_sites.splice(index, 1);
 			// reset formatting, set selected to false
-			d3.select(this)
-				.attr('opacity', 0.5)
+			bar.attr('opacity', 0.5)
 				.attr("y", yScale(1))
 				.classed("selected",false);
 		}
