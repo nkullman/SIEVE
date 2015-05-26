@@ -21,6 +21,9 @@ var vac_scale = d3.scale.linear()
 var selected_sites = [];
 
 var mouse_down = false;
+
+//clear selecting mode even if you release your mouse elsewhere.
+d3.select(window).on("mouseup", function(){ mouse_down = false; });
 		
 /** Generate visualization */
 function generateVis(){
@@ -98,8 +101,7 @@ function generateSiteSelector() {
 		})
 		.attr("opacity", 0.5)
 		.on("mouseover", bar_mousedover)
-		.on("mousedown", function(d,i) { mouse_down = true; this.f = bar_mousedover; this.f(d,i);})
-		.on("mouseup", function() {mouse_down = false; });
+		.on("mousedown", function(d,i) { mouse_down = true; this.f = bar_mousedover; this.f(d,i);});
 	// append focus axis
 	focus.append("g")
 		.attr("class", "x axis")
@@ -197,8 +199,7 @@ function generateSiteSelector() {
 			.attr("fill", function (d) { return aacolor(d); })
 			.attr("opacity", 0.5)
     		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d, extent1[0] + i); })
-			.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d,extent1[0] + i);})
-			.on("mouseup", function() {mouse_down = false; });
+			.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d,extent1[0] + i);});
 			
 		// redraw axis
 		focus.select(".x.axis").call(xAxis);
