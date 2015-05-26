@@ -150,10 +150,10 @@ function create_stacked_bar(svg, nest, scale, yloc)
 
 function update_aasite_colors()
 {
-  console.log("HELLOOOOOOOOOO");
 	aacolor.range(aacolor.domain().map(function(d) { return aa_to_color(d3.event.target.value, d); }));
 	sites_svg.selectAll(".AAsite").remove();
 	update_AAsites(selected_sites);
+	d3.selectAll(".focus.sitebar").attr("fill", function(d,i) { return aacolor(d); })
 }
 
 function AAsite_translate(d, i)
