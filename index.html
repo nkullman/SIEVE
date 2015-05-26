@@ -9,11 +9,24 @@
 <div id="parent">
 	<div id="overview"></div>
 	<div id="drilldown">
-		<div id="group"><button id="export_button">Export SVG image</button></div>
+		<div id="options">
+			<ul>
+				<li><button id="export_button">Export SVG image</button></li>
+				<li>Color scheme: <select id="color_selector">
+					<option value="taylor">Taylor</option>
+					<option value="hydrophobicity">Hydrophobicity</option>
+					<option value="chemistry">Chemistry</option>
+				</select></li>
+			</ul>
+		</div>
+		<div id="group"></div>
 		<div id="sites"></div>
 	</div>
+  <div id="entropy"></div>
 </div>
+
 <!-- <script src="parseinput.js"></script> -->
+<script src="colors.js"></script>
 <script src="parseinput_nested.js"></script>
 <script src="sieve.js"></script>
 <script src="stackedbars.js"></script>

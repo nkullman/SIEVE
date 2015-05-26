@@ -4,7 +4,7 @@ body {
 }
 
 #overview {
-	position: fixed;
+	position: absolute;
 	left: 20px;
 	width: 50%;
 }
@@ -21,4 +21,10 @@ body {
 
 #export_button {
 	display: block;
+}
+
+#options {
+	position: absolute;
+	right: 20px;
+	width: 300px;
 }

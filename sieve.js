@@ -11,6 +11,7 @@ var barmargin = {top: 5, right: 10, bottom: 0, left: 10},
 var barchartmargin = {top: 15, right: 100, bottom: 10, left: 50},
 	barchartwidth = 250,
 	barchartheight = 70;
+var pcutoff = .3; //largest p-value to plot at all
 		
 var plac_scale = d3.scale.linear()
 	.range([0, barwidth]);
@@ -27,12 +28,11 @@ function generateVis(){
 	
 	generateSiteSelector();
 	drawPyramid([]);
-  generateTable();
 }
 
 function generateSiteSelector() {
-	var margin =  {top: 10, right: 10, bottom: 100, left: 40},
-		margin2 = {top: 250, right: 10, bottom: 20, left: 40},
+	var margin =  {top: 10, right: 10, bottom: 100, left: 20},
+		margin2 = {top: 250, right: 10, bottom: 20, left: 20},
 		width = 500 - margin.left - margin.right,
 		height =  300 - margin.top - margin.bottom,
 		height2 = 300 - margin2.top - margin2.bottom;
@@ -105,15 +105,24 @@ function generateSiteSelector() {
 	
 	// append context drawings
 	var contextbars = context.selectAll(".sitebar")
-	    .data(vaccine.sequence)
+	    .data(pvalues)
 	  .enter().append("rect")
 	  	.attr("class", "context sitebar")
 	    .attr("x", function (d,i) { return x2Scale(i) - barwidth/2; })
 		.attr("y", y2Scale(1))
 		.attr("width", barwidth)
 		.attr("height", height2 - y2Scale(1))
-		.attr("fill", "steelblue")
-		.attr("opacity", 0.5);
+		.attr("fill", "black")
+		.attr("opacity", function(d) {
+			if (d < .05)
+			{
+				return 1;
+			} else  if (d < pcutoff) {
+				return pcutoff-d;
+			} else {
+				return 0;
+			}
+		});
 	// append context axis
 	context.append("g")
 		.attr("class", "x axis")
@@ -135,7 +144,8 @@ function generateSiteSelector() {
 	selected_sites = [];
 	update_AAsites(selected_sites);
 	updatePyramid(selected_sites);
-  updateTable(selected_sites);
+	//update_sitelisttext(selected_sites);
+  generateTable();
 	
 	function brushed() {
 		var extent0 = x2brush.extent(),
@@ -222,6 +232,7 @@ function generateSiteSelector() {
 		}
 		update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
+    //update_sitelisttext(selected_sites);
     updateTable(selected_sites);
 	}
 	

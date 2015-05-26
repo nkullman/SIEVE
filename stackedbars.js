@@ -3,6 +3,8 @@ var fig3array = [8, 21, 186, 198, 307, 358, 387, 399, 420, 330, 468, 480]
 
 var legendspacing = {x: 25, y: 15};
 
+var selected_sites = [];
+
 var group_axis = d3.svg.axis()
 	.scale(d3.scale.ordinal()
 		.domain(["Vaccine", "Placebo"])
@@ -34,9 +36,12 @@ sites_svg.append("style")
 
 var export_button = d3.select("#export_button")
 	.on("click", export_AAsites);
+var color_selector = d3.select("#color_selector")
+	.on("input", update_aasite_colors);
 
 function update_AAsites(sites)
 {
+	selected_sites = sites;
 	//Use enter() and exit() to create, move, and remove AA site charts around
 	var AAsites = sites_svg.selectAll(".AAsite")
 		.data(sites, function(d) { return d; });
@@ -95,7 +100,7 @@ function create_AAsite_chart(site)
 		.attr("text-anchor", "middle")
 		.attr("x", barchartwidth/2)
 		.attr("y", 0)
-		.text("Env " + envmap[site].hxb2Pos + " (" + vaccine.sequence[site]+ ") Mismatches");
+		.text("Env " + envmap[site].hxb2Pos + " (" + vaccine.sequence[site]+ ") Mismatches (p=" + pvalues[site].toPrecision(2) + ")");
 	
 	//Create legend
 	var acids = d3.set(); //assemble list of amino acids present in chart
@@ -141,6 +146,13 @@ function create_stacked_bar(svg, nest, scale, yloc)
 		.attr("height", barheight)
 		.attr("width", function(d) {return scale(d.x1) - scale(d.x0);})
 		.style("fill", function(d) {return aacolor(d.key);});
+}
+
+function update_aasite_colors()
+{
+	aacolor.range(aacolor.domain().map(function(d) { return aa_to_color(d3.event.target.value, d); }));
+	sites_svg.selectAll(".AAsite").remove();
+	update_AAsites(selected_sites);
 }
 
 function AAsite_translate(d, i)
