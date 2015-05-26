@@ -259,8 +259,8 @@ function generateSiteSelector() {
 			// change up it and set selected to true
 			bar.classed("selected",true)
 				.attr("opacity", 1)
-				.attr("y", yScale(1.25));
-				//.attr("transform", "translate(0,5)");
+				//.attr("y", yScale(1.25));
+				.attr("transform", "translate(" + (xScale(i) - sitebarwidth/2) + "," + yScale(1.25) + ")");
 				
 		} else { // if already selected
 			// remove from array
@@ -268,8 +268,8 @@ function generateSiteSelector() {
 			selected_sites.splice(index, 1);
 			// reset formatting, set selected to false
 			bar.attr('opacity', 0.5)
-				.attr("y", yScale(1))
-				//.attr("transform", "translate(0,-5)")
+				//.attr("y", yScale(1))
+				.attr("transform", "translate(" + (xScale(i) - sitebarwidth/2) + ",0)")
 				.classed("selected",false);
 		}
 		update_AAsites(selected_sites);
