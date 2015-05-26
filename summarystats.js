@@ -3,11 +3,11 @@
 *input: indices - list of sites in the sequence
 *output: float*/
 function jointentropy(indices,data,patientcount) {
-    entropy = 0.0;
+    var entropy = 0.0;
     var counts = {};
     //Transpose and filter data, then count each sequence occurance
     data[0].map(function(d, i) {
-        return fig3array.map(function(j) {
+        return indices.map(function(j) {
             return data[j][i];
         });
     }).forEach(function(obs) {
@@ -18,9 +18,9 @@ function jointentropy(indices,data,patientcount) {
         }
     });
     for(var key in counts){
-        entropy += counts[key]*Math.log(counts[key]/patientcount);
+        entropy -= counts[key]*Math.log(counts[key]/patientcount);
     }
-    return(-1*entropy/patientcount);
+    return(entropy/patientcount);
 }
 
 // Approximates the p-value of a t-test for a given site
