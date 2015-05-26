@@ -165,15 +165,15 @@ function generateSiteSelector() {
 		var newfocusbars = focus.selectAll(".sitebar") // selection
 			.data(vaccine.sequence.slice(extent1[0], extent1[1] + 1)/*, function(d,i) { return (i+x2brush.extent()[0]); }*/);
 			
-		newfocusbars.transition() // updaters
-			.attr("transform", function (d,i) { return "translate(" + (xScale(i) - sitebarwidth/2) +  ",0)"; })
-			.attr("width", sitebarwidth);
+		newfocusbars // updaters
+			.attr("transform", function (d,i) { return "translate(" + (xScale(extent1[0]+i) - sitebarwidth/2) +  ",0)"; })
+			.attr("width", sitebarwidth).transition();
 		newfocusbars.exit().transition() //exiters
-			.attr("transform", function (d,i) { return "translate(" + (xScale(i) - sitebarwidth/2) +  ",0)"; })
+			.attr("transform", function (d,i) { return "translate(" + (xScale(extent1[0]+i) - sitebarwidth/2) +  ",0)"; })
 			.remove();
 		newfocusbars.enter().append("rect") //enterers
 	  		.attr("class", "focus sitebar")
-	    	.attr("transform", function (d,i) { return "translate(" + (xScale(i) - sitebarwidth/2) +  ",0)"; })
+	    	.attr("transform", function (d,i) { return "translate(" + (xScale(extent1[0]+i) - sitebarwidth/2) +  ",0)"; })
 			.attr("width", sitebarwidth)
 			.attr("height", height - yScale(1))
 			.attr("fill", function (d) {
