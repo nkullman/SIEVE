@@ -174,8 +174,6 @@ function generateSiteSelector() {
 		xScale.domain(extent1);
 		sitebarwidth = (xScale.range()[1] - xScale.range()[0]) / (extent1[1] - extent1[0]);
 		d3.select(this).call(x2brush.extent(extent1));
-		console.log(extent1);
-		
 		// redraw bars
 		var newfocusbars = focus.selectAll(".sitebar") // selection
 			.data(vaccine.sequence.slice(extent1[0], extent1[1] + 1), function(d,i) { return (extent1[0] + i); });
