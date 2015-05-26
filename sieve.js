@@ -164,19 +164,26 @@ function generateSiteSelector() {
 		// otherwise, if resizing, round both sides
 		else {
 			extent1 = extent0.map(function(d) {return Math.round(d); });
-			// if too small, increase both sides by one until we have hit the min extent
+			// if too small, increase both sides by one until we reach min extent
 			if (extent1[1] - extent1[0] < minextent){
 				while (extent1[1] - extent1[0] < minextent) {
 					if (extent1[1] + 1 <= vaccine.sequence.length) { extent1[1]++; }
 					if (extent1[0] - 1 >= 0) { extent1[0]--; }
 				}
 			}
+			// if too big, decrease both sides until we reach max extent
+			if (extent1[1] - extent1[0] > maxextent){
+				while (extent1[1] - extent1[0] > maxextent) {
+					extent1[1]--;
+					extent1[0]++;
+				}
+			}
 			
 			// in case empty when rounded, use floor & ceil instead
-			if (extent1[0] >= extent1[1]) {
+			/*if (extent1[0] >= extent1[1]) {
 				extent1[0] = Math.floor(extent0[0]);
 				extent1[1] = Math.ceil(extent0[1]);
-			}
+			}*/
 		}
 		
 		// redefine xScale's domain, barwidth, brush's extent
@@ -276,20 +283,4 @@ function generateSiteSelector() {
 		updatePyramid(selected_sites);
     	updateTable(selected_sites);
 	}
-	
-	/* Demo for logging keystrokes. May be useful
-		later in site selection functionality
-	
-	d3.select("body")
-    .on("keydown", function() {
-        d3.select("#seqchart").append("text")
-            .attr("x", (width/2) + "px")
-            .attr("y", (height) + "px")
-            .style("font-size","50px")
-            .text("keyCode: " + d3.event.keyCode)  
-          .transition().duration(2000)
-            .style("font-size","5px")
-            .style("fill-opacity",".1")
-          .remove();
-    });*/
 }
