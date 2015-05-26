@@ -1,31 +1,38 @@
-var tmargin = {top: 20, right: 10, bottom: 20, left: 20},
-    width = 500 - tmargin.left - tmargin.right,
-    height = 100 - tmargin.top - tmargin.bottom;
+var tmargin = {top: 20, right: 10, bottom: 20, left: 40},
+    twidth = 500 - tmargin.left - tmargin.right,
+    theight = 100 - tmargin.top - tmargin.bottom;
+var margin =  {top: 10, right: 10, bottom: 100, left: 40},
+    margin2 = {top: 250, right: 10, bottom: 20, left: 40},
+    width = 500 - margin.left - margin.right,
+    height =  300 - margin.top - margin.bottom,
+    height2 = 300 - margin2.top - margin2.bottom;
     
 var fieldHeight = 25;
-var fieldWidth = 118;
-
+var fieldWidth = 100;
+var buttonWidth = 25
 var colnames = ['Site','Vaccine Group','Placebo Group','Full Data'];
 
 function generateTable(){
+ 
   var canvas = d3.selectAll("#overview")
       .append("svg")
       .attr("class","tablesvg")
       .attr("dy",500)
-      .attr("width", width + tmargin.left + tmargin.right)
-      .attr("height", height + tmargin.top + tmargin.bottom)
+      .attr("width", twidth + tmargin.left + tmargin.right+buttonWidth)
+      .attr("height", theight + tmargin.top + tmargin.bottom)
     .append("g")
       .attr("transform", "translate(" + tmargin.left + "," + tmargin.top + ")");
 
   var title = canvas.append("g");
     
   title.append("rect")
+    .attr("x",buttonWidth)
     .attr("width", 4*fieldWidth-1)
     .attr("height", fieldHeight)
     .style("fill","black");
 
   title.append("text")
-    .attr("x",(4*fieldWidth-1)/2)
+    .attr("x",+(4*fieldWidth-1)/2)
     .attr("y",fieldHeight/2+4)
     .attr("text-anchor","middle")
     .style("fill","white")
@@ -41,7 +48,7 @@ function generateTable(){
     .enter().append("g")
     .attr("class", "header")
     .attr("transform", function (d, i){
-      return "translate(" + i * fieldWidth + "," + (fieldHeight + 1) + ")";
+      return "translate(" +(i * fieldWidth + buttonWidth) + "," + (fieldHeight + 1) + ")";
     });
   header.append("rect")
     .attr("width", fieldWidth-1)
@@ -61,7 +68,7 @@ function generateTable(){
 }
 function updateTable(sites){
   canvas  = d3.select(".tablesvg");
-  canvas.attr("height",height+(sites.length+4)*(fieldHeight+1)  );
+  canvas.attr("height",theight+(sites.length+4)*(fieldHeight+1)  );
   var ent_data = gen_entropy_data(sites);
   var avg_data = gen_average_entropies(sites);
   var jts_data = gen_joint_entropies(sites);
@@ -73,7 +80,7 @@ function updateTable(sites){
     .enter().append("g")
     .attr("class","averageCell")
     .attr("transform",function(d,i){
-      return "translate(" + i * fieldWidth + "," + (fieldHeight + 1)*2 + ")";
+      return "translate(" + (i * fieldWidth + buttonWidth) + "," + (fieldHeight + 1)*2 + ")";
     })
 
   avgEnter.append("rect")
@@ -107,7 +114,7 @@ function updateTable(sites){
     .enter().append("g")
     .attr("class","jointCell")
     .attr("transform",function(d,i){
-      return "translate(" + i * fieldWidth + "," + (fieldHeight + 1)*3 + ")";
+      return "translate(" + (i * fieldWidth + buttonWidth) + "," + (fieldHeight + 1)*3 + ")";
     })
 
   jtEnter.append("rect")
@@ -157,14 +164,29 @@ function updateTable(sites){
     .transition()
     .style("opacity",0)
     .remove();
-  
+    
+  // creates remove button for every row
+  rows.selectAll(".button").remove();
+  rows.append("rect")
+    .attr("class","button")
+    .attr("x",1)
+    .attr("y",1)
+    .attr("title","Remove this site from the selection.")
+    .attr("height",buttonWidth-2)
+    .attr("width",buttonWidth-2)
+    .style("fill","red")
+    .style("opacity",0.5)
+    .on("mouseover",function(){d3.select(this).style("opacity",1)})
+    .on("mouseout",function(){d3.select(this).style("opacity",0.5)})
+    .on("click",removeOnClick);
+    
   // creates cells for every row
   var cells = rows.selectAll(".cell")
     .data(function(d,i){return ent_data[i];});
   var cellsEnter = cells.enter().append("g")
 		.attr("class", "cell")
 		.attr("transform", function (d, i){
-			return "translate(" + i * fieldWidth + ",0)";
+			return "translate(" + (i * fieldWidth + buttonWidth) + ",0)";
 		});
     
   cellsEnter.append("rect")
@@ -203,6 +225,27 @@ function updateTable(sites){
 		.text(String);
 }
 
+	function removeOnClick(d, i) {
+    yScale = d3.scale.linear()
+			.domain([0, 1])
+			.range([height, 0])
+		var index = selected_sites.indexOf(d);
+		selected_sites.splice(index, 1);
+    d3.selectAll(".selected")
+      .classed("selected",function(e,j){
+        if(j == i){
+          d3.select(this)
+            .attr('opacity', 0.5)
+            .attr("y", yScale(1));
+          return false;
+        } else {
+          return true;
+        }
+      })
+		update_AAsites(selected_sites);
+		updatePyramid(selected_sites);
+    updateTable(selected_sites);
+	}
  
  function gen_entropy_data(sites){
   var sitewise = [];
