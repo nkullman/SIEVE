@@ -184,7 +184,9 @@ function generateSiteSelector() {
 			.attr("transform", function (d,i) { return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  ",0)"; })
 			.attr("width", sitebarwidth)
 			.attr("fill", function(d) { return aacolor(d);} )
-			.on("click", function(d,i) {doOnClick(d, extent1[0]+i);});
+			.on("mouseover", function(d,i) {bar_mousedover(d, extent1[0]+i);})
+			.on("mousedown", function(d,i) { mouse_down = true; this.f = bar_mousedover; this.f(d,extent1[0]+i);})
+			.on("mouseup", function() {mouse_down = false; });
 			
 		newfocusbars.exit()	 //exiters
 			.attr("transform", function (d,i) { return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  ",0)"; })
@@ -197,8 +199,8 @@ function generateSiteSelector() {
 			.attr("height", height - yScale(1))
 			.attr("fill", function (d) { return aacolor(d); })
 			.attr("opacity", 0.5)
-    		.on("mouseover", bar_mousedover)
-			.on("mousedown", function(d,i) { mouse_down = true; this.f = bar_mousedover; this.f(d,i);})
+    		.on("mouseover", function(d,i) {bar_mousedover(d, extent1[0]+i);})
+			.on("mousedown", function(d,i) { mouse_down = true; this.f = bar_mousedover; this.f(d,extent1[0]+i);})
 			.on("mouseup", function() {mouse_down = false; });
 			
 		// redraw axis
