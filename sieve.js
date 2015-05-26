@@ -170,20 +170,20 @@ function generateSiteSelector() {
 			.attr("transform", function (d,i) { return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  ",0)"; })
 			.attr("width", sitebarwidth)
 			.attr("fill", function(d) { return aacolor(d);} )
-			.on("click", doOnClick);
-		newfocusbars.exit() //exiters
+			.on("click", function(d,i) {doOnClick(d, extent1[0]+i);});
+			
+		newfocusbars.exit()	 //exiters
 			.attr("transform", function (d,i) { return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  ",0)"; })
 			.remove();
+			
 		newfocusbars.enter().append("rect") //enterers
 	  		.attr("class", "focus sitebar")
 	    	.attr("transform", function (d,i) { return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  ",0)"; })
 			.attr("width", sitebarwidth)
 			.attr("height", height - yScale(1))
-			.attr("fill", function (d) {
-				return aacolor(d);
-			})
+			.attr("fill", function (d) { return aacolor(d); })
 			.attr("opacity", 0.5)
-    		.on("click", doOnClick);
+    		.on("click", function(d,i) {doOnClick(d, extent1[0]+i);}); // how do I pass (d, extent1[0]+i)?
 			
 		// redraw axis
 		focus.select(".x.axis").call(xAxis);
