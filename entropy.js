@@ -12,15 +12,17 @@ var fieldWidth = 100;
 var buttonWidth = 25
 var colnames = ['Site','Vaccine Group','Placebo Group','Full Data'];
 
+var jointRow, averageRow, canvas, rowsGrp;
+
 function generateTable(){
  
-  var canvas = d3.selectAll("#overview")
+  canvas = d3.selectAll("#overview")
       .append("svg")
       .attr("class","tablesvg")
       .attr("dy",500)
       .attr("width", twidth + tmargin.left + tmargin.right+buttonWidth)
-      .attr("height", theight + tmargin.top + tmargin.bottom)
-    .append("g")
+      .attr("height", theight + tmargin.top + tmargin.bottom);
+  canvas.append("g")
       .attr("transform", "translate(" + tmargin.left + "," + tmargin.top + ")");
 
   var title = canvas.append("g");
@@ -41,7 +43,7 @@ function generateTable(){
       
   // define groups for header and rows for the individual sites  
   var headerGrp = canvas.append("g").attr("class", "headerGrp");
-  var rowsGrp = canvas.append("g").attr("class","rowsGrp");
+  rowsGrp = canvas.append("g").attr("class","rowsGrp");
 
   var header = headerGrp.selectAll("g")
     .data(colnames)
@@ -67,21 +69,18 @@ function generateTable(){
   averageRow = canvas.append("g").attr("class","averages");
 }
 function updateTable(sites){
-  canvas  = d3.select(".tablesvg");
   canvas.attr("height",theight+(sites.length+4)*(fieldHeight+1)  );
   var ent_data = gen_entropy_data(sites);
   var avg_data = gen_average_entropies(sites);
   var jts_data = gen_joint_entropies(sites);
   // creates the aggregate rows
-  var averageRow = d3.select(".averages");
-  var jointRow = d3.select(".joints");
   var avgEnter = averageRow.selectAll("g")
     .data(avg_data)
     .enter().append("g")
     .attr("class","averageCell")
     .attr("transform",function(d,i){
       return "translate(" + (i * fieldWidth + buttonWidth) + "," + (fieldHeight + 1)*2 + ")";
-    })
+    });
 
   avgEnter.append("rect")
     .attr("width", fieldWidth-1)
@@ -115,7 +114,7 @@ function updateTable(sites){
     .attr("class","jointCell")
     .attr("transform",function(d,i){
       return "translate(" + (i * fieldWidth + buttonWidth) + "," + (fieldHeight + 1)*3 + ")";
-    })
+    });
 
   jtEnter.append("rect")
     .attr("width", fieldWidth-1)
@@ -143,7 +142,7 @@ function updateTable(sites){
   
   
   //creates all the site specific rows
-  var rows = canvas.select(".rowsGrp").selectAll(".row")
+  var rows = rowsGrp.selectAll(".row")
    .data(sites);
   
   rows.attr("class","row")
@@ -151,8 +150,7 @@ function updateTable(sites){
     .attr("width",500)
     .attr("transform",function(d,i){
       return "translate(0," + (i+4)*(fieldHeight+1) + ")";
-    })
-    .on("click",function(d,i){console.log(sites[i]);});
+    });
   
   var rowsEnter = rows.enter().append("g")
     .attr("class","row")
