@@ -22,6 +22,8 @@ var selected_sites = [];
 
 var mouse_down = false;
 
+			
+
 //clear selecting mode even if you release your mouse elsewhere.
 d3.select(window).on("mouseup", function(){ mouse_down = false; });
 		
@@ -36,51 +38,37 @@ function generateVis(){
 }
 
 function generateSiteSelector() {
-	var margin =  {top: 10, right: 10, bottom: 100, left: 20},
-<<<<<<< HEAD
-		margin2 = {top: 250, right: 10, bottom: 20, left: 20},
-		width = 500 - margin.left - margin.right,
-		height =  300 - margin.top - margin.bottom,
-		height2 = 300 - margin2.top - margin2.bottom;
-		
-	var xScale = d3.scale.linear()
-			.domain([0, vaccine.sequence.length])
-=======
-		margin2 = {top: 150, right: 10, bottom: 20, left: 20},
-		width = 500 - margin.left - margin.right,
-		height =  200 - margin.top - margin.bottom,
-		height2 = 200 - margin2.top - margin2.bottom;
-		
-	var xScale = d3.scale.linear()
-			.domain([0, vaccine.sequence.length-1])
->>>>>>> 7e9980065ac0d87c40ddb7070402751a39180072
-			.range([0, width]),
-		x2Scale = d3.scale.linear()
-			.domain(xScale.domain())
-			.range([0, width]),
-		yScale = d3.scale.linear()
-			.domain([0, 1])
-			.range([height, 0]),
-		y2Scale = d3.scale.linear()
-			.domain(yScale.domain())
-			.range([height2, 0]);
-			
-	var xAxis = d3.svg.axis()
+  var margin =  {top: 10, right: 10, bottom: 100, left: 20},
+  margin2 = {top: 150, right: 10, bottom: 20, left: 20},
+  width = 500 - margin.left - margin.right,
+  height =  200 - margin.top - margin.bottom,
+  height2 = 200 - margin2.top - margin2.bottom;
+  
+  window.xScale = d3.scale.linear()
+    .domain([0, vaccine.sequence.length-1])
+    .range([0, width]);
+  window.x2Scale = d3.scale.linear()
+    .domain(xScale.domain())
+    .range([0, width]);
+  window.yScale = d3.scale.linear()
+    .domain([0, 1])
+    .range([height, 0]);
+  window.y2Scale = d3.scale.linear()
+    .domain(yScale.domain())
+    .range([height2, 0]);
+	window.xAxis = d3.svg.axis()
 			.scale(xScale)
-			.orient("bottom"),
-		x2Axis = d3.svg.axis()
+			.orient("bottom");
+	window.x2Axis = d3.svg.axis()
+	window.x2Axis = d3.svg.axis()
 			.scale(x2Scale)
 			.orient("bottom");
 
-	var x2brush = d3.svg.brush()
+	window.x2brush = d3.svg.brush()
 			.x(x2Scale)
 			.on("brush", brushed);
 			
-<<<<<<< HEAD
-	var barwidth = xScale.range()[1] / d3.max(xScale.domain());
-=======
-	var sitebarwidth = xScale.range()[1] / d3.max(xScale.domain());
->>>>>>> 7e9980065ac0d87c40ddb7070402751a39180072
+	window.sitebarwidth = xScale.range()[1] / d3.max(xScale.domain());
 			// = totalwidth/numbars
 	
 	var siteselSVG = d3.select("#overview").append("svg")
@@ -107,25 +95,15 @@ function generateSiteSelector() {
 	    .data(vaccine.sequence)
 	  .enter().append("rect")
 	  	.attr("class", "focus sitebar")
-<<<<<<< HEAD
-	    .attr("x", function (d,i) { return xScale(i) - barwidth/2 })
-		.attr("y", yScale(1))
-		.attr("width", barwidth)
-=======
 	    .attr("transform", function (d,i) { return "translate(" + (xScale(i) - sitebarwidth/2) +  ",0)"; })
 		.attr("width", sitebarwidth)
->>>>>>> 7e9980065ac0d87c40ddb7070402751a39180072
 		.attr("height", height - yScale(1))
 		.attr("fill", function (d) {
 			return aacolor(d);
 		})
 		.attr("opacity", 0.5)
-<<<<<<< HEAD
-    .on("click",doOnClick);
-=======
 		.on("mouseover", bar_mousedover)
 		.on("mousedown", function(d,i) { mouse_down = true; this.f = bar_mousedover; this.f(d,i);});
->>>>>>> 7e9980065ac0d87c40ddb7070402751a39180072
 	// append focus axis
 	focus.append("g")
 		.attr("class", "x axis")
@@ -137,15 +115,9 @@ function generateSiteSelector() {
 	    .data(pvalues)
 	  .enter().append("rect")
 	  	.attr("class", "context sitebar")
-<<<<<<< HEAD
-	    .attr("x", function (d,i) { return x2Scale(i) - barwidth/2; })
-		.attr("y", y2Scale(1))
-		.attr("width", barwidth)
-=======
 	    .attr("x", function (d,i) { return x2Scale(i) - sitebarwidth/2; })
 		.attr("y", y2Scale(1))
 		.attr("width", sitebarwidth)
->>>>>>> 7e9980065ac0d87c40ddb7070402751a39180072
 		.attr("height", height2 - y2Scale(1))
 		.attr("fill", "black")
 		.attr("opacity", function(d) {
@@ -183,13 +155,10 @@ function generateSiteSelector() {
   generateTable();
 	
 	function brushed() {
-<<<<<<< HEAD
-=======
 		var minextent = 10,
 			maxextent = 50;
->>>>>>> 7e9980065ac0d87c40ddb7070402751a39180072
-		var extent0 = x2brush.extent(),
-			extent1;
+		var extent0 = x2brush.extent();
+		window.extent1;
 		// if dragging, preserve width
 		if (d3.event.mode === "move") {
 			var d0 = Math.round(extent0[0]),
@@ -199,57 +168,6 @@ function generateSiteSelector() {
 		// otherwise, if resizing, round both sides
 		else {
 			extent1 = extent0.map(function(d) {return Math.round(d); });
-<<<<<<< HEAD
-			
-			// in case empty when rounded, use floor & ceil instead
-			if (extent1[0] >= extent1[1]) {
-				extent1[0] = Math.floor(extent0[0]);
-				extent1[1] = Math.ceil(extent0[1]);
-			}
-		}
-		
-		// redefine xScale's domain, barwidth, then redraw bars, then redraw axis
-		xScale.domain(extent1);
-		barwidth = (xScale.range()[1] - xScale.range()[0]) / (extent1[1] - extent1[0]);
-		focus.selectAll(".sitebar")
-			.attr("transform", function (d,i) { return "translate(" + (xScale(i) - barwidth/2) +  ",0)"; })
-			.attr("width", barwidth);
-		focus.select(".x.axis").call(xAxis);
-		// then update the brush's extent, define which sites are selected, and redraw all the graphs
-		d3.select(this).call(x2brush.extent(extent1));
-	}
-	
-	function update_sitelisttext(sitelist){
-		var sitetexts = sitelist_svg.selectAll(".sitetext")
-			.data(sitelist, function(d) { return d; });
-		
-		sitelist_svg.transition() // update the SVG
-			.attr("height", ((sitelist.length+1)*10 + (sitelist.length)*3) + "px");
-		
-		sitetexts.transition() // update sites in list
-			.attr("transform", sitetext_translate);
-		sitetexts.exit().transition() // exiting sites
-			.attr("transform", function(d,i) { return sitetext_shrink(d,i+1); })
-			.remove();
-		sitetexts.enter().append("g") // entering sites
-			.attr("class", "sitetext")
-			.attr("transform", sitetext_shrink)
-			.each(write_sitetext)
-			.transition()
-			.attr("transform", sitetext_translate);
-	}
-		
-	function sitetext_translate(d, i) {
-		return "translate(" + margin.left + "," + ((i+1) * 12) + ") scale(1,1)";
-	}
-	function sitetext_shrink(d,i) {
-		return "translate(" + margin.left + "," + ((i+1) * 12) + ") scale(1,0)";
-	}
-	function write_sitetext(d,i) {
-		var siteSVG = d3.select(this);
-		siteSVG.append("text")
-			.text(function(d) {return d;});
-=======
 			// if too small, increase both sides by one until we reach min extent
 			if (extent1[1] - extent1[0] < minextent){
 				while (extent1[1] - extent1[0] < minextent) {
@@ -336,7 +254,6 @@ function generateSiteSelector() {
 			
 		// redraw axis
 		focus.select(".x.axis").call(xAxis);
->>>>>>> 7e9980065ac0d87c40ddb7070402751a39180072
 	}
 	
 	function bar_mousedover(d, i) {
@@ -367,27 +284,6 @@ function generateSiteSelector() {
 		}
 		update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
-<<<<<<< HEAD
-    //update_sitelisttext(selected_sites);
-    updateTable(selected_sites);
-=======
     	updateTable(selected_sites);
->>>>>>> 7e9980065ac0d87c40ddb7070402751a39180072
 	}
-	
-	/* Demo for logging keystrokes. May be useful
-		later in site selection functionality
-	
-	d3.select("body")
-    .on("keydown", function() {
-        d3.select("#seqchart").append("text")
-            .attr("x", (width/2) + "px")
-            .attr("y", (height) + "px")
-            .style("font-size","50px")
-            .text("keyCode: " + d3.event.keyCode)  
-          .transition().duration(2000)
-            .style("font-size","5px")
-            .style("fill-opacity",".1")
-          .remove();
-    });*/
 }

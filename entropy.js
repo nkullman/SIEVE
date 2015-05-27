@@ -1,12 +1,7 @@
 var tmargin = {top: 20, right: 10, bottom: 20, left: 40},
     twidth = 500 - tmargin.left - tmargin.right,
     theight = 100 - tmargin.top - tmargin.bottom;
-var margin =  {top: 10, right: 10, bottom: 100, left: 40},
-    margin2 = {top: 250, right: 10, bottom: 20, left: 40},
-    width = 500 - margin.left - margin.right,
-    height =  300 - margin.top - margin.bottom,
-    height2 = 300 - margin2.top - margin2.bottom;
-    
+
 var fieldHeight = 25;
 var fieldWidth = 100;
 var buttonWidth = 25
@@ -44,6 +39,7 @@ function generateTable(){
   // define groups for header and rows for the individual sites  
   var headerGrp = canvas.append("g").attr("class", "headerGrp");
   rowsGrp = canvas.append("g").attr("class","rowsGrp");
+
   var header = headerGrp.selectAll("g")
     .data(colnames)
     .enter().append("g")
@@ -80,6 +76,7 @@ function updateTable(sites){
     .attr("transform",function(d,i){
       return "translate(" + (i * fieldWidth + buttonWidth) + "," + (fieldHeight + 1)*2 + ")";
     });
+
   avgEnter.append("rect")
     .attr("width", fieldWidth-1)
     .attr("height", fieldHeight)
@@ -113,6 +110,7 @@ function updateTable(sites){
     .attr("transform",function(d,i){
       return "translate(" + (i * fieldWidth + buttonWidth) + "," + (fieldHeight + 1)*3 + ")";
     });
+
   jtEnter.append("rect")
     .attr("width", fieldWidth-1)
     .attr("height", fieldHeight)
@@ -221,27 +219,77 @@ function updateTable(sites){
 }
 
 	function removeOnClick(d, i) {
-    yScale = d3.scale.linear()
-			.domain([0, 1])
-			.range([height, 0])
 		var index = selected_sites.indexOf(d);
 		selected_sites.splice(index, 1);
     d3.selectAll(".selected")
       .classed("selected",function(e,j){
         if(j == i){
-          d3.select(this)
-            .attr('opacity', 0.5)
-            .attr("y", yScale(1));
           return false;
         } else {
           return true;
         }
       })
+    var newfocusbars = d3.select(".focus").selectAll(".sitebar") // selection
+			.data(vaccine.sequence.slice(extent1[0], extent1[1] + 1));
+			
+		newfocusbars // updaters
+			.attr("class", function(d,i) {
+				  if (selected_sites.indexOf(i + extent1[0]) === -1) { return "focus sitebar"; }
+				  else { return "focus sitebar selected";}
+			})
+			.attr("transform", function (d,i) { 
+				if (!d3.select(this).classed("selected")) {
+					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  "," + yScale(1) + ")";
+				} else {
+					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  "," + yScale(1.25) + ")";
+				}
+			})
+			.attr("width", sitebarwidth)
+			.attr("fill", function(d) { return aacolor(d);} )
+			.attr("opacity", function (d,i) { 
+				if (!d3.select(this).classed("selected")) {
+					return 0.5;
+				} else {
+					return 1;
+				}
+			})
+    		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d, extent1[0] + i); })
+			.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d,extent1[0] + i);})
+			.on("mouseup", function() {mouse_down = false; });
 		update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
     updateTable(selected_sites);
 	}
- 
+ function bar_mousedover(d, i) {
+		if (!mouse_down) { return; }
+		
+		var bar = d3.select(this);
+		if (!bar.classed("selected")) { // if not selected
+		
+			// add to and sort array
+			selected_sites.push(i);
+			selected_sites.sort();
+			
+			// change up it and set selected to true
+			bar.classed("selected",true)
+				.attr("opacity", 1)
+				//.attr("y", yScale(1.25));
+				.attr("transform", "translate(" + (xScale(i) - sitebarwidth/2) + "," + yScale(1.25) + ")");
+				
+		} else { // if already selected
+			// remove from array
+			var index = selected_sites.indexOf(i);
+			selected_sites.splice(index, 1);
+			// reset formatting, set selected to false
+			bar.attr('opacity', 0.5)
+				//.attr("y", yScale(1))
+				.attr("transform", "translate(" + (xScale(i) - sitebarwidth/2) + ",0)")
+				.classed("selected",false);
+		}
+		update_AAsites(selected_sites);
+		updatePyramid(selected_sites);
+    	updateTable(selected_sites);
+	}
  function gen_entropy_data(sites){
   var sitewise = [];
   for(var i = 0; i < sites.length; i ++){
