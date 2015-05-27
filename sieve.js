@@ -19,6 +19,11 @@ var vac_scale = d3.scale.linear()
 	.range([0, barwidth]);
 	
 var selected_sites = [];
+
+var mouse_down = false;
+
+//clear selecting mode even if you release your mouse elsewhere.
+d3.select(window).on("mouseup", function(){ mouse_down = false; });
 		
 /** Generate visualization */
 function generateVis(){
@@ -32,6 +37,7 @@ function generateVis(){
 
 function generateSiteSelector() {
 	var margin =  {top: 10, right: 10, bottom: 100, left: 20},
+<<<<<<< HEAD
 		margin2 = {top: 250, right: 10, bottom: 20, left: 20},
 		width = 500 - margin.left - margin.right,
 		height =  300 - margin.top - margin.bottom,
@@ -39,6 +45,15 @@ function generateSiteSelector() {
 		
 	var xScale = d3.scale.linear()
 			.domain([0, vaccine.sequence.length])
+=======
+		margin2 = {top: 150, right: 10, bottom: 20, left: 20},
+		width = 500 - margin.left - margin.right,
+		height =  200 - margin.top - margin.bottom,
+		height2 = 200 - margin2.top - margin2.bottom;
+		
+	var xScale = d3.scale.linear()
+			.domain([0, vaccine.sequence.length-1])
+>>>>>>> 7e9980065ac0d87c40ddb7070402751a39180072
 			.range([0, width]),
 		x2Scale = d3.scale.linear()
 			.domain(xScale.domain())
@@ -61,7 +76,11 @@ function generateSiteSelector() {
 			.x(x2Scale)
 			.on("brush", brushed);
 			
+<<<<<<< HEAD
 	var barwidth = xScale.range()[1] / d3.max(xScale.domain());
+=======
+	var sitebarwidth = xScale.range()[1] / d3.max(xScale.domain());
+>>>>>>> 7e9980065ac0d87c40ddb7070402751a39180072
 			// = totalwidth/numbars
 	
 	var siteselSVG = d3.select("#overview").append("svg")
@@ -88,15 +107,25 @@ function generateSiteSelector() {
 	    .data(vaccine.sequence)
 	  .enter().append("rect")
 	  	.attr("class", "focus sitebar")
+<<<<<<< HEAD
 	    .attr("x", function (d,i) { return xScale(i) - barwidth/2 })
 		.attr("y", yScale(1))
 		.attr("width", barwidth)
+=======
+	    .attr("transform", function (d,i) { return "translate(" + (xScale(i) - sitebarwidth/2) +  ",0)"; })
+		.attr("width", sitebarwidth)
+>>>>>>> 7e9980065ac0d87c40ddb7070402751a39180072
 		.attr("height", height - yScale(1))
 		.attr("fill", function (d) {
 			return aacolor(d);
 		})
 		.attr("opacity", 0.5)
+<<<<<<< HEAD
     .on("click",doOnClick);
+=======
+		.on("mouseover", bar_mousedover)
+		.on("mousedown", function(d,i) { mouse_down = true; this.f = bar_mousedover; this.f(d,i);});
+>>>>>>> 7e9980065ac0d87c40ddb7070402751a39180072
 	// append focus axis
 	focus.append("g")
 		.attr("class", "x axis")
@@ -108,9 +137,15 @@ function generateSiteSelector() {
 	    .data(pvalues)
 	  .enter().append("rect")
 	  	.attr("class", "context sitebar")
+<<<<<<< HEAD
 	    .attr("x", function (d,i) { return x2Scale(i) - barwidth/2; })
 		.attr("y", y2Scale(1))
 		.attr("width", barwidth)
+=======
+	    .attr("x", function (d,i) { return x2Scale(i) - sitebarwidth/2; })
+		.attr("y", y2Scale(1))
+		.attr("width", sitebarwidth)
+>>>>>>> 7e9980065ac0d87c40ddb7070402751a39180072
 		.attr("height", height2 - y2Scale(1))
 		.attr("fill", "black")
 		.attr("opacity", function(d) {
@@ -148,6 +183,11 @@ function generateSiteSelector() {
   generateTable();
 	
 	function brushed() {
+<<<<<<< HEAD
+=======
+		var minextent = 10,
+			maxextent = 50;
+>>>>>>> 7e9980065ac0d87c40ddb7070402751a39180072
 		var extent0 = x2brush.extent(),
 			extent1;
 		// if dragging, preserve width
@@ -159,6 +199,7 @@ function generateSiteSelector() {
 		// otherwise, if resizing, round both sides
 		else {
 			extent1 = extent0.map(function(d) {return Math.round(d); });
+<<<<<<< HEAD
 			
 			// in case empty when rounded, use floor & ceil instead
 			if (extent1[0] >= extent1[1]) {
@@ -208,32 +249,130 @@ function generateSiteSelector() {
 		var siteSVG = d3.select(this);
 		siteSVG.append("text")
 			.text(function(d) {return d;});
+=======
+			// if too small, increase both sides by one until we reach min extent
+			if (extent1[1] - extent1[0] < minextent){
+				while (extent1[1] - extent1[0] < minextent) {
+					if (extent1[1] + 1 <= vaccine.sequence.length) { extent1[1]++; }
+					if (extent1[0] - 1 >= 0) { extent1[0]--; }
+				}
+			}
+			// if too big, decrease both sides until we reach max extent
+			if (extent1[1] - extent1[0] > maxextent){
+				while (extent1[1] - extent1[0] > maxextent) {
+					extent1[1]--;
+					extent1[0]++;
+				}
+			}
+			
+			// in case empty when rounded, use floor & ceil instead
+			/*if (extent1[0] >= extent1[1]) {
+				extent1[0] = Math.floor(extent0[0]);
+				extent1[1] = Math.ceil(extent0[1]);
+			}*/
+		}
+		
+		// redefine xScale's domain, barwidth, brush's extent
+		xScale.domain(extent1);
+		sitebarwidth = (xScale.range()[1] - xScale.range()[0]) / (extent1[1] - extent1[0]);
+		d3.select(this).call(x2brush.extent(extent1));
+		// redraw bars
+		var newfocusbars = focus.selectAll(".sitebar") // selection
+			.data(vaccine.sequence.slice(extent1[0], extent1[1] + 1));
+			
+		newfocusbars // updaters
+			.attr("class", function(d,i) {
+				  if (selected_sites.indexOf(i + extent1[0]) === -1) { return "focus sitebar"; }
+				  else { return "focus sitebar selected";}
+			})
+			.attr("transform", function (d,i) { 
+				if (!d3.select(this).classed("selected")) {
+					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  "," + yScale(1) + ")";
+				} else {
+					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  "," + yScale(1.25) + ")";
+				}
+			})
+			.attr("width", sitebarwidth)
+			.attr("fill", function(d) { return aacolor(d);} )
+			.attr("opacity", function (d,i) { 
+				if (!d3.select(this).classed("selected")) {
+					return 0.5;
+				} else {
+					return 1;
+				}
+			})
+    		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d, extent1[0] + i); })
+			.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d,extent1[0] + i);})
+			.on("mouseup", function() {mouse_down = false; });
+			
+		newfocusbars.exit()	 //exiters
+			.attr("transform", function (d,i) { return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  ",0)"; })
+			.remove();
+			
+		newfocusbars.enter().append("rect") //enterers
+	  		.attr("class", function(d,i) {
+				  if (selected_sites.indexOf(i + extent1[0]) === -1) { return "focus sitebar"; }
+				  else { return "focus sitebar selected";}
+			})
+	    	.attr("transform", function (d,i) { 
+				if (!d3.select(this).classed("selected")) {
+					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  ",0)";
+				} else {
+					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  "," + yScale(1.25) + ")";
+				}
+			})
+			.attr("width", sitebarwidth)
+			.attr("height", height - yScale(1))
+			.attr("fill", function (d) { return aacolor(d); })
+			.attr("opacity", function (d,i) { 
+				if (!d3.select(this).classed("selected")) {
+					return 0.5;
+				} else {
+					return 1;
+				}
+			})
+    		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d, extent1[0] + i); })
+			.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d,extent1[0] + i);});
+			
+		// redraw axis
+		focus.select(".x.axis").call(xAxis);
+>>>>>>> 7e9980065ac0d87c40ddb7070402751a39180072
 	}
 	
-	function doOnClick(d, i) {
-		if (!d3.select(this).classed("selected")) { // if not selected
+	function bar_mousedover(d, i) {
+		if (!mouse_down) { return; }
+		
+		var bar = d3.select(this);
+		if (!bar.classed("selected")) { // if not selected
+		
 			// add to and sort array
 			selected_sites.push(i);
 			selected_sites.sort();
-			// change formatting and set selected to true
-			d3.select(this)
+			
+			// change up it and set selected to true
+			bar.classed("selected",true)
 				.attr("opacity", 1)
-				.attr("y", yScale(1.25))
-				.classed("selected",true);
+				//.attr("y", yScale(1.25));
+				.attr("transform", "translate(" + (xScale(i) - sitebarwidth/2) + "," + yScale(1.25) + ")");
+				
 		} else { // if already selected
 			// remove from array
 			var index = selected_sites.indexOf(i);
 			selected_sites.splice(index, 1);
 			// reset formatting, set selected to false
-			d3.select(this)
-				.attr('opacity', 0.5)
-				.attr("y", yScale(1))
+			bar.attr('opacity', 0.5)
+				//.attr("y", yScale(1))
+				.attr("transform", "translate(" + (xScale(i) - sitebarwidth/2) + ",0)")
 				.classed("selected",false);
 		}
 		update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
+<<<<<<< HEAD
     //update_sitelisttext(selected_sites);
     updateTable(selected_sites);
+=======
+    	updateTable(selected_sites);
+>>>>>>> 7e9980065ac0d87c40ddb7070402751a39180072
 	}
 	
 	/* Demo for logging keystrokes. May be useful
