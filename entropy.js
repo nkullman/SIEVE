@@ -1,12 +1,7 @@
 var tmargin = {top: 20, right: 10, bottom: 20, left: 40},
     twidth = 500 - tmargin.left - tmargin.right,
     theight = 100 - tmargin.top - tmargin.bottom;
-var margin =  {top: 10, right: 10, bottom: 100, left: 40},
-    margin2 = {top: 250, right: 10, bottom: 20, left: 40},
-    width = 500 - margin.left - margin.right,
-    height =  300 - margin.top - margin.bottom,
-    height2 = 300 - margin2.top - margin2.bottom;
-    
+
 var fieldHeight = 25;
 var fieldWidth = 100;
 var buttonWidth = 25
@@ -70,8 +65,25 @@ function generateTable(){
 }
 function updateTable(sites){
   canvas.attr("height",theight+(sites.length+4)*(fieldHeight+1)  );
-  var ent_data = gen_entropy_data(sites);
-  var avg_data = gen_average_entropies(sites);
+  var vaccine_entropies = sites.map(function(i) {
+    return jointentropy([i], sequences.vaccine, numvac);
+  });
+  var placebo_entropies = sites.map(function(i) {
+    return jointentropy([i], sequences.placebo, numplac);
+  });
+  var combined_entropies = sites.map(function(i) {
+    return jointentropy([i], sequences_raw, numplac+numvac);
+  });
+  var ent_data = sites.map(function(d, i)
+  {
+    return ["Env " + envmap[d].hxb2Pos,
+      vaccine_entropies[i].toFixed(2),
+      placebo_entropies[i].toFixed(2),
+      combined_entropies[i].toFixed(2)];
+  });
+  var avg_data = ["Average Entropy", mean(vaccine_entropies).toFixed(2),
+                            mean(placebo_entropies).toFixed(2),
+                            mean(combined_entropies).toFixed(2)];
   var jts_data = gen_joint_entropies(sites);
   // creates the aggregate rows
   var avgEnter = averageRow.selectAll("g")
@@ -224,51 +236,76 @@ function updateTable(sites){
 }
 
 	function removeOnClick(d, i) {
-    yScale = d3.scale.linear()
-			.domain([0, 1])
-			.range([height, 0])
 		var index = selected_sites.indexOf(d);
 		selected_sites.splice(index, 1);
     d3.selectAll(".selected")
       .classed("selected",function(e,j){
         if(j == i){
-          d3.select(this)
-            .attr('opacity', 0.5)
-            .attr("y", yScale(1));
           return false;
         } else {
           return true;
         }
       })
+    var newfocusbars = d3.select(".focus").selectAll(".sitebar") // selection
+			.data(vaccine.sequence.slice(extent1[0], extent1[1] + 1));
+			
+		newfocusbars // updaters
+			.attr("class", function(d,i) {
+				  if (selected_sites.indexOf(i + extent1[0]) === -1) { return "focus sitebar"; }
+				  else { return "focus sitebar selected";}
+			})
+			.attr("transform", function (d,i) { 
+				if (!d3.select(this).classed("selected")) {
+					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  "," + yScale(1) + ")";
+				} else {
+					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  "," + yScale(1.25) + ")";
+				}
+			})
+			.attr("width", sitebarwidth)
+			.attr("fill", function(d) { return aacolor(d);} )
+			.attr("opacity", function (d,i) { 
+				if (!d3.select(this).classed("selected")) {
+					return 0.5;
+				} else {
+					return 1;
+				}
+			})
+    		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d, extent1[0] + i); })
+			.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d,extent1[0] + i);})
+			.on("mouseup", function() {mouse_down = false; });
 		update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
     updateTable(selected_sites);
 	}
- 
- function gen_entropy_data(sites){
-  var sitewise = [];
-  for(var i = 0; i < sites.length; i ++){
-    sitewise.push(["Env " + envmap[sites[i]].hxb2Pos,
-                jointentropy([sites[i]],sequences.vaccine,numvac).toFixed(2),
-                jointentropy([sites[i]],sequences.placebo,numplac).toFixed(2),
-                jointentropy([sites[i]],sequences_raw,numvac+numplac).toFixed(2)])
-  }
-  return sitewise;
-}
-
-function gen_average_entropies(sites){
-  var vaccine_entropies = [];
-  var placebo_entropies = [];
-  var combined_entropies = [];
-  for(var i = 0; i < sites.length; i ++){
-    vaccine_entropies.push(jointentropy([sites[i]],sequences.vaccine,numvac));
-    placebo_entropies.push(jointentropy([sites[i]],sequences.placebo,numplac));
-    combined_entropies.push(jointentropy([sites[i]],sequences_raw,numvac+numplac));
-  }
-  var average_entropies = ["Average Entropy", mean(vaccine_entropies).toFixed(2),
-                            mean(placebo_entropies).toFixed(2),
-                            mean(combined_entropies).toFixed(2)];
-  return average_entropies;
+ function bar_mousedover(d, i) {
+		if (!mouse_down) { return; }
+		
+		var bar = d3.select(this);
+		if (!bar.classed("selected")) { // if not selected
+		
+			// add to and sort array
+			selected_sites.push(i);
+			selected_sites.sort();
+			
+			// change up it and set selected to true
+			bar.classed("selected",true)
+				.attr("opacity", 1)
+				//.attr("y", yScale(1.25));
+				.attr("transform", "translate(" + (xScale(i) - sitebarwidth/2) + "," + yScale(1.25) + ")");
+				
+		} else { // if already selected
+			// remove from array
+			var index = selected_sites.indexOf(i);
+			selected_sites.splice(index, 1);
+			// reset formatting, set selected to false
+			bar.attr('opacity', 0.5)
+				//.attr("y", yScale(1))
+				.attr("transform", "translate(" + (xScale(i) - sitebarwidth/2) + ",0)")
+				.classed("selected",false);
+		}
+		update_AAsites(selected_sites);
+		updatePyramid(selected_sites);
+    	updateTable(selected_sites);
 }
 
 function gen_joint_entropies(sites){

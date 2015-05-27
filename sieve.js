@@ -22,6 +22,8 @@ var selected_sites = [];
 
 var mouse_down = false;
 
+			
+
 //clear selecting mode even if you release your mouse elsewhere.
 d3.select(window).on("mouseup", function(){ mouse_down = false; });
 		
@@ -36,37 +38,37 @@ function generateVis(){
 }
 
 function generateSiteSelector() {
-	var margin =  {top: 10, right: 10, bottom: 100, left: 20},
-		margin2 = {top: 150, right: 10, bottom: 20, left: 20},
-		width = 500 - margin.left - margin.right,
-		height =  200 - margin.top - margin.bottom,
-		height2 = 200 - margin2.top - margin2.bottom;
-		
-	var xScale = d3.scale.linear()
-			.domain([0, vaccine.sequence.length-1])
-			.range([0, width]),
-		x2Scale = d3.scale.linear()
-			.domain(xScale.domain())
-			.range([0, width]),
-		yScale = d3.scale.linear()
-			.domain([0, 1])
-			.range([height, 0]),
-		y2Scale = d3.scale.linear()
-			.domain(yScale.domain())
-			.range([height2, 0]);
-			
-	var xAxis = d3.svg.axis()
+  var margin =  {top: 10, right: 10, bottom: 100, left: 20},
+  margin2 = {top: 150, right: 10, bottom: 20, left: 20},
+  width = 500 - margin.left - margin.right,
+  height =  200 - margin.top - margin.bottom,
+  height2 = 200 - margin2.top - margin2.bottom;
+  
+  window.xScale = d3.scale.linear()
+    .domain([0, vaccine.sequence.length-1])
+    .range([0, width]);
+  window.x2Scale = d3.scale.linear()
+    .domain(xScale.domain())
+    .range([0, width]);
+  window.yScale = d3.scale.linear()
+    .domain([0, 1])
+    .range([height, 0]);
+  window.y2Scale = d3.scale.linear()
+    .domain(yScale.domain())
+    .range([height2, 0]);
+	window.xAxis = d3.svg.axis()
 			.scale(xScale)
-			.orient("bottom"),
-		x2Axis = d3.svg.axis()
+			.orient("bottom");
+	window.x2Axis = d3.svg.axis()
+	window.x2Axis = d3.svg.axis()
 			.scale(x2Scale)
 			.orient("bottom");
 
-	var x2brush = d3.svg.brush()
+	window.x2brush = d3.svg.brush()
 			.x(x2Scale)
 			.on("brush", brushed);
 			
-	var sitebarwidth = xScale.range()[1] / d3.max(xScale.domain());
+	window.sitebarwidth = xScale.range()[1] / d3.max(xScale.domain());
 			// = totalwidth/numbars
 	
 	var siteselSVG = d3.select("#overview").append("svg")
@@ -167,8 +169,8 @@ function generateSiteSelector() {
 	function brushed() {
 		var minextent = 10,
 			maxextent = 50;
-		var extent0 = x2brush.extent(),
-			extent1;
+		var extent0 = x2brush.extent();
+		window.extent1;
 		// if dragging, preserve width
 		if (d3.event.mode === "move") {
 			var d0 = Math.round(extent0[0]),
