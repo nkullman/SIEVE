@@ -88,6 +88,18 @@ function generateSiteSelector() {
 		.attr("class", "context")
 		.attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 		
+	d3.select("#siteselSVG").on("mousewheel", MouseWheelHandler);
+	function MouseWheelHandler(e) {
+		var e = window.event;
+		var delta = e.wheelDelta/Math.abs(e.wheelDelta);
+		var currExtent = x2brush.extent();
+		console.log(delta);
+		if (!x2brush.empty()) {
+			//x2brush.extent([currExtent[0]+delta, currExtent[1]+delta]);
+			d3.select(this).call(x2brush.extent([currExtent[0]+delta, currExtent[1]+delta]));
+		}
+	}
+		
 	// append focus drawings (we could use y-dimension for an encoding)
 	var focusbars = focus.selectAll(".sitebar")
 	    .data(vaccine.sequence)
