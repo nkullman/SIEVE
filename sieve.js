@@ -43,7 +43,7 @@ function generateSiteSelector() {
 		height2 = 200 - margin2.top - margin2.bottom;
 		
 	var xScale = d3.scale.linear()
-			.domain([0, vaccine.sequence.length])
+			.domain([0, vaccine.sequence.length-1])
 			.range([0, width]),
 		x2Scale = d3.scale.linear()
 			.domain(xScale.domain())
@@ -153,6 +153,8 @@ function generateSiteSelector() {
   generateTable();
 	
 	function brushed() {
+		var minextent = 10,
+			maxextent = 50;
 		var extent0 = x2brush.extent(),
 			extent1;
 		// if dragging, preserve width
@@ -164,12 +166,26 @@ function generateSiteSelector() {
 		// otherwise, if resizing, round both sides
 		else {
 			extent1 = extent0.map(function(d) {return Math.round(d); });
+			// if too small, increase both sides by one until we reach min extent
+			if (extent1[1] - extent1[0] < minextent){
+				while (extent1[1] - extent1[0] < minextent) {
+					if (extent1[1] + 1 <= vaccine.sequence.length) { extent1[1]++; }
+					if (extent1[0] - 1 >= 0) { extent1[0]--; }
+				}
+			}
+			// if too big, decrease both sides until we reach max extent
+			if (extent1[1] - extent1[0] > maxextent){
+				while (extent1[1] - extent1[0] > maxextent) {
+					extent1[1]--;
+					extent1[0]++;
+				}
+			}
 			
 			// in case empty when rounded, use floor & ceil instead
-			if (extent1[0] >= extent1[1]) {
+			/*if (extent1[0] >= extent1[1]) {
 				extent1[0] = Math.floor(extent0[0]);
 				extent1[1] = Math.ceil(extent0[1]);
-			}
+			}*/
 		}
 		
 		// redefine xScale's domain, barwidth, brush's extent
@@ -178,73 +194,94 @@ function generateSiteSelector() {
 		d3.select(this).call(x2brush.extent(extent1));
 		// redraw bars
 		var newfocusbars = focus.selectAll(".sitebar") // selection
-			.data(vaccine.sequence.slice(extent1[0], extent1[1] + 1), function(d,i) { return (extent1[0] + i); });
+			.data(vaccine.sequence.slice(extent1[0], extent1[1] + 1));
 			
 		newfocusbars // updaters
-			.attr("transform", function (d,i) { return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  ",0)"; })
+			.attr("class", function(d,i) {
+				  if (selected_sites.indexOf(i + extent1[0]) === -1) { return "focus sitebar"; }
+				  else { return "focus sitebar selected";}
+			})
+			.attr("transform", function (d,i) { 
+				if (!d3.select(this).classed("selected")) {
+					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  "," + yScale(1) + ")";
+				} else {
+					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  "," + yScale(1.25) + ")";
+				}
+			})
 			.attr("width", sitebarwidth)
 			.attr("fill", function(d) { return aacolor(d);} )
+			.attr("opacity", function (d,i) { 
+				if (!d3.select(this).classed("selected")) {
+					return 0.5;
+				} else {
+					return 1;
+				}
+			})
     		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d, extent1[0] + i); })
-			.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d,extent1[0] + i);});
+			.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d,extent1[0] + i);})
+			.on("mouseup", function() {mouse_down = false; });
 			
 		newfocusbars.exit()	 //exiters
 			.attr("transform", function (d,i) { return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  ",0)"; })
 			.remove();
 			
 		newfocusbars.enter().append("rect") //enterers
-	  		.attr("class", "focus sitebar")
-	    	.attr("transform", function (d,i) { return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  ",0)"; })
+	  		.attr("class", function(d,i) {
+				  if (selected_sites.indexOf(i + extent1[0]) === -1) { return "focus sitebar"; }
+				  else { return "focus sitebar selected";}
+			})
+	    	.attr("transform", function (d,i) { 
+				if (!d3.select(this).classed("selected")) {
+					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  ",0)";
+				} else {
+					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  "," + yScale(1.25) + ")";
+				}
+			})
 			.attr("width", sitebarwidth)
 			.attr("height", height - yScale(1))
 			.attr("fill", function (d) { return aacolor(d); })
-			.attr("opacity", 0.5)
+			.attr("opacity", function (d,i) { 
+				if (!d3.select(this).classed("selected")) {
+					return 0.5;
+				} else {
+					return 1;
+				}
+			})
     		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d, extent1[0] + i); })
 			.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d,extent1[0] + i);});
 			
 		// redraw axis
 		focus.select(".x.axis").call(xAxis);
 	}
+	
 	function bar_mousedover(d, i) {
-		if (!mouse_down)
-		{
-			return;
-		}
+		if (!mouse_down) { return; }
+		
 		var bar = d3.select(this);
 		if (!bar.classed("selected")) { // if not selected
+		
 			// add to and sort array
 			selected_sites.push(i);
 			selected_sites.sort();
-			// change formatting and set selected to true
-			bar.attr("opacity", 1)
-				.attr("y", yScale(1.25))
-				.classed("selected",true);
+			
+			// change up it and set selected to true
+			bar.classed("selected",true)
+				.attr("opacity", 1)
+				//.attr("y", yScale(1.25));
+				.attr("transform", "translate(" + (xScale(i) - sitebarwidth/2) + "," + yScale(1.25) + ")");
+				
 		} else { // if already selected
 			// remove from array
 			var index = selected_sites.indexOf(i);
 			selected_sites.splice(index, 1);
 			// reset formatting, set selected to false
 			bar.attr('opacity', 0.5)
-				.attr("y", yScale(1))
+				//.attr("y", yScale(1))
+				.attr("transform", "translate(" + (xScale(i) - sitebarwidth/2) + ",0)")
 				.classed("selected",false);
 		}
 		update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
     	updateTable(selected_sites);
 	}
-	
-	/* Demo for logging keystrokes. May be useful
-		later in site selection functionality
-	
-	d3.select("body")
-    .on("keydown", function() {
-        d3.select("#seqchart").append("text")
-            .attr("x", (width/2) + "px")
-            .attr("y", (height) + "px")
-            .style("font-size","50px")
-            .text("keyCode: " + d3.event.keyCode)  
-          .transition().duration(2000)
-            .style("font-size","5px")
-            .style("fill-opacity",".1")
-          .remove();
-    });*/
 }
