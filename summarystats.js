@@ -3,24 +3,24 @@
 *input: indices - list of sites in the sequence
 *output: float*/
 function jointentropy(indices,data,patientcount) {
-    entropy = 0.0;
-    var N = patientcount;
+    var entropy = 0.0;
     var counts = {};
-    for (var i = 0; i < N; i++){
-        var obs = [];
-        for(var j = 0; j < indices.length; j++){
-            obs.push(data[i][indices[j]]);
-        }
+    //Transpose and filter data, then count each sequence occurance
+    data[0].map(function(d, i) {
+        return indices.map(function(j) {
+            return data[j][i];
+        });
+    }).forEach(function(obs) {
         if(obs in counts){
-            counts[obs] += 1.0/N;
+            counts[obs]++;
         } else {
-            counts[obs] = 1.0/N;
+            counts[obs] = 1;
         }
-    }
+    });
     for(var key in counts){
-        entropy += counts[key]*Math.log(counts[key]);
+        entropy -= counts[key]*Math.log(counts[key]/patientcount);
     }
-    return(entropy);
+    return(entropy/patientcount);
 }
 
 // Approximates the p-value of a t-test for a given site
@@ -93,7 +93,7 @@ function mmprocess(site){
 function ttest(array1,array2){
     var fullarray = array1.concat(array2);
     var ts = [], shuffledata, part1, part2;
-    for(var i = 0; i < 1000; i++){
+    for(var i = 0; i < 500; i++){
         shuffledata = d3.shuffle(fullarray);
         part1 = shuffledata.slice(0,array1.length);
         part2 = shuffledata.slice(array1.length);
