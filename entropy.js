@@ -1,9 +1,9 @@
 var tmargin = {top: 20, right: 10, bottom: 20, left: 40},
-    twidth = 500 - tmargin.left - tmargin.right,
+    twidth = 600 - tmargin.left - tmargin.right,
     theight = 100 - tmargin.top - tmargin.bottom;
 
 var fieldHeight = 25;
-var fieldWidth = 100;
+var fieldWidth = 105;
 var buttonWidth = 25
 var colnames = ['Site','Vaccine Group','Placebo Group','Full Data'];
 
@@ -11,10 +11,10 @@ var jointRow, averageRow, canvas, rowsGrp;
 
 function generateTable(){
  
-  canvas = d3.selectAll("#overview")
+  canvas = d3.select("#group")
       .append("svg")
       .attr("class","tablesvg")
-      .attr("dy",500)
+      .attr("dy",2)
       .attr("width", twidth + tmargin.left + tmargin.right+buttonWidth)
       .attr("height", theight + tmargin.top + tmargin.bottom);
   canvas.append("g")
@@ -29,7 +29,7 @@ function generateTable(){
     .style("fill","black");
 
   title.append("text")
-    .attr("x",+(4*fieldWidth-1)/2)
+    .attr("x",+(4*fieldWidth-1 + tmargin.left)/2)
     .attr("y",fieldHeight/2+4)
     .attr("text-anchor","middle")
     .style("fill","white")

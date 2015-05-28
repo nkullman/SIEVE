@@ -3,14 +3,24 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-#overview {
-	position: absolute;
-	left: 20px;
-	width: 50%;
+#parent {
+	width: 960px;
+  margin:20px auto;
 }
 
-#parent {
-	margin-left: 50%;
+
+#overview {
+	width: 960px;
+}
+
+#group{
+  float: left;
+  width: 480px;
+}
+
+#sites{
+  width: 325px;
+  float: left;
 }
 
 .brush .extent {
@@ -19,16 +29,13 @@ body {
   shape-rendering: crispEdges;
 }
 
+#options{
+border:1px solid black;
+}
+
 #export_button {
 	display: block;
 }
 
-#options {
-	position: absolute;
-	right: 20px;
-	width: 300px;
-}
 
-table {
-	border-spacing: 5px 10px;
-}
+

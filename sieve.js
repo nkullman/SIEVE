@@ -29,18 +29,18 @@ d3.select(window).on("mouseup", function(){ mouse_down = false; });
 		
 /** Generate visualization */
 function generateVis(){
-	
 	plac_scale.domain([0, numplac]);
 	vac_scale.domain([0, numvac]);
-	
 	generateSiteSelector();
-	drawPyramid([]);
+  drawPyramid([]);
+  generateTable();
+	
 }
 
 function generateSiteSelector() {
   window.margin =  {top: 10, right: 10, bottom: 100, left: 20};
   window.margin2 = {top: 150, right: 10, bottom: 20, left: 20};
-  window.width = 500 - margin.left - margin.right;
+  window.width = 825 - margin.left - margin.right;
   window.height =  200 - margin.top - margin.bottom;
   window.height2 = 200 - margin2.top - margin2.bottom;
   
@@ -152,7 +152,7 @@ function generateSiteSelector() {
 	update_AAsites(selected_sites);
 	updatePyramid(selected_sites);
 	//update_sitelisttext(selected_sites);
-  generateTable();
+
 	
 	function brushed() {
 		var minextent = 10,
@@ -284,6 +284,6 @@ function generateSiteSelector() {
 		}
 		update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
-    	updateTable(selected_sites);
+    updateTable(selected_sites);
 	}
 }
