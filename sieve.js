@@ -38,11 +38,11 @@ function generateVis(){
 }
 
 function generateSiteSelector() {
-  var margin =  {top: 10, right: 10, bottom: 100, left: 20},
-  margin2 = {top: 150, right: 10, bottom: 20, left: 20},
-  width = 500 - margin.left - margin.right,
-  height =  200 - margin.top - margin.bottom,
-  height2 = 200 - margin2.top - margin2.bottom;
+  window.margin =  {top: 10, right: 10, bottom: 100, left: 20};
+  window.margin2 = {top: 150, right: 10, bottom: 20, left: 20};
+  window.width = 500 - margin.left - margin.right;
+  window.height =  200 - margin.top - margin.bottom;
+  window.height2 = 200 - margin2.top - margin2.bottom;
   
   window.xScale = d3.scale.linear()
     .domain([0, vaccine.sequence.length-1])
