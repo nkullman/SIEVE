@@ -90,16 +90,15 @@ function generateSiteSelector() {
 		.attr("class", "context")
 		.attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 		
-	d3.select("#siteselSVG").on("mousewheel", MouseWheelHandler);
+	/*d3.select("#siteselSVG").on("mousewheel", MouseWheelHandler);
 	function MouseWheelHandler(e) {
 		var e = window.event;
 		var delta = e.wheelDelta/Math.abs(e.wheelDelta);
-		var currExtent = window.x2brush.extent();
-		console.log(delta);
 		if (!window.x2brush.empty()) {
-			d3.select(this).call(window.x2brush.extent([currExtent[0]+delta, currExtent[1]+delta]));
+			d3.select(this).call(window.x2brush.extent([window.x2brush.extent()[0]+delta, window.x2brush.extent()[1]+delta]));
+			redrawfocusbars();
 		}
-	}
+	}*/
 		
 	// append focus drawings (we could use y-dimension for an encoding)
 	var focusbars = focus.selectAll(".sitebar")
@@ -206,19 +205,25 @@ function generateSiteSelector() {
 		window.sitebarwidth = (window.xScale.range()[1] - window.xScale.range()[0]) / (window.extent1[1] - window.extent1[0]);
 		d3.select(this).call(window.x2brush.extent(window.extent1));
 		// redraw bars
+		redrawfocusbars();
+	}
+	
+	function redrawfocusbars(){
+		var brushextent = window.x2brush.extent();
+		
 		var newfocusbars = focus.selectAll(".sitebar") // selection
-			.data(vaccine.sequence.slice(window.extent1[0], window.extent1[1] + 1));
+			.data(vaccine.sequence.slice(brushextent[0], brushextent[1] + 1));
 			
 		newfocusbars // updaters
 			.attr("class", function(d,i) {
-				  if (selected_sites.indexOf(i + window.extent1[0]) === -1) { return "focus sitebar"; }
+				  if (selected_sites.indexOf(i + brushextent[0]) === -1) { return "focus sitebar"; }
 				  else { return "focus sitebar selected";}
 			})
 			.attr("transform", function (d,i) { 
 				if (!d3.select(this).classed("selected")) {
-					return "translate(" + (window.xScale(window.extent1[0] + i) - window.sitebarwidth/2) +  "," + window.yScale(1) + ")";
+					return "translate(" + (window.xScale(brushextent[0] + i) - window.sitebarwidth/2) +  "," + window.yScale(1) + ")";
 				} else {
-					return "translate(" + (window.xScale(window.extent1[0] + i) - window.sitebarwidth/2) +  "," + window.yScale(1.25) + ")";
+					return "translate(" + (window.xScale(brushextent[0] + i) - window.sitebarwidth/2) +  "," + window.yScale(1.25) + ")";
 				}
 			})
 			.attr("width", window.sitebarwidth)
@@ -230,24 +235,24 @@ function generateSiteSelector() {
 					return 1;
 				}
 			})
-    		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d, window.extent1[0] + i); })
-			.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d,window.extent1[0] + i);})
+    		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d, brushextent[0] + i); })
+			.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d,brushextent[0] + i);})
 			.on("mouseup", function() {mouse_down = false; });
 			
 		newfocusbars.exit()	 //exiters
-			.attr("transform", function (d,i) { return "translate(" + (window.xScale(window.extent1[0] + i) - window.sitebarwidth/2) +  ",0)"; })
+			.attr("transform", function (d,i) { return "translate(" + (window.xScale(brushextent[0] + i) - window.sitebarwidth/2) +  ",0)"; })
 			.remove();
 			
 		newfocusbars.enter().append("rect") //enterers
 	  		.attr("class", function(d,i) {
-				  if (selected_sites.indexOf(i + window.extent1[0]) === -1) { return "focus sitebar"; }
+				  if (selected_sites.indexOf(i + brushextent[0]) === -1) { return "focus sitebar"; }
 				  else { return "focus sitebar selected";}
 			})
 	    	.attr("transform", function (d,i) { 
 				if (!d3.select(this).classed("selected")) {
-					return "translate(" + (window.xScale(window.extent1[0] + i) - window.sitebarwidth/2) +  ",0)";
+					return "translate(" + (window.xScale(brushextent[0] + i) - window.sitebarwidth/2) +  ",0)";
 				} else {
-					return "translate(" + (window.xScale(window.extent1[0] + i) - window.sitebarwidth/2) +  "," + window.yScale(1.25) + ")";
+					return "translate(" + (window.xScale(brushextent[0] + i) - window.sitebarwidth/2) +  "," + window.yScale(1.25) + ")";
 				}
 			})
 			.attr("width", window.sitebarwidth)
@@ -260,8 +265,8 @@ function generateSiteSelector() {
 					return 1;
 				}
 			})
-    		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d, window.extent1[0] + i); })
-			.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d,window.extent1[0] + i);});
+    		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d, brushextent[0] + i); })
+			.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d,brushextent[0] + i);});
 			
 		// redraw axis
 		focus.select(".x.axis").call(window.xAxis);
