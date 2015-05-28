@@ -174,7 +174,7 @@ function updateTable(sites){
     .transition()
     .style("opacity",0)
     .remove();
-    
+
   // creates remove button for every row
   rows.selectAll(".button").remove();
   rows.append("rect")
@@ -233,6 +233,20 @@ function updateTable(sites){
     .transition()
     .style("opacity",1)
 		.text(String);
+    
+  // Sets up rectangle which highlights the moused over row
+  // Clicking will shift the selection bar to that site
+  rows.append("rect")
+    .attr("class","select button")
+    .attr("x",26)
+    .attr("y",1)
+    .attr("height",fieldHeight-1)
+    .attr("width",fieldWidth*4)
+    .style("fill","green")
+    .style("opacity",0)
+    .on("mouseover",function(d){d3.select(this).style("opacity",0.1)})
+    .on("mouseout",function(d){d3.select(this).style("opacity",0)})
+    .on("click",onClickChangeView); 
 }
 
 	function removeOnClick(d, i) {
@@ -313,4 +327,74 @@ function gen_joint_entropies(sites){
                           jointentropy(sites,sequences.placebo,numplac).toFixed(2),
                           jointentropy(sites,sequences_raw,numvac+numplac).toFixed(2)];
   return joint_entropies;
+}
+
+function onClickChangeView(d,i){
+    var focus = d3.select(".focus");
+    var diff = extent1[1] - extent1[0];
+    extent1[0] = selected_sites[i] - Math.floor(diff/2)
+    extent1[1] = selected_sites[i] + Math.ceil(diff/2)
+  	xScale.domain(extent1);
+		sitebarwidth = (xScale.range()[1] - xScale.range()[0]) / (extent1[1] - extent1[0]);
+		d3.select(".brush").call(x2brush.extent(extent1));
+		// redraw bars
+		var newfocusbars = focus.selectAll(".sitebar") // selection
+			.data(vaccine.sequence.slice(extent1[0], extent1[1] + 1));
+			
+		newfocusbars // updaters
+			.attr("class", function(d,i) {
+				  if (selected_sites.indexOf(i + extent1[0]) === -1) { return "focus sitebar"; }
+				  else { return "focus sitebar selected";}
+			})
+			.attr("transform", function (d,i) { 
+				if (!d3.select(this).classed("selected")) {
+					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  "," + yScale(1) + ")";
+				} else {
+					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  "," + yScale(1.25) + ")";
+				}
+			})
+			.attr("width", sitebarwidth)
+			.attr("fill", function(d) { return aacolor(d);} )
+			.attr("opacity", function (d,i) { 
+				if (!d3.select(this).classed("selected")) {
+					return 0.5;
+				} else {
+					return 1;
+				}
+			})
+    		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d, extent1[0] + i); })
+			.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d,extent1[0] + i);})
+			.on("mouseup", function() {mouse_down = false; });
+			
+		newfocusbars.exit()	 //exiters
+			.attr("transform", function (d,i) { return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  ",0)"; })
+			.remove();
+			
+		newfocusbars.enter().append("rect") //enterers
+	  		.attr("class", function(d,i) {
+				  if (selected_sites.indexOf(i + extent1[0]) === -1) { return "focus sitebar"; }
+				  else { return "focus sitebar selected";}
+			})
+	    	.attr("transform", function (d,i) { 
+				if (!d3.select(this).classed("selected")) {
+					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  ",0)";
+				} else {
+					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  "," + yScale(1.25) + ")";
+				}
+			})
+			.attr("width", sitebarwidth)
+			.attr("height", height - yScale(1))
+			.attr("fill", function (d) { return aacolor(d); })
+			.attr("opacity", function (d,i) { 
+				if (!d3.select(this).classed("selected")) {
+					return 0.5;
+				} else {
+					return 1;
+				}
+			})
+    		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d, extent1[0] + i); })
+			.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d,extent1[0] + i);});
+			
+		// redraw axis
+		focus.select(".x.axis").call(xAxis);
 }
