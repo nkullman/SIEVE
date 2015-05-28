@@ -21,11 +21,15 @@ var vac_scale = d3.scale.linear()
 var selected_sites = [];
 
 var mouse_down = false;
+var shift_down;
 
 			
 
 //clear selecting mode even if you release your mouse elsewhere.
 d3.select(window).on("mouseup", function(){ mouse_down = false; });
+// maintain record of shift depression
+d3.select(window).on("keydown", function () {shift_down = d3.event.shiftKey || d3.event.metaKey; });
+d3.select(window).on("keyup", function () {shift_down = d3.event.shiftKey || d3.event.metaKey; });
 		
 /** Generate visualization */
 function generateVis(){
