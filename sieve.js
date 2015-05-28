@@ -90,15 +90,16 @@ function generateSiteSelector() {
 		.attr("class", "context")
 		.attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 		
-	/*d3.select("#siteselSVG").on("mousewheel", MouseWheelHandler);
+	d3.select("#siteselSVG").on("mousewheel", MouseWheelHandler);
 	function MouseWheelHandler(e) {
 		var e = window.event;
 		var delta = e.wheelDelta/Math.abs(e.wheelDelta);
 		if (!window.x2brush.empty()) {
-			d3.select(this).call(window.x2brush.extent([window.x2brush.extent()[0]+delta, window.x2brush.extent()[1]+delta]));
-			redrawfocusbars();
+			var newextent = [window.x2brush.extent()[0]+delta, window.x2brush.extent()[1]+delta];
+			d3.select(this).call(window.x2brush.extent(newextent));
+			redrawfocusbars(newextent);
 		}
-	}*/
+	}
 		
 	// append focus drawings (we could use y-dimension for an encoding)
 	var focusbars = focus.selectAll(".sitebar")
@@ -192,12 +193,6 @@ function generateSiteSelector() {
 					window.extent1[0]++;
 				}
 			}
-			
-			// in case empty when rounded, use floor & ceil instead
-			/*if (extent1[0] >= extent1[1]) {
-				extent1[0] = Math.floor(extent0[0]);
-				extent1[1] = Math.ceil(extent0[1]);
-			}*/
 		}
 		
 		// redefine xScale's domain, barwidth, brush's extent
@@ -205,11 +200,19 @@ function generateSiteSelector() {
 		window.sitebarwidth = (window.xScale.range()[1] - window.xScale.range()[0]) / (window.extent1[1] - window.extent1[0]);
 		d3.select(this).call(window.x2brush.extent(window.extent1));
 		// redraw bars
-		redrawfocusbars();
+		redrawfocusbars(window.extent1);
 	}
 	
-	function redrawfocusbars(){
+	function centerbrushon(site){
 		var brushextent = window.x2brush.extent();
+		var extentlength = brushextent[1] - brushextent[0] + 1;
+		var newextent = [Math.max(0, site - Math.round(extentlength/2)),
+						Math.min(vaccine.sequence.length, site + Math.round(extentlength/2))];
+		d3.select(this).call(window.x2brush.extent(newextent));
+		redrawfocusbars(newextent);
+	}
+	
+	function redrawfocusbars(brushextent){
 		
 		var newfocusbars = focus.selectAll(".sitebar") // selection
 			.data(vaccine.sequence.slice(brushextent[0], brushextent[1] + 1));
