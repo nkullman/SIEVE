@@ -94,11 +94,10 @@ function generateSiteSelector() {
 	function MouseWheelHandler(e) {
 		var e = window.event;
 		var delta = e.wheelDelta/Math.abs(e.wheelDelta);
-		var currExtent = x2brush.extent();
+		var currExtent = window.x2brush.extent();
 		console.log(delta);
-		if (!x2brush.empty()) {
-			//x2brush.extent([currExtent[0]+delta, currExtent[1]+delta]);
-			d3.select(this).call(x2brush.extent([currExtent[0]+delta, currExtent[1]+delta]));
+		if (!window.x2brush.empty()) {
+			d3.select(this).call(window.x2brush.extent([currExtent[0]+delta, currExtent[1]+delta]));
 		}
 	}
 		
@@ -107,9 +106,9 @@ function generateSiteSelector() {
 	    .data(vaccine.sequence)
 	  .enter().append("rect")
 	  	.attr("class", "focus sitebar")
-	    .attr("transform", function (d,i) { return "translate(" + (xScale(i) - sitebarwidth/2) +  ",0)"; })
-		.attr("width", sitebarwidth)
-		.attr("height", height - yScale(1))
+	    .attr("transform", function (d,i) { return "translate(" + (window.xScale(i) - window.sitebarwidth/2) +  ",0)"; })
+		.attr("width", window.sitebarwidth)
+		.attr("height", height - window.yScale(1))
 		.attr("fill", function (d) {
 			return aacolor(d);
 		})
@@ -120,17 +119,17 @@ function generateSiteSelector() {
 	focus.append("g")
 		.attr("class", "x axis")
 		.attr("transform", "translate(0," + (height + 5) + ")")
-		.call(xAxis);
+		.call(window.xAxis);
 	
 	// append context drawings
 	var contextbars = context.selectAll(".sitebar")
 	    .data(pvalues)
 	  .enter().append("rect")
 	  	.attr("class", "context sitebar")
-	    .attr("x", function (d,i) { return x2Scale(i) - sitebarwidth/2; })
-		.attr("y", y2Scale(1))
-		.attr("width", sitebarwidth)
-		.attr("height", height2 - y2Scale(1))
+	    .attr("x", function (d,i) { return window.x2Scale(i) - window.sitebarwidth/2; })
+		.attr("y", window.y2Scale(1))
+		.attr("width", window.sitebarwidth)
+		.attr("height", height2 - window.y2Scale(1))
 		.attr("fill", "black")
 		.attr("opacity", function(d) {
 			if (d < .05)
@@ -146,11 +145,11 @@ function generateSiteSelector() {
 	context.append("g")
 		.attr("class", "x axis")
 		.attr("transform", "translate(0," + (height2 + 2) + ")")
-		.call(x2Axis);
+		.call(window.x2Axis);
 	// append context brush
 	context.append("g")
 		.attr("class", "x brush")
-		.call(x2brush)
+		.call(window.x2brush)
 		.selectAll("rect")
 		.attr("y", -6)
 		.attr("height", height2 + 7);
@@ -169,29 +168,29 @@ function generateSiteSelector() {
 	function brushed() {
 		var minextent = 10,
 			maxextent = 50;
-		var extent0 = x2brush.extent();
+		var extent0 = window.x2brush.extent();
 		window.extent1;
 		// if dragging, preserve width
 		if (d3.event.mode === "move") {
 			var d0 = Math.round(extent0[0]),
 				d1 = Math.round(extent0[1]);
-			extent1 = [d0, d1];
+			window.extent1 = [d0, d1];
 		}
 		// otherwise, if resizing, round both sides
 		else {
-			extent1 = extent0.map(function(d) {return Math.round(d); });
+			window.extent1 = extent0.map(function(d) {return Math.round(d); });
 			// if too small, increase both sides by one until we reach min extent
-			if (extent1[1] - extent1[0] < minextent){
-				while (extent1[1] - extent1[0] < minextent) {
-					if (extent1[1] + 1 <= vaccine.sequence.length) { extent1[1]++; }
-					if (extent1[0] - 1 >= 0) { extent1[0]--; }
+			if (window.extent1[1] - window.extent1[0] < minextent){
+				while (window.extent1[1] - window.extent1[0] < minextent) {
+					if (window.extent1[1] + 1 <= vaccine.sequence.length) { window.extent1[1]++; }
+					if (window.extent1[0] - 1 >= 0) { window.extent1[0]--; }
 				}
 			}
 			// if too big, decrease both sides until we reach max extent
-			if (extent1[1] - extent1[0] > maxextent){
-				while (extent1[1] - extent1[0] > maxextent) {
-					extent1[1]--;
-					extent1[0]++;
+			if (window.extent1[1] - window.extent1[0] > maxextent){
+				while (window.extent1[1] - window.extent1[0] > maxextent) {
+					window.extent1[1]--;
+					window.extent1[0]++;
 				}
 			}
 			
@@ -203,26 +202,26 @@ function generateSiteSelector() {
 		}
 		
 		// redefine xScale's domain, barwidth, brush's extent
-		xScale.domain(extent1);
-		sitebarwidth = (xScale.range()[1] - xScale.range()[0]) / (extent1[1] - extent1[0]);
-		d3.select(this).call(x2brush.extent(extent1));
+		window.xScale.domain(window.extent1);
+		window.sitebarwidth = (window.xScale.range()[1] - window.xScale.range()[0]) / (window.extent1[1] - window.extent1[0]);
+		d3.select(this).call(window.x2brush.extent(window.extent1));
 		// redraw bars
 		var newfocusbars = focus.selectAll(".sitebar") // selection
-			.data(vaccine.sequence.slice(extent1[0], extent1[1] + 1));
+			.data(vaccine.sequence.slice(window.extent1[0], window.extent1[1] + 1));
 			
 		newfocusbars // updaters
 			.attr("class", function(d,i) {
-				  if (selected_sites.indexOf(i + extent1[0]) === -1) { return "focus sitebar"; }
+				  if (selected_sites.indexOf(i + window.extent1[0]) === -1) { return "focus sitebar"; }
 				  else { return "focus sitebar selected";}
 			})
 			.attr("transform", function (d,i) { 
 				if (!d3.select(this).classed("selected")) {
-					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  "," + yScale(1) + ")";
+					return "translate(" + (window.xScale(window.extent1[0] + i) - window.sitebarwidth/2) +  "," + window.yScale(1) + ")";
 				} else {
-					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  "," + yScale(1.25) + ")";
+					return "translate(" + (window.xScale(window.extent1[0] + i) - window.sitebarwidth/2) +  "," + window.yScale(1.25) + ")";
 				}
 			})
-			.attr("width", sitebarwidth)
+			.attr("width", window.sitebarwidth)
 			.attr("fill", function(d) { return aacolor(d);} )
 			.attr("opacity", function (d,i) { 
 				if (!d3.select(this).classed("selected")) {
@@ -231,28 +230,28 @@ function generateSiteSelector() {
 					return 1;
 				}
 			})
-    		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d, extent1[0] + i); })
-			.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d,extent1[0] + i);})
+    		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d, window.extent1[0] + i); })
+			.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d,window.extent1[0] + i);})
 			.on("mouseup", function() {mouse_down = false; });
 			
 		newfocusbars.exit()	 //exiters
-			.attr("transform", function (d,i) { return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  ",0)"; })
+			.attr("transform", function (d,i) { return "translate(" + (window.xScale(window.extent1[0] + i) - window.sitebarwidth/2) +  ",0)"; })
 			.remove();
 			
 		newfocusbars.enter().append("rect") //enterers
 	  		.attr("class", function(d,i) {
-				  if (selected_sites.indexOf(i + extent1[0]) === -1) { return "focus sitebar"; }
+				  if (selected_sites.indexOf(i + window.extent1[0]) === -1) { return "focus sitebar"; }
 				  else { return "focus sitebar selected";}
 			})
 	    	.attr("transform", function (d,i) { 
 				if (!d3.select(this).classed("selected")) {
-					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  ",0)";
+					return "translate(" + (window.xScale(window.extent1[0] + i) - window.sitebarwidth/2) +  ",0)";
 				} else {
-					return "translate(" + (xScale(extent1[0] + i) - sitebarwidth/2) +  "," + yScale(1.25) + ")";
+					return "translate(" + (window.xScale(window.extent1[0] + i) - window.sitebarwidth/2) +  "," + window.yScale(1.25) + ")";
 				}
 			})
-			.attr("width", sitebarwidth)
-			.attr("height", height - yScale(1))
+			.attr("width", window.sitebarwidth)
+			.attr("height", height - window.yScale(1))
 			.attr("fill", function (d) { return aacolor(d); })
 			.attr("opacity", function (d,i) { 
 				if (!d3.select(this).classed("selected")) {
@@ -261,11 +260,11 @@ function generateSiteSelector() {
 					return 1;
 				}
 			})
-    		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d, extent1[0] + i); })
-			.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d,extent1[0] + i);});
+    		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d, window.extent1[0] + i); })
+			.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d,window.extent1[0] + i);});
 			
 		// redraw axis
-		focus.select(".x.axis").call(xAxis);
+		focus.select(".x.axis").call(window.xAxis);
 	}
 	
 	function bar_mousedover(d, i) {
@@ -282,7 +281,7 @@ function generateSiteSelector() {
 			bar.classed("selected",true)
 				.attr("opacity", 1)
 				//.attr("y", yScale(1.25));
-				.attr("transform", "translate(" + (xScale(i) - sitebarwidth/2) + "," + yScale(1.25) + ")");
+				.attr("transform", "translate(" + (window.xScale(i) - window.sitebarwidth/2) + "," + window.yScale(1.25) + ")");
 				
 		} else { // if already selected
 			// remove from array
@@ -291,7 +290,7 @@ function generateSiteSelector() {
 			// reset formatting, set selected to false
 			bar.attr('opacity', 0.5)
 				//.attr("y", yScale(1))
-				.attr("transform", "translate(" + (xScale(i) - sitebarwidth/2) + ",0)")
+				.attr("transform", "translate(" + (window.xScale(i) - window.sitebarwidth/2) + ",0)")
 				.classed("selected",false);
 		}
 		update_AAsites(selected_sites);
