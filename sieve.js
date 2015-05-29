@@ -47,7 +47,7 @@ function generateVis(){
 function generateSiteSelector() {
 	
 	var update_throttled = _.throttle(update_charts, 500);
-  window.margin =  {top: 10, right: 20, bottom: 30, left: 20};
+  window.margin =  {top: 20, right: 20, bottom: 30, left: 20};
   window.width = 800 - margin.left - margin.right;
   window.height =  110 - margin.top - margin.bottom;
   
@@ -55,8 +55,8 @@ function generateSiteSelector() {
     .domain([0, vaccine.sequence.length-1])
     .range([0, width]);
 	
-  window.yScale = d3.scale.linear()
-    .domain([0, 1])
+  window.yScale = d3.scale.log()
+    .domain([1, 2])
     .range([height, 0]);
 	
 	window.xAxis = d3.svg.axis()
@@ -79,27 +79,44 @@ function generateSiteSelector() {
 		.attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
 		.call(zoom);
 		
+	siteselSVG.on("mouseout", function() {d3.select("#tooltip").remove(); });
+		
 	siteselSVG.append("rect")
 		.attr("class", "overlay")
 		.attr("transform", "translate(" + (-margin.left) + ", " + (-margin.top) + ")")
 	    .attr("width", width + margin.left + margin.right)
-	    .attr("height", height + margin.top + margin.bottom)
+	    .attr("height", height + margin.top + margin.bottom);
 		
 	window.sitebars = siteselSVG.selectAll(".sitebars")
-	    .data(vaccine.sequence)
+	    .data(vaccine.sequence);
     
 	sitebars.enter().append("rect")
-    .attr("class","sitebars")
-	  .attr("x", function (d,i) { return xScale(i) - sitebarwidth/2; })
-		.attr("y", yScale(1))
+    	.attr("class","sitebars")
+		.attr("id", function (d,i) { return "sitebar" + i;})
+	  	.attr("x", function (d,i) { return xScale(i) - sitebarwidth/2; })
+		.attr("y", function (d,i) {return Math.min(0.95*height, yScale(2-pvalues[i]));} )
 		.attr("width", sitebarwidth)
-		.attr("height", height - yScale(1))
+		.attr("height", function (d,i) {return height - Math.min(0.95*height, yScale(2-pvalues[i]));})
 		.attr("fill", function (d) {
 			return aacolor(d);
 		})
-		.attr("opacity", 0.5)
+		.attr("opacity", 0.5);
+		
+	window.foregroundbars = siteselSVG.selectAll(".foregroundbars")
+		.data(vaccine.sequence);
+		
+	foregroundbars.enter().append("rect")
+		.attr("class", "fgrdbars")
+		.attr("id", function (d,i) { return "fgrdbar" + i;})
+		.attr("x", function (d,i) { return xScale(i) - sitebarwidth/2; })
+		.attr("y", yScale(2.25))
+		.attr("width", sitebarwidth)
+		.attr("height", height - yScale(2.25))
+		.attr("fill", "white")
+		.attr("opacity", 0)
 		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d,i); })
-		.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d, i); });
+		.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d, i); })
+		.on("mouseout", function() {d3.select("#tooltip").remove();});
 		
 	siteselSVG.append("g")
 		.attr("class", "x axis")
@@ -117,33 +134,45 @@ function generateSiteSelector() {
 			zoom.translate(t);
 			
 			sitebars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
+			foregroundbars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
 			siteselSVG.select(".x.axis").call(xAxis.scale(xScale));
 		}
 	}
 	
 	function bar_mousedover(d, i) {
+		siteselSVG.append("text")
+			.attr("id", "tooltip")
+			.attr("x", margin.left + width)
+			.attr("y", -margin.top/2)
+			.attr("text-anchor", "end")
+			.text("HXB2 Pos: " + envmap[i].hxb2Pos +
+					" // p-value: " + Math.round(pvalues[i]*100)/100);
+		
 		if (!mouse_down || !shift_down) { return; }
 		
-		var bar = d3.select(this);
+		var bar = d3.select("#sitebar"+i);
 		if (!bar.classed("selected")) { // if not selected
 		
 			// add to and sort array
 			selected_sites.push(i);
 			selected_sites.sort();
 			
-			// change up it and set selected to true
+			// up it and set selected to true
 			bar.classed("selected",true)
 				.attr("opacity", 1)
-				.attr("y", yScale(1.25));
+				.attr("y", yScale(2.25))
+				.attr("height", yScale(2) - yScale(2.25));
 				
 		} else { // if already selected
 			// remove from array
 			var index = selected_sites.indexOf(i);
 			selected_sites.splice(index, 1);
 			// reset formatting, set selected to false
-			bar.attr('opacity', 0.5)
-				.attr("y", yScale(1))
-				.classed("selected",false);
+			var yval = Math.min(0.95*height, yScale(2-pvalues[i]));
+			bar.classed("selected",false)
+				.attr('opacity', 0.5)
+				.attr("y", function (d,i) { return yval;} )
+				.attr("height", function (d,i) {return height - yval;});
 		}
 		update_throttled();
 	}
@@ -157,11 +186,16 @@ function generateSiteSelector() {
 
 function clear_selection()
 {
-	selected_sites = [];
-	d3.selectAll(".selected")
-		.attr("opacity", 0.5)
-		.attr("y", yScale(1))
-		.classed("selected", false);
+	for (var i = 0; i < selected_sites.length; i++) {
+		var site = selected_sites[i];
+    	var bar = d3.select("#sitebar" + site);
+    	var yval = Math.min(0.95*height, yScale(2-pvalues[site]));
+		bar.classed("selected",false)
+			.attr('opacity', 0.5)
+			.attr("y", yval )
+			.attr("height", height - yval);
+	}
+	selected_sites = [];	
 	update_AAsites([]);
 	updatePyramid([]);
 	updateTable([]);
