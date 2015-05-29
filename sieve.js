@@ -113,7 +113,7 @@ function generateSiteSelector() {
 		.attr("width", sitebarwidth)
 		.attr("height", height - yScale(2.25))
 		.attr("fill", "white")
-		.attr("opacity", 0.5)
+		.attr("opacity", 0)
 		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d,i); })
 		.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d, i); })
 		.on("mouseout", function() {d3.select("#tooltip").remove();});
@@ -145,7 +145,8 @@ function generateSiteSelector() {
 			.attr("x", margin.left + width)
 			.attr("y", -margin.top/2)
 			.attr("text-anchor", "end")
-			.text("HXB2 Pos: " + envmap[i].hxb2Pos);
+			.text("HXB2 Pos: " + envmap[i].hxb2Pos +
+					" // p-value: " + Math.round(pvalues[i]*100)/100);
 		
 		if (!mouse_down || !shift_down) { return; }
 		
@@ -185,12 +186,16 @@ function generateSiteSelector() {
 
 function clear_selection()
 {
-	selected_sites = [];
-	d3.selectAll(".selected")
-		.attr("opacity", 0.5)
-		.attr("y", function (d,i) { return Math.min(0.95*height, yScale(2-pvalues[i]));} )
-		.attr("height", function (d,i) {return height - Math.min(0.95*height, yScale(2-pvalues[i]));})
-		.classed("selected", false);
+	for (var i = 0; i < selected_sites.length; i++) {
+		var site = selected_sites[i];
+    	var bar = d3.select("#sitebar" + site);
+    	var yval = Math.min(0.95*height, yScale(2-pvalues[site]));
+		bar.classed("selected",false)
+			.attr('opacity', 0.5)
+			.attr("y", yval )
+			.attr("height", height - yval);
+	}
+	selected_sites = [];	
 	update_AAsites([]);
 	updatePyramid([]);
 	updateTable([]);
