@@ -19,7 +19,7 @@ var mismatch_axis = d3.svg.axis()
 	.ticks(5)
 	.tickFormat(d3.format(".0%"));
 
-var sites_svg = d3.select("#sites")
+var sites_svg = d3.select("#sitessvg")
 	.append("svg")
 	.attr("width", barchartwidth + barchartmargin.left + barchartmargin.right)
 	.attr("height", 0)
