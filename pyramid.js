@@ -29,7 +29,7 @@ function updatePyramid(sites){
         }  
     }
     
-  var w = 300,
+  var w = 400,
       h = 150;
   var maxValue = Math.max(
     d3.max(mdata, function(d) { return d.vaccine/numvac; }),
@@ -157,7 +157,7 @@ function drawPyramid(sites){
         }
         
     }
-    var w = 300,
+    var w = 400,
         h = 150;
         
     // margin.middle is distance from center line to each y-axis

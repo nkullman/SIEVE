@@ -13,6 +13,11 @@ body {
   width: 480px;
 }
 
+#sites{
+  float: left;
+  width: 345px;
+}
+
 .brush .extent {
   stroke: steelblue;
   fill-opacity: .125;
@@ -27,9 +32,8 @@ body {
 	pointer-events: all;
 }
 #options {
-	position: absolute;
 	right: 20px;
-	width: 300px;
+  border: 1px solid black;
 }
 
 table {
