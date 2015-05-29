@@ -38,6 +38,7 @@ function generateVis(){
 	vac_scale.domain([0, numvac]);
 	
 	generateSiteSelector();
+  generateTable();
 	drawPyramid([]);
 }
 
@@ -61,7 +62,7 @@ function generateSiteSelector() {
 	window.sitebarwidth = xScale.range()[1] / d3.max(xScale.domain());
 			// = totalwidth/numbars
 	
-	var zoom = d3.behavior.zoom().x(xScale).scaleExtent([1,100]).on("zoom", refresh);
+	window.zoom = d3.behavior.zoom().x(xScale).scaleExtent([1,100]).on("zoom", refresh);
 	
 	var siteselSVG = d3.select("#overview").append("svg")
 	    .attr("width", width + margin.left + margin.right)
@@ -80,10 +81,12 @@ function generateSiteSelector() {
 	    .attr("width", width + margin.left + margin.right)
 	    .attr("height", height + margin.top + margin.bottom)
 		
-	var sitebars = siteselSVG.selectAll(".sitebars")
+	window.sitebars = siteselSVG.selectAll(".sitebars")
 	    .data(vaccine.sequence)
-	  .enter().append("rect")
-	    .attr("x", function (d,i) { return xScale(i) - sitebarwidth/2; })
+    
+	sitebars.enter().append("rect")
+    .attr("class","sitebars")
+	  .attr("x", function (d,i) { return xScale(i) - sitebarwidth/2; })
 		.attr("y", yScale(1))
 		.attr("width", sitebarwidth)
 		.attr("height", height - yScale(1))
@@ -140,6 +143,6 @@ function generateSiteSelector() {
 		}
 		update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
-    	updateTable(selected_sites);
+    updateTable(selected_sites);
 	}
 }
