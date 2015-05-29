@@ -11,7 +11,7 @@ var jointRow, averageRow, canvas, rowsGrp;
 
 function generateTable(){
  
-  canvas = d3.selectAll("#overview")
+  canvas = d3.selectAll("#group")
       .append("svg")
       .attr("class","tablesvg")
       .attr("dy",500)

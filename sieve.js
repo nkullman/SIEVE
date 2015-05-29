@@ -38,13 +38,13 @@ function generateVis(){
 	vac_scale.domain([0, numvac]);
 	
 	generateSiteSelector();
-  generateTable();
 	drawPyramid([]);
+  generateTable();
 }
 
 function generateSiteSelector() {
   window.margin =  {top: 10, right: 20, bottom: 30, left: 20};
-  window.width = 500 - margin.left - margin.right;
+  window.width = 800 - margin.left - margin.right;
   window.height =  110 - margin.top - margin.bottom;
   
   window.xScale = d3.scale.linear()
