@@ -250,28 +250,16 @@ function updateTable(sites){
 }
 
 	function removeOnClick(d, i) {
-    console.log(d);
-    console.log(i);
-		var index = selected_sites.indexOf(d);
-		selected_sites.splice(index, 1);
+		selected_sites.splice(i, 1);
     d3.selectAll(".selected")
-      .classed("selected",function(e,j){
-        if(j == i){
-          return false;
-        } else {
-          return true;
-        }
-      })
-
-    d3.selectAll(".sitebars")
-      .data(vaccine.sequence)
       .each(function(e,j){
-        if(d == j){
+        if(j == i){
           d3.select(this)
-            .attr("y",yScale(1))
-            .style("opacity",0.5);
+            .classed("selected", false)
+            .attr("y", yScale(1))
+            .style("opacity", 0.5);
         }
-      })
+      });
     update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
     updateTable(selected_sites);

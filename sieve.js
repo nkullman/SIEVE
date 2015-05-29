@@ -30,6 +30,8 @@ d3.select(window).on("mouseup", function(){ mouse_down = false; })
 // maintain record of shift depression
 	.on("keydown", function () {shift_down = d3.event.shiftKey || d3.event.metaKey; })
 	.on("keyup", function () {shift_down = d3.event.shiftKey || d3.event.metaKey; });
+
+d3.select("#clear_selection_button").on("click", clear_selection);
 		
 /** Generate visualization */
 function generateVis(){
@@ -151,4 +153,16 @@ function generateSiteSelector() {
 		updatePyramid(selected_sites);
 		updateTable(selected_sites);
 	}
+}
+
+function clear_selection()
+{
+	selected_sites = [];
+	d3.selectAll(".selected")
+		.attr("opacity", 0.5)
+		.attr("y", yScale(1))
+		.classed("selected", false);
+	update_AAsites([]);
+	updatePyramid([]);
+	updateTable([]);
 }
