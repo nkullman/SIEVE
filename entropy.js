@@ -11,7 +11,7 @@ var jointRow, averageRow, canvas, rowsGrp;
 
 function generateTable(){
  
-  canvas = d3.selectAll("#overview")
+  canvas = d3.selectAll("#group")
       .append("svg")
       .attr("class","tablesvg")
       .attr("dy",500)
@@ -19,7 +19,8 @@ function generateTable(){
       .attr("height", theight + tmargin.top + tmargin.bottom);
   canvas.append("g")
       .attr("transform", "translate(" + tmargin.left + "," + tmargin.top + ")");
-
+  
+  // Draw Title
   var title = canvas.append("g");
     
   title.append("rect")
@@ -29,7 +30,7 @@ function generateTable(){
     .style("fill","black");
 
   title.append("text")
-    .attr("x",+(4*fieldWidth-1)/2)
+    .attr("x",twidth/2)
     .attr("y",fieldHeight/2+4)
     .attr("text-anchor","middle")
     .style("fill","white")
@@ -250,28 +251,16 @@ function updateTable(sites){
 }
 
 	function removeOnClick(d, i) {
-    console.log(d);
-    console.log(i);
-		var index = selected_sites.indexOf(d);
-		selected_sites.splice(index, 1);
+		selected_sites.splice(i, 1);
     d3.selectAll(".selected")
-      .classed("selected",function(e,j){
-        if(j == i){
-          return false;
-        } else {
-          return true;
-        }
-      })
-
-    d3.selectAll(".sitebars")
-      .data(vaccine.sequence)
       .each(function(e,j){
-        if(d == j){
+        if(j == i){
           d3.select(this)
-            .attr("y",yScale(1))
-            .style("opacity",0.5);
+            .classed("selected", false)
+            .attr("y", yScale(1))
+            .style("opacity", 0.5);
         }
-      })
+      });
     update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
     updateTable(selected_sites);

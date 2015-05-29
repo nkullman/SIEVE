@@ -3,14 +3,18 @@
 <head>
 <meta charset="utf-8">
 <script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="lodash.min.js"></script>
 <link rel="stylesheet" type="text/css" href="sievestyles.css">
 </head>
 <body>
 <div id="parent">
 	<div id="overview"></div>
 	<div id="drilldown">
-		<div id="options">
+    <div id="group"></div>
+		<div id="sites">
+    <div id="options">
 			<table>
+				<tr><td></td><td><button id="clear_selection_button">Clear Selection</button></td></tr>
 				<tr><td></td><td><button id="export_button">Export SVG image</button></td></li>
 				<tr><td>Color scheme:</td><td><select id="color_selector">
 					<option value="taylor">Taylor</option>
@@ -18,11 +22,8 @@
 					<option value="chemistry">Chemistry</option>
 				</select></td></tr>
 			</table>
-		</div>
-		<div id="group"></div>
-		<div id="sites"></div>
+		</div><div id="sitessvg"></div></div>
 	</div>
-  <div id="entropy"></div>
 </div>
 
 <!-- <script src="parseinput.js"></script> -->

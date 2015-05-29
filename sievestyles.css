@@ -1,16 +1,27 @@
 
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 #overview {
-	position: absolute;
-	left: 20px;
-	width: 50%;
+	width: 960px;
+  margin-left: 25px;
 }
 
-#parent {
-	margin-left: 50%;
+#group{
+  float: left;
+  width: 480px;
+}
+
+#sites{
+  float: left;
+  width: 345px;
 }
 
 .brush .extent {
@@ -22,18 +33,15 @@ body {
 #export_button {
 	display: block;
 }
-
+.overlay {
+	fill: rgba(0, 0, 0, .1);;
+	pointer-events: all;
+}
 #options {
-	position: absolute;
 	right: 20px;
-	width: 300px;
+  border: 1px solid black;
 }
 
 table {
 	border-spacing: 5px 10px;
-}
-
-.overlay {
-	fill: rgba(0, 0, 0, .1);;
-	pointer-events: all;
 }
