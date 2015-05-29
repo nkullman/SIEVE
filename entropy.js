@@ -65,8 +65,25 @@ function generateTable(){
 }
 function updateTable(sites){
   canvas.attr("height",theight+(sites.length+4)*(fieldHeight+1)  );
-  var ent_data = gen_entropy_data(sites);
-  var avg_data = gen_average_entropies(sites);
+  var vaccine_entropies = sites.map(function(i) {
+    return jointentropy([i], sequences.vaccine, numvac);
+  });
+  var placebo_entropies = sites.map(function(i) {
+    return jointentropy([i], sequences.placebo, numplac);
+  });
+  var combined_entropies = sites.map(function(i) {
+    return jointentropy([i], sequences_raw, numplac+numvac);
+  });
+  var ent_data = sites.map(function(d, i)
+  {
+    return ["Env " + envmap[d].hxb2Pos,
+      vaccine_entropies[i].toFixed(2),
+      placebo_entropies[i].toFixed(2),
+      combined_entropies[i].toFixed(2)];
+  });
+  var avg_data = ["Average Entropy", mean(vaccine_entropies).toFixed(2),
+                            mean(placebo_entropies).toFixed(2),
+                            mean(combined_entropies).toFixed(2)];
   var jts_data = gen_joint_entropies(sites);
   // creates the aggregate rows
   var avgEnter = averageRow.selectAll("g")
@@ -303,31 +320,6 @@ function updateTable(sites){
 		update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
     	updateTable(selected_sites);
-	}
- function gen_entropy_data(sites){
-  var sitewise = [];
-  for(var i = 0; i < sites.length; i ++){
-    sitewise.push(["Env " + envmap[sites[i]].hxb2Pos,
-                jointentropy([sites[i]],sequences.vaccine,numvac).toFixed(2),
-                jointentropy([sites[i]],sequences.placebo,numplac).toFixed(2),
-                jointentropy([sites[i]],sequences_raw,numvac+numplac).toFixed(2)])
-  }
-  return sitewise;
-}
-
-function gen_average_entropies(sites){
-  var vaccine_entropies = [];
-  var placebo_entropies = [];
-  var combined_entropies = [];
-  for(var i = 0; i < sites.length; i ++){
-    vaccine_entropies.push(jointentropy([sites[i]],sequences.vaccine,numvac));
-    placebo_entropies.push(jointentropy([sites[i]],sequences.placebo,numplac));
-    combined_entropies.push(jointentropy([sites[i]],sequences_raw,numvac+numplac));
-  }
-  var average_entropies = ["Average Entropy", mean(vaccine_entropies).toFixed(2),
-                            mean(placebo_entropies).toFixed(2),
-                            mean(combined_entropies).toFixed(2)];
-  return average_entropies;
 }
 
 function gen_joint_entropies(sites){
