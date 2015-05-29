@@ -188,7 +188,8 @@ function clear_selection()
 	selected_sites = [];
 	d3.selectAll(".selected")
 		.attr("opacity", 0.5)
-		.attr("y", yScale(2))
+		.attr("y", function (d,i) { return Math.min(0.95*height, yScale(2-pvalues[i]));} )
+		.attr("height", function (d,i) {return height - Math.min(0.95*height, yScale(2-pvalues[i]));})
 		.classed("selected", false);
 	update_AAsites([]);
 	updatePyramid([]);
