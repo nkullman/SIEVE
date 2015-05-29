@@ -68,7 +68,7 @@ function generateSiteSelector() {
 	
 	window.zoom = d3.behavior.zoom().x(xScale).scaleExtent([1,100]).on("zoom", refresh);
 	
-	var siteselSVG = d3.select("#overview").append("svg")
+	window.siteselSVG = d3.select("#overview").append("svg")
 	    .attr("width", width + margin.left + margin.right)
 	    .attr("height", height + margin.top + margin.bottom)
 		.attr("id", "siteselSVG")

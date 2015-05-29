@@ -272,4 +272,11 @@ function gen_joint_entropies(sites){
 }
 
 function onClickChangeView(d,i){
+  var site = selected_sites[i];
+  // 37 is (arbitrary) magic number for a pretty zoom extent
+  var s = 37;
+  // the location of the translation is off
+  var t = [width*s, 0];
+  // transition not smooth. needs help.
+  siteselSVG.transition().duration(1000).call(zoom.translate(t).scale(s).event);
 }
