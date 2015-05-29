@@ -89,8 +89,8 @@ function generateSiteSelector() {
 	    .data(vaccine.sequence);
     
 	sitebars.enter().append("rect")
-    .attr("class","sitebars")
-	  .attr("x", function (d,i) { return xScale(i) - sitebarwidth/2; })
+    	.attr("class","sitebars")
+	  	.attr("x", function (d,i) { return xScale(i) - sitebarwidth/2; })
 		.attr("y", function (d,i) {return Math.min(0.95*height, yScale(2-pvalues[i]));} )
 		.attr("width", sitebarwidth)
 		.attr("height", function (d,i) {return height - Math.min(0.95*height, yScale(2-pvalues[i]));})
@@ -101,6 +101,18 @@ function generateSiteSelector() {
 		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d,i); })
 		.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d, i); })
 		.on("mouseout", function() {d3.select("#tooltip").remove()});
+		
+	window.backgroundbars = siteselSVG.selectAll(".backgroundbars")
+		.data(vaccine.sequence);
+		
+	backgroundbars.enter().append("rect")
+		.attr("class", "bgrdbars")
+		.attr("x", function (d,i) { return xScale(i) - sitebarwidth/2; })
+		.attr("y", yScale(2))
+		.attr("width", sitebarwidth)
+		.attr("height", height - yScale(2))
+		.attr("fill", "white")
+		.attr("opacity", 0.9);
 		
 	siteselSVG.append("g")
 		.attr("class", "x axis")
@@ -118,6 +130,7 @@ function generateSiteSelector() {
 			zoom.translate(t);
 			
 			sitebars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
+			backgroundbars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
 			siteselSVG.select(".x.axis").call(xAxis.scale(xScale));
 		}
 	}
