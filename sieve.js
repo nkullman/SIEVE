@@ -26,10 +26,12 @@ var shift_down = false;
 			
 
 // clear selecting mode even if you release your mouse elsewhere.
-d3.select(window).on("mouseup", function(){ mouse_down = false; });
+d3.select(window).on("mouseup", function(){ mouse_down = false; })
 // maintain record of shift depression
-d3.select(window).on("keydown", function () {shift_down = d3.event.shiftKey || d3.event.metaKey; });
-d3.select(window).on("keyup", function () {shift_down = d3.event.shiftKey || d3.event.metaKey; });
+	.on("keydown", function () {shift_down = d3.event.shiftKey || d3.event.metaKey; })
+	.on("keyup", function () {shift_down = d3.event.shiftKey || d3.event.metaKey; });
+
+d3.select("#clear_selection_button").on("click", clear_selection);
 		
 /** Generate visualization */
 function generateVis(){
@@ -43,6 +45,8 @@ function generateVis(){
 }
 
 function generateSiteSelector() {
+	
+	var update_throttled = _.throttle(update_charts, 500);
   window.margin =  {top: 10, right: 20, bottom: 30, left: 20};
   window.width = 800 - margin.left - margin.right;
   window.height =  110 - margin.top - margin.bottom;
@@ -141,8 +145,24 @@ function generateSiteSelector() {
 				.attr("y", yScale(1))
 				.classed("selected",false);
 		}
+		update_throttled();
+	}
+	function update_charts()
+	{
 		update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
-    updateTable(selected_sites);
+		updateTable(selected_sites);
 	}
+}
+
+function clear_selection()
+{
+	selected_sites = [];
+	d3.selectAll(".selected")
+		.attr("opacity", 0.5)
+		.attr("y", yScale(1))
+		.classed("selected", false);
+	update_AAsites([]);
+	updatePyramid([]);
+	updateTable([]);
 }
