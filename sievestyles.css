@@ -13,10 +13,6 @@ body {
   width: 480px;
 }
 
-#parent {
-	margin-left: 50%;
-}
-
 .brush .extent {
   stroke: steelblue;
   fill-opacity: .125;
