@@ -19,7 +19,8 @@ function generateTable(){
       .attr("height", theight + tmargin.top + tmargin.bottom);
   canvas.append("g")
       .attr("transform", "translate(" + tmargin.left + "," + tmargin.top + ")");
-
+  
+  // Draw Title
   var title = canvas.append("g");
     
   title.append("rect")
@@ -29,7 +30,7 @@ function generateTable(){
     .style("fill","black");
 
   title.append("text")
-    .attr("x",+(4*fieldWidth-1)/2)
+    .attr("x",twidth/2)
     .attr("y",fieldHeight/2+4)
     .attr("text-anchor","middle")
     .style("fill","white")
