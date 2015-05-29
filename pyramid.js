@@ -39,7 +39,7 @@ function updatePyramid(sites){
       top: 50,
       right: 20,
       bottom: 24,
-      left: 40,
+      left: 25,
       middle: 20
     };
         
@@ -165,7 +165,7 @@ function drawPyramid(sites){
       top: 50,
       right: 20,
       bottom: 24,
-      left: 40,
+      left: 25,
       middle: 20
     };
         

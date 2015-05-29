@@ -11,6 +11,7 @@ body {
 
 #overview {
 	width: 960px;
+  margin-left: 25px;
 }
 
 #group{
@@ -37,5 +38,7 @@ border:1px solid black;
 	display: block;
 }
 
-
-
+.overlay {
+	fill: rgba(0, 0, 0, .1);;
+	pointer-events: all;
+}
