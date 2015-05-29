@@ -77,7 +77,9 @@ function generateSiteSelector() {
 		.attr("width", width)
 		.attr("height", height)
 		.attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
-		.call(zoom);		
+		.call(zoom);
+		
+	siteselSVG.on("mouseout", function() {d3.select("#tooltip").remove(); });
 		
 	siteselSVG.append("rect")
 		.attr("class", "overlay")
@@ -90,6 +92,7 @@ function generateSiteSelector() {
     
 	sitebars.enter().append("rect")
     	.attr("class","sitebars")
+		.attr("id", function (d,i) { return "sitebar" + i;})
 	  	.attr("x", function (d,i) { return xScale(i) - sitebarwidth/2; })
 		.attr("y", function (d,i) {return Math.min(0.95*height, yScale(2-pvalues[i]));} )
 		.attr("width", sitebarwidth)
@@ -97,22 +100,23 @@ function generateSiteSelector() {
 		.attr("fill", function (d) {
 			return aacolor(d);
 		})
+		.attr("opacity", 0.5);
+		
+	window.foregroundbars = siteselSVG.selectAll(".foregroundbars")
+		.data(vaccine.sequence);
+		
+	foregroundbars.enter().append("rect")
+		.attr("class", "fgrdbars")
+		.attr("id", function (d,i) { return "fgrdbar" + i;})
+		.attr("x", function (d,i) { return xScale(i) - sitebarwidth/2; })
+		.attr("y", yScale(2.25))
+		.attr("width", sitebarwidth)
+		.attr("height", height - yScale(2.25))
+		.attr("fill", "white")
 		.attr("opacity", 0.5)
 		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d,i); })
 		.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d, i); })
-		.on("mouseout", function() {d3.select("#tooltip").remove()});
-		
-	window.backgroundbars = siteselSVG.selectAll(".backgroundbars")
-		.data(vaccine.sequence);
-		
-	backgroundbars.enter().append("rect")
-		.attr("class", "bgrdbars")
-		.attr("x", function (d,i) { return xScale(i) - sitebarwidth/2; })
-		.attr("y", yScale(2))
-		.attr("width", sitebarwidth)
-		.attr("height", height - yScale(2))
-		.attr("fill", "white")
-		.attr("opacity", 0.9);
+		.on("mouseout", function() {d3.select("#tooltip").remove();});
 		
 	siteselSVG.append("g")
 		.attr("class", "x axis")
@@ -130,7 +134,7 @@ function generateSiteSelector() {
 			zoom.translate(t);
 			
 			sitebars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
-			backgroundbars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
+			foregroundbars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
 			siteselSVG.select(".x.axis").call(xAxis.scale(xScale));
 		}
 	}
@@ -145,7 +149,7 @@ function generateSiteSelector() {
 		
 		if (!mouse_down || !shift_down) { return; }
 		
-		var bar = d3.select(this);
+		var bar = d3.select("#sitebar"+i);
 		if (!bar.classed("selected")) { // if not selected
 		
 			// add to and sort array
