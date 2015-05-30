@@ -11,7 +11,6 @@ var barmargin = {top: 5, right: 10, bottom: 0, left: 10},
 var barchartmargin = {top: 15, right: 100, bottom: 10, left: 50},
 	barchartwidth = 250,
 	barchartheight = 70;
-var pcutoff = .3; //largest p-value to plot at all
 		
 var plac_scale = d3.scale.linear()
 	.range([0, barwidth]);
@@ -22,11 +21,12 @@ var selected_sites = [];
 
 var mouse_down = false;
 var shift_down = false;
+var last_updated;
 
 			
 
 // clear selecting mode even if you release your mouse elsewhere.
-d3.select(window).on("mouseup", function(){ mouse_down = false; })
+d3.select(window).on("mouseup", function(){ last_updated = undefined; mouse_down = false; })
 // maintain record of shift depression
 	.on("keydown", function () {shift_down = d3.event.shiftKey || d3.event.metaKey; })
 	.on("keyup", function () {shift_down = d3.event.shiftKey || d3.event.metaKey; });
@@ -115,7 +115,7 @@ function generateSiteSelector() {
 		.attr("fill", "white")
 		.attr("opacity", 0)
 		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d,i); })
-		.on("mousedown", function(d, i) { mouse_down = true; this.f = bar_mousedover; this.f(d, i); })
+		.on("mousedown", function(d, i) { mouse_down = true; selection_start = i; this.f = bar_mousedover; this.f(d, i); })
 		.on("mouseout", function() {d3.select("#tooltip").remove();});
 		
 	siteselSVG.append("g")
@@ -140,22 +140,35 @@ function generateSiteSelector() {
 	}
 	
 	function bar_mousedover(d, i) {
+		var update_array = [];
 		siteselSVG.append("text")
 			.attr("id", "tooltip")
 			.attr("x", margin.left + width)
 			.attr("y", -margin.top/2)
 			.attr("text-anchor", "end")
 			.text("HXB2 Pos: " + envmap[i].hxb2Pos +
-					" // p-value: " + Math.round(pvalues[i]*100)/100);
+					" // p-value: " + pvalues[i].toPrecision(2));
 		
 		if (!mouse_down || !shift_down) { return; }
 		
-		var bar = d3.select("#sitebar"+i);
+		if (i > last_updated)
+		{
+			update_array = d3.range(last_updated+1, i+1); //returns interval (last_updated, i]
+		} else if (i < last_updated)
+		{
+			update_array = d3.range(i, last_updated); //[i, last_updated)
+		} else {
+			//initial selection
+			update_array = [i];
+		}
+		
+		
+		update_array.forEach(function(j) {
+		var bar = d3.select("#sitebar"+j);
 		if (!bar.classed("selected")) { // if not selected
 		
 			// add to and sort array
-			selected_sites.push(i);
-			selected_sites.sort();
+			selected_sites.splice(_.sortedIndex(selected_sites, j), 0, j);
 			
 			// up it and set selected to true
 			bar.classed("selected",true)
@@ -165,16 +178,19 @@ function generateSiteSelector() {
 				
 		} else { // if already selected
 			// remove from array
-			var index = selected_sites.indexOf(i);
+			var index = selected_sites.indexOf(j);
 			selected_sites.splice(index, 1);
 			// reset formatting, set selected to false
-			var yval = Math.min(0.95*height, yScale(2-pvalues[i]));
+			var yval = Math.min(0.95*height, yScale(2-pvalues[j]));
 			bar.classed("selected",false)
 				.attr('opacity', 0.5)
-				.attr("y", function (d,i) { return yval;} )
-				.attr("height", function (d,i) {return height - yval;});
+				.attr("y", function (d) { return yval;} )
+				.attr("height", function (d) {return height - yval;});
 		}
+		});
+		
 		update_throttled();
+		last_updated = i;
 	}
 	function update_charts()
 	{
