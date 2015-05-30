@@ -116,7 +116,16 @@ function generateSiteSelector() {
 		.attr("opacity", 0)
 		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d,i); })
 		.on("mousedown", function(d, i) { mouse_down = true; selection_start = i; this.f = bar_mousedover; this.f(d, i); })
-		.on("mouseout", function() {d3.select("#tooltip").remove();});
+		.on("mouseout", function() {d3.select("#tooltip").remove();})
+		.on("mouseup", function(d, i) {
+			if (typeof(last_updated) != "undefined" && last_updated != i)
+			{
+				//bar_mousedover wasn't called on the final rectangle. Call it now.
+				//This works because this is called before window gets the mouseup event (and last_updated is cleared)
+				this.f = bar_mousedover;
+				this.f(d,i);
+			}
+		});
 		
 	siteselSVG.append("g")
 		.attr("class", "x axis")
