@@ -145,7 +145,20 @@ function create_stacked_bar(svg, nest, scale, yloc)
 		.attr("x", function(d) {return scale(d.x0);})
 		.attr("height", barheight)
 		.attr("width", function(d) {return scale(d.x1) - scale(d.x0);})
-		.style("fill", function(d) {return aacolor(d.key);});
+		.style("fill", function(d) {return aacolor(d.key);})
+		.style("stroke-width", 1)
+		.style("stroke", "white")
+		.on("mouseover", function(d, i) {
+			d3.select(this)
+				.attr("opacity", .5);})
+		.on("mouseout", function(d, i) {
+			d3.select(this)
+				.attr("opacity", 1);})
+		.append("svg:title")
+			.text(function(d, i)
+			{
+				return d.key + ": " + d.values + " Patients";
+			});
 }
 
 function update_aasite_colors()
