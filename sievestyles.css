@@ -88,3 +88,6 @@ table {
 #sievehelpdiv.hidden {
         display: none;
 }
+#sievehelpdiv p {
+  font-size: 14pt;
+}
