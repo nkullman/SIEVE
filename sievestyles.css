@@ -45,3 +45,46 @@ body {
 table {
 	border-spacing: 5px 10px;
 }
+
+.title {
+  color: #492a7c;
+  font-size: 24pt;
+  display: block;
+}
+
+.subtitle {
+  font-size: 12pt;
+}
+
+.sievehelplink {
+  font-size: 8pt;
+  color: #24153E;
+  float: right;
+  cursor: pointer;
+}
+.sievehelplink:hover {
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+#sievehelpdiv {
+        position: absolute;
+        top: 100px;
+        left: 100px;
+        width: auto;
+        max-width: 800px;
+        height: auto;
+        max-height: 800px;
+        padding: 10px;
+        background-color: white;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+        -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        pointer-events: none;
+}
+#sievehelpdiv.hidden {
+        display: none;
+}
