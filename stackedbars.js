@@ -41,7 +41,7 @@ var color_selector = d3.select("#color_selector")
 var sort_selector = d3.select("#sort_selector")
 	.on("input", update_sorting);
 
-var sortmode = 0; //0 = alphabetical, 1 = individual prevalence, 2 = joint prevalence
+var sortmode = 1; //0 = alphabetical, 1 = joint prevalence
 
 function update_AAsites(sites)
 {
@@ -257,5 +257,8 @@ function AAlegend_translate(i)
 
 function export_AAsites()
 {
-	window.open("data:image/svg+xml;base64," + btoa(sites_svg.node().parentNode.innerHTML), "_blank");
+	window.open("data:image/svg+xml;base64," +
+		btoa(sites_svg.node().parentNode.innerHTML
+			.replace(/.32em/g, "3.2px") //InkScape doesn't parse em units for whatever reason.
+			.replace(/.71em/g, "7.1px")), "_blank");
 }
