@@ -135,7 +135,39 @@ function create_AAsite_chart(site)
 	acids.forEach(function(d,i)
 	{
 		var acid_g = legend.append("g")
-			.attr("transform", AAlegend_translate(i));
+			.attr("transform", AAlegend_translate(i))
+			.on("mouseover", function() {
+				vacnest.forEach(function(e)
+				{
+					if (e.key == d)
+					{
+						d3.select(e.bar).attr("opacity", 0.5);
+					}
+				});
+				placnest.forEach(function(e)
+				{
+					if (e.key == d)
+					{
+						d3.select(e.bar).attr("opacity", 0.5);
+					}
+				});
+			})
+			.on("mouseout", function() {
+				vacnest.forEach(function(e)
+				{
+					if (e.key == d)
+					{
+						d3.select(e.bar).attr("opacity", 1);
+					}
+				});
+				placnest.forEach(function(e)
+				{
+					if (e.key == d)
+					{
+						d3.select(e.bar).attr("opacity", 1);
+					}
+				});
+			});
 		acid_g.append("rect")
 			.attr("width", 10)
 			.attr("height", 10)
@@ -197,6 +229,7 @@ function create_stacked_bar(svg, nest, scale, yloc)
 	bar.selectAll("rect")
 		.data(nest)
 		.enter().append("rect")
+		.each(function(d) {d.bar = this;}) //store for legend mouseovers.
 		.attr("x", function(d) {return scale(d.x0);})
 		.attr("height", barheight)
 		.attr("width", function(d) {return scale(d.x1) - scale(d.x0);})
