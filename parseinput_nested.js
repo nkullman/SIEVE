@@ -41,7 +41,7 @@ d3.text("env.aa.92TH023.fasta", function(vacdata) {
 					sequences.placebo = transpose(sequences.placebo);
           d3.select("#overview").append("text")
             .attr("class","loading")
-            .style("font-size", "LoAdInG");
+            .style("font-size", "LOADING");
           for(var i=0; i < sequences_raw.length; i++){
             entropies.full.push(jointentropy([i],sequences_raw,numvac+numplac).toFixed(2));
           }
