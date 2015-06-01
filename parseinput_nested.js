@@ -39,9 +39,19 @@ d3.text("env.aa.92TH023.fasta", function(vacdata) {
 					sequences_raw = transpose(sequences_raw);
 					sequences.vaccine = transpose(sequences.vaccine);
 					sequences.placebo = transpose(sequences.placebo);
-          d3.select("#overview").append("text")
+          var loadscreen = d3.select("#overview").append("rect")
+            .attr("class","loadbox")
+            .attr("height",300)
+            .attr("width",900)
+            .attr("fill","black");
+           
+          loadscreen.append("text")
             .attr("class","loading")
-            .style("font-size", "LOADING");
+            .attr("x",450)
+            .attr("y",150)
+            .style("text-anchor","middle")
+            .style("font-size", "30px")
+            .text("Loading");
           for(var i=0; i < sequences_raw.length; i++){
             entropies.full.push(jointentropy([i],sequences_raw,numvac+numplac).toFixed(2));
           }
@@ -51,6 +61,7 @@ d3.text("env.aa.92TH023.fasta", function(vacdata) {
           for(var i=0; i < sequences.placebo.length; i++){
             entropies.placebo.push(jointentropy([i],sequences.placebo,numplac).toFixed(2));
           }
+          d3.select(".loadbox").remove();
           d3.select(".loading").remove();
 					generateVis();
 					
