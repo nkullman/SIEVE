@@ -251,16 +251,14 @@ function updateTable(sites){
 }
 
 	function removeOnClick(d, i) {
+    var site = selected_sites[i];
 		selected_sites.splice(i, 1);
-    d3.selectAll(".selected")
-      .each(function(e,j){
-        if(j == i){
-          d3.select(this)
-            .classed("selected", false)
-            .attr("y", yScale(1))
-            .style("opacity", 0.5);
-        }
-      });
+    var bar = d3.select("#sitebar" + site);
+    var yval = Math.min(0.95*height, yScale(2-pvalues[site]));
+			bar.classed("selected",false)
+				.attr('opacity', 0.5)
+				.attr("y", yval )
+				.attr("height", height - yval);
     update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
     updateTable(selected_sites);
@@ -274,4 +272,12 @@ function gen_joint_entropies(sites){
 }
 
 function onClickChangeView(d,i){
+  var site = selected_sites[i];
+  // 37 is (arbitrary) magic number for a pretty zoom extent
+  var s = 37;
+  // the location of the translation is off
+  var t = [-((site/vaccine.sequence.length)*(width)*(s-1) -
+          (width+margin.left)/(s*2)), 0];
+  // transition not smooth. needs help.
+  siteselSVG.transition().call(zoom.translate(t).scale(s).event);
 }

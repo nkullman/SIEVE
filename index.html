@@ -5,28 +5,61 @@
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="lodash.min.js"></script>
 <link rel="stylesheet" type="text/css" href="sievestyles.css">
+<title>S.I.E.V.E.</title>
 </head>
 <body>
 <div id="parent">
+	<div class="title">
+		<strong>S.I.E.V.E.</strong>
+		<span class="subtitle">Statistical Interactive Explorer of Vaccine Efficacy</span>
+		<span class="help" id="sievehelplink">help
+			<span id="generaltoolhelp">
+				<h3>How to use this tool:</h3>
+				<ul>
+					<li>Use the vaccine sequence in the shaded area to select sites</li>
+					<li>Scroll and double-click to zoom</li>
+					<li>Click and drag to pan</li>
+					<li>Hold shift and click+drag to select sites</li>
+				</ul>
+			</span>
+		</span>
+		<!--<script src = "sievehelp.js"></script>-->
+	</div>
 	<div id="overview"></div>
 	<div id="drilldown">
     <div id="group"></div>
 		<div id="sites">
     <div id="options">
 			<table>
-				<tr><td></td><td><button id="clear_selection_button">Clear Selection</button></td></tr>
-				<tr><td></td><td><button id="export_button">Export SVG image</button></td></li>
+				<tr><td></td><td><button id="clear_selection_button">Clear Selection</button></td><td></td></tr>
+				<tr><td></td><td><button id="export_button">Export SVG image</button></td><td class="help">?
+					<span>
+						Opens new window with the stacked bar charts for individual sites. Ctrl-S or similar to save in SVG format, which can be edited/converted in Inkscape or other editors or converted using an online tool such as CloudConvert.com.
+					</span></td></li>
 				<tr><td>Color scheme:</td><td><select id="color_selector">
 					<option value="taylor">Taylor</option>
 					<option value="hydrophobicity">Hydrophobicity</option>
 					<option value="chemistry">Chemistry</option>
-				</select></td></tr>
+					<option value="d3">D3</option>
+				</select></td><td class="help">?
+					<span>
+						Choose amino acid color encoding. <br>
+						Taylor: W. Taylor, Protein Engineering, Vol 10 , 743-746 (1997) <br>
+						Hydrophobicity: blue = hydrophilic, green = neutral, black = hydrophobic (WebLogo 3 default)<br>
+						Chemistry: green = polar, purple = neutral, blue = basic, red = acidic, black = hydrophobic (Weblogo 1 and 2 and makelogo default)<br>
+						D3: D3's default 20 category color scheme
+						
+					</span>
+				</td></tr>
+				<tr><td>Bar Sorting:</td><td><select id="sort_selector">
+					<option value="joint_prev">Joint Prevalence</option>
+					<option value="alpha">Alphabetical</option>
+				</select></td><td></td></tr>
 			</table>
 		</div><div id="sitessvg"></div></div>
 	</div>
 </div>
 
-<!-- <script src="parseinput.js"></script> -->
 <script src="colors.js"></script>
 <script src="parseinput_nested.js"></script>
 <script src="sieve.js"></script>

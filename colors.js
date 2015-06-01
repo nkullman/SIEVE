@@ -63,6 +63,14 @@ function aa_to_color(palette, aa)
 					return "black";			 
 			}
 			break;
+		case "d3":
+			if (aa == "-")
+			{
+				return "#000000";
+			} else {
+				return d3.scale.category20().domain(['A','C','D','E','F','G','H','I','K','L','M',
+		'N','P','Q','R','S','T','V','W','Y'])(aa);
+			}
 		case "taylor":
 		default:
 			return {"A":'#CCFF00', "C":'#FFFF00', "D":'#FF0000', "E":'#FF0066', "F":'#00FF66', "G":'#FF9900', "H":'#0066FF',

@@ -10,8 +10,12 @@ function updatePyramid(sites){
       }
       possiblecounts.push(mmcount);
     }
+    maxcounts = d3.max(possiblecounts)
+    skipcount = Math.ceil(maxcounts/16)
+    var tickvals = d3.range(maxcounts).filter(function(d,i){return (i % skipcount === 0)});
     PyramidDiv = d3.select("#group");
     mdata = [];
+    
     for(var i = 0; i < d3.max(possiblecounts)+1; i++){
         mdata.push({mismatches:i.toString(), vaccine:0, placebo:0});
         }
@@ -56,18 +60,20 @@ function updatePyramid(sites){
       .nice();
    
   var yScale = d3.scale.ordinal()
-      .domain(mdata.map(function(d) { return d.mismatches; }))
-      .rangeRoundBands([h,0], 0.1);
-      
+      .domain(d3.range(maxcounts))
+      .rangeRoundBands([h,0],0.1);
+  console.log(yScale.domain());
   var yAxisLeft = d3.svg.axis()
       .scale(yScale)
       .orient('right')
+      .tickValues(tickvals)
       .tickSize(4,0)
       .tickPadding(margin.middle-4);
 
   var yAxisRight = d3.svg.axis()
       .scale(yScale)
       .orient('left')
+      .tickValues(tickvals)
       .tickSize(4,0)
       .tickFormat('');
       
@@ -139,6 +145,17 @@ function updatePyramid(sites){
 
 }
 function drawPyramid(sites){
+    var possiblecounts = [];
+    for(var patient in seqID_lookup){
+      if(seqID_lookup[patient].mismatch != undefined){
+        mmcount = 0;
+        for(var i = 0; i < sites.length; i++){
+            mmcount += seqID_lookup[patient].mismatch[sites[i]]; 
+        }
+      }
+      possiblecounts.push(mmcount);
+    }
+    
     mmdata = [];
     for(var i = 0; i < sites.length+1; i++){
         mmdata.push({mismatches:i.toString(), vaccine:0, placebo:0});
@@ -207,12 +224,14 @@ function drawPyramid(sites){
     var yAxisLeft = d3.svg.axis()
       .scale(yScale)
       .orient('right')
+      .ticks(18)
       .tickSize(4,0)
       .tickPadding(margin.middle-4);
 
     var yAxisRight = d3.svg.axis()
       .scale(yScale)
       .orient('left')
+      .ticks(18)
       .tickSize(4,0)
       .tickFormat('');
 
