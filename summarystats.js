@@ -21,7 +21,7 @@ function jointentropy(indices,data,patientcount) {
       for(var key in counts){
           entropy -= counts[key]*Math.log(counts[key]/patientcount);
       }
-      return(entropy/patientcount);
+      return(d3.max([entropy/patientcount,0]));
     } else {
       return 0;
     }
