@@ -68,7 +68,15 @@ function generateSiteSelector() {
 	
 	window.zoom = d3.behavior.zoom().x(xScale).scaleExtent([1,100]).on("zoom", refresh);
 	
-	window.siteselSVG = d3.select("#overview").append("svg")
+	var siteselSVGfieldset = d3.select("#overview").append("fieldset")
+		.attr("class", "selectionfieldset");
+		
+	siteselSVGfieldset.append("legend")
+		.attr("border", "1px black solid")
+		.append("text")
+			.text("Vaccine sequence: " + vaccine.ID);
+	
+	window.siteselSVG = siteselSVGfieldset.append("svg")
 	    .attr("width", width + margin.left + margin.right)
 	    .attr("height", height + margin.top + margin.bottom)
 		.attr("id", "siteselSVG")

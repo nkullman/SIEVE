@@ -82,3 +82,7 @@ table {
 .help:hover span{
     display:inline; position:absolute; color:#111;
     border:1px solid #DCA; background:#fffAF0;}
+
+.selectionfieldset {
+  display: inline-block;
+}
