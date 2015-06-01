@@ -23,7 +23,7 @@ var numvac = 0;
 var numplac = 0;
 /** Array of p-values */
 var pvalues =[];
-
+var entropies = {full:[],vaccine:[],placebo:[]};
 d3.text("env.aa.92TH023.fasta", function(vacdata) {
 	dovacparsing(vacdata);
   d3.csv("pvalues.csv").row(function(d) {pvalues.push(+d.pvalue);})
@@ -39,6 +39,16 @@ d3.text("env.aa.92TH023.fasta", function(vacdata) {
 					sequences_raw = transpose(sequences_raw);
 					sequences.vaccine = transpose(sequences.vaccine);
 					sequences.placebo = transpose(sequences.placebo);
+          for(var i=0; i < sequences_raw.length; i++){
+            entropies.full.push(jointentropy([i],sequences_raw,numvac+numplac).toFixed(2));
+          }
+          for(var i=0; i < sequences.vaccine.length; i++){
+            entropies.vaccine.push(jointentropy([i],sequences.vaccine,numvac).toFixed(2));
+          }
+          for(var i=0; i < sequences.placebo.length; i++){
+            entropies.placebo.push(jointentropy([i],sequences.placebo,numplac).toFixed(2));
+          }
+          console.log(entropies);
 					generateVis();
 					
 				});
