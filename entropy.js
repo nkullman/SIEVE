@@ -272,4 +272,12 @@ function gen_joint_entropies(sites){
 }
 
 function onClickChangeView(d,i){
+  var site = selected_sites[i];
+  // 37 is (arbitrary) magic number for a pretty zoom extent
+  var s = 37;
+  // the location of the translation is off
+  var t = [-((site/vaccine.sequence.length)*(width)*(s-1) -
+          (width+margin.left)/(s*2)), 0];
+  // transition not smooth. needs help.
+  siteselSVG.transition().call(zoom.translate(t).scale(s).event);
 }

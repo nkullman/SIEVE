@@ -38,6 +38,10 @@ var export_button = d3.select("#export_button")
 	.on("click", export_AAsites);
 var color_selector = d3.select("#color_selector")
 	.on("input", update_aasite_colors);
+var sort_selector = d3.select("#sort_selector")
+	.on("input", update_sorting);
+
+var sortmode = 1; //0 = alphabetical, 1 = joint prevalence
 
 function update_AAsites(sites)
 {
@@ -65,23 +69,41 @@ function update_AAsites(sites)
 
 function create_AAsite_chart(site)
 {
+	var prev = {};
 	//Create a viz of two stacked horizontal stacked bar charts.
 	//Passed the location to append viz and the index of the site of interest
 	var vacnest = d3.nest()
 	//count aas of each type at this site
 		.key(function(d) { return d; })
-		.sortKeys(d3.ascending)
 		.rollup(function(d) { return d.length; })
 		.entries(sequences.vaccine[site].filter(function(d) {
 			return d != vaccine.sequence[site];
 		}));
 	var placnest = d3.nest()
 		.key(function(d, i) { return d; })
-		.sortKeys(d3.ascending)
 		.rollup(function(d) { return d.length; })
 		.entries(sequences.placebo[site].filter(function(d) {
 			return d!= vaccine.sequence[site];
 		}));
+	if (sortmode == 1)
+	{
+		//compute joint prevalence
+		vacnest.forEach(function(d)
+		{
+			prev[d.key] = d.values;
+		});
+		placnest.forEach(function(d)
+		{
+			if (prev[d.key])
+			{
+				prev[d.key] += d.values;
+			} else {
+				prev[d.key] = d.values;
+			}
+		});
+	}
+	vacnest.sort(sort_nest);
+	placnest.sort(sort_nest);
 	var svg = d3.select(this);
 	
 	svg.append("g")
@@ -106,14 +128,46 @@ function create_AAsite_chart(site)
 	var acids = d3.set(); //assemble list of amino acids present in chart
 	vacnest.forEach(function(d) { acids.add(d.key); });
 	placnest.forEach(function(d) { acids.add(d.key); });
-	acids = acids.values().sort(d3.ascending);
+	acids = acids.values().sort(sort_keys);
 	var legend = svg.append("g")
 		.attr("class", "aalegend")
 		.attr("transform", "translate(" + (barwidth + barmargin.right + barmargin.left) + ", -10)");
 	acids.forEach(function(d,i)
 	{
 		var acid_g = legend.append("g")
-			.attr("transform", AAlegend_translate(i));
+			.attr("transform", AAlegend_translate(i))
+			.on("mouseover", function() {
+				vacnest.forEach(function(e)
+				{
+					if (e.key == d)
+					{
+						d3.select(e.bar).attr("opacity", 0.5);
+					}
+				});
+				placnest.forEach(function(e)
+				{
+					if (e.key == d)
+					{
+						d3.select(e.bar).attr("opacity", 0.5);
+					}
+				});
+			})
+			.on("mouseout", function() {
+				vacnest.forEach(function(e)
+				{
+					if (e.key == d)
+					{
+						d3.select(e.bar).attr("opacity", 1);
+					}
+				});
+				placnest.forEach(function(e)
+				{
+					if (e.key == d)
+					{
+						d3.select(e.bar).attr("opacity", 1);
+					}
+				});
+			});
 		acid_g.append("rect")
 			.attr("width", 10)
 			.attr("height", 10)
@@ -122,6 +176,39 @@ function create_AAsite_chart(site)
 			.attr("transform", "translate(12,9)")
 			.text(d);
 	});
+	function sort_nest(a, b)
+	{
+		switch (sortmode)
+		{
+		case 1: //joint prevalence
+			if (prev[a.key] < prev[b.key])
+			{
+				return 1;
+			} else if (prev[a.key] > prev[b.key])
+			{
+				return -1;
+			}
+			//fall through if equal
+		case 0: //alphabetical
+			return d3.ascending(a.key, b.key);
+		}
+	}
+	function sort_keys(a, b)
+	{
+		switch (sortmode)
+		{
+			case 1:
+				if (prev[a] < prev[b])
+				{
+					return 1;
+				} else if (prev[a] > prev[b])
+				{
+					return -1;
+				} //fall through if equal
+			case 0:
+				return d3.ascending(a,b);
+		}
+	}
 }
 
 function create_stacked_bar(svg, nest, scale, yloc)
@@ -142,10 +229,24 @@ function create_stacked_bar(svg, nest, scale, yloc)
 	bar.selectAll("rect")
 		.data(nest)
 		.enter().append("rect")
+		.each(function(d) {d.bar = this;}) //store for legend mouseovers.
 		.attr("x", function(d) {return scale(d.x0);})
 		.attr("height", barheight)
 		.attr("width", function(d) {return scale(d.x1) - scale(d.x0);})
-		.style("fill", function(d) {return aacolor(d.key);});
+		.style("fill", function(d) {return aacolor(d.key);})
+		.style("stroke-width", 1)
+		.style("stroke", "white")
+		.on("mouseover", function(d, i) {
+			d3.select(this)
+				.attr("opacity", .5);})
+		.on("mouseout", function(d, i) {
+			d3.select(this)
+				.attr("opacity", 1);})
+		.append("svg:title")
+			.text(function(d, i)
+			{
+				return d.key + ": " + d.values + " Patients";
+			});
 }
 
 function update_aasite_colors()
@@ -154,6 +255,22 @@ function update_aasite_colors()
 	sites_svg.selectAll(".AAsite").remove();
 	update_AAsites(selected_sites);
 	d3.selectAll(".sitebars").attr("fill", function(d,i) { return aacolor(d); });
+}
+
+function update_sorting()
+{
+	switch(d3.event.target.value)
+	{
+		case "joint_prev":
+			sortmode = 1;
+			break;
+		default:
+		case "alpha":
+			sortmode = 0;
+	}
+	//redo site charts
+	sites_svg.selectAll(".AAsite").remove();
+	update_AAsites(selected_sites);
 }
 
 function AAsite_translate(d, i)
@@ -173,5 +290,8 @@ function AAlegend_translate(i)
 
 function export_AAsites()
 {
-	window.open("data:image/svg+xml;base64," + btoa(sites_svg.node().parentNode.innerHTML), "_blank");
+	window.open("data:image/svg+xml;base64," +
+		btoa(sites_svg.node().parentNode.innerHTML
+			.replace(/.32em/g, "3.2px") //InkScape doesn't parse em units for whatever reason.
+			.replace(/.71em/g, "7.1px")), "_blank");
 }
