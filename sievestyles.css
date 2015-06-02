@@ -11,7 +11,7 @@ body {
 
 #overview {
 	width: 960px;
-  margin-left: 25px;
+  margin-left: 1px;
 }
 
 #group{
@@ -38,6 +38,7 @@ body {
 	pointer-events: all;
 }
 #options {
+  width: 370;
 	right: 20px;
   border: 1px solid black;
 }

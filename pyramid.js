@@ -10,9 +10,10 @@ function updatePyramid(sites){
       }
       possiblecounts.push(mmcount);
     }
-    maxcounts = d3.max(possiblecounts)
-    skipcount = Math.ceil(maxcounts/16)
-    var tickvals = d3.range(maxcounts).filter(function(d,i){return (i % skipcount === 0)});
+    mincounts = d3.min(possiblecounts);
+    maxcounts = d3.max(possiblecounts);
+    skipcount = Math.ceil((maxcounts-mincounts)/16);
+    var tickvals = d3.range(mincounts,maxcounts+1).filter(function(d,i){return (i % skipcount === 0)});
     PyramidDiv = d3.select("#group");
     mdata = [];
     
@@ -60,9 +61,9 @@ function updatePyramid(sites){
       .nice();
    
   var yScale = d3.scale.ordinal()
-      .domain(d3.range(maxcounts))
+      .domain(d3.range(mincounts,maxcounts+1))
       .rangeRoundBands([h,0],0.1);
-  console.log(yScale.domain());
+
   var yAxisLeft = d3.svg.axis()
       .scale(yScale)
       .orient('right')
