@@ -9,8 +9,12 @@ body {
   user-select: none;
 }
 
+#parent {
+  width: 900px;
+  float: left;
+}
 #overview {
-	width: 960px;
+	width: 900px;
   margin-left: 1px;
 }
 
@@ -30,17 +34,16 @@ body {
   shape-rendering: crispEdges;
 }
 
-#export_button {
-	display: block;
-}
 .overlay {
-	fill: rgba(0, 0, 0, .1);;
+	fill: rgba(0, 0, 0, .1);
 	pointer-events: all;
 }
 #options {
-  width: 370;
-	right: 20px;
+  width: 370px;
+	margin-right: 20px;
+  margin-top: 45px;
   border: 1px solid black;
+  float: right;
 }
 
 table {
