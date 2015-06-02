@@ -61,6 +61,7 @@ function generateSiteSelector() {
 	
 	window.xAxis = d3.svg.axis()
 			.scale(xScale)
+      .tickFormat(function(d,i){return "HXB2:" + envmap[d].hxb2Pos})
 			.orient("bottom");
 			
 	window.sitebarwidth = xScale.range()[1] / d3.max(xScale.domain());
