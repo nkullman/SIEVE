@@ -32,6 +32,8 @@ d3.select(window).on("mouseup", function(){ last_updated = undefined; mouse_down
 	.on("keyup", function () {shift_down = d3.event.shiftKey || d3.event.metaKey; });
 
 d3.select("#clear_selection_button").on("click", clear_selection);
+
+d3.select("#hxb2_select").on("keypress", hxb2_selection);
 		
 /** Generate visualization */
 function generateVis(){
@@ -196,7 +198,7 @@ function generateSiteSelector() {
 				
 		} else { // if already selected
 			// remove from array
-			var index = selected_sites.indexOf(j);
+			var index = _.sortedIndex(selected_sites, j);
 			selected_sites.splice(index, 1);
 			// reset formatting, set selected to false
 			var yval = Math.min(0.95*height, yScale(2-pvalues[j]));
@@ -233,4 +235,54 @@ function clear_selection()
 	update_AAsites([]);
 	updatePyramid([]);
 	updateTable([]);
+}
+
+function hxb2_selection()
+{
+	if (d3.event.which == 13)
+	{
+		_.flatten(this.value.split(",")
+			.map(function(d)
+			{
+				var arr = d.split("-")
+					.map(function(e)
+					{ //convert hxb2 pos to index using binary search
+						console.log(e);
+						return _.sortedIndex(envmap, e, function(i)
+							{ //convert to hxb2 for comparison
+								if (i == this)
+								{ //already hxb2
+									return i;
+								} else {
+									return i.hxb2Pos;
+								}
+							}, e);
+					});
+				console.log(arr);
+				if (arr.length == 1)
+				{
+					return arr;
+				} else {
+					return d3.range(arr[0], arr[1]+1);
+				}
+			}))
+			.forEach(function(d)
+			{
+				var index = _.sortedIndex(selected_sites, d);
+				if (selected_sites[index] == d)
+				{ //already selected
+					return;
+				} else {
+					selected_sites.splice(index, 0, d);
+					
+					d3.select("#sitebar" + d).classed("selected",true)
+						.attr("opacity", 1)
+						.attr("y", yScale(2.25))
+						.attr("height", yScale(2) - yScale(2.25));
+				}
+			});
+		update_AAsites(selected_sites);
+		updatePyramid(selected_sites);
+		updateTable(selected_sites);
+	}
 }
