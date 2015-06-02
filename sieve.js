@@ -34,6 +34,7 @@ d3.select(window).on("mouseup", function(){ last_updated = undefined; mouse_down
 d3.select("#clear_selection_button").on("click", clear_selection);
 
 d3.select("#hxb2_select").on("keypress", hxb2_selection);
+d3.select("#pvalue_select").on("keypress", pvalue_selection);
 		
 /** Generate visualization */
 function generateVis(){
@@ -279,6 +280,38 @@ function hxb2_selection()
 						.attr("opacity", 1)
 						.attr("y", yScale(2.25))
 						.attr("height", yScale(2) - yScale(2.25));
+				}
+			});
+		update_AAsites(selected_sites);
+		updatePyramid(selected_sites);
+		updateTable(selected_sites);
+	}
+}
+
+function pvalue_selection()
+{
+	if (d3.event.which == 13)
+	{
+		var threshold = this.value;
+		d3.selectAll(".sitebars")
+			.each(function(d, i)
+			{
+				var bar = d3.select(this);
+				if (pvalues[i] < threshold && !bar.classed("selected"))
+				{
+					bar.classed("selected", true)
+						.attr("opacity", 1)
+						.attr("y", yScale(2.25))
+						.attr("height", yScale(2) - yScale(2.25));
+					selected_sites.splice(_.sortedIndex(selected_sites, i), 0, i);
+				} else if (pvalues[i] >= threshold && bar.classed("selected"))
+				{
+    				var yval = Math.min(0.95*height, yScale(2-pvalues[i]));
+					bar.classed("selected", false)
+						.attr("opacity", .5)
+						.attr("y", yval )
+						.attr("height", height - yval);
+					selected_sites.splice(_.sortedIndex(selected_sites, i), 1);
 				}
 			});
 		update_AAsites(selected_sites);
