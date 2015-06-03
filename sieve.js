@@ -24,7 +24,7 @@ var pval_scale = d3.scale.log()
 	.domain([.1,1.1])
 	.range([0, .95*height]);
 var entropy_scale = d3.scale.linear()
-	.range([0, .95*height])
+	.range([.95*height, 0])
 	.domain([-1, 0]); //will compute domain when scale is selected the first time.
 
 var selected_sites = [];
