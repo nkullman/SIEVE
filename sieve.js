@@ -22,13 +22,17 @@ var vac_scale = d3.scale.linear()
 	.range([0, barwidth]);
 var pval_scale = d3.scale.log()
 	.domain([.1,1.1])
-	.range([0, .95*height]);	
+	.range([0, .95*height]);
+var entropy_scale = d3.scale.linear()
+	.range([0, .95*height])
+	.domain([-1, 0]); //will compute domain when scale is selected the first time.
 
 var selected_sites = [];
 
 var mouse_down = false;
 var shift_down = false;
 var last_updated;
+var yscale_mode = 0; //0 = pval, 1 = entropy, -1 = constant
 
 			
 
@@ -42,10 +46,19 @@ d3.select("#clear_selection_button").on("click", clear_selection);
 
 d3.select("#hxb2_select").on("keypress", hxb2_selection);
 d3.select("#pvalue_select").on("keypress", pvalue_selection);
+d3.select("#yscale_selector").on("input", yscale_selection);
 
 function overview_yscale(site)
 {
-	return pval_scale(pvalues[site]+.1);
+	switch (yscale_mode)
+	{
+	case 0:
+		return pval_scale(pvalues[site]+.1);
+	case 1:
+		return entropy_scale(entropies.full[site]);
+	default:
+		return 0;
+	}
 }
 		
 /** Generate visualization */
@@ -323,4 +336,30 @@ function pvalue_selection()
 		updatePyramid(selected_sites);
 		updateTable(selected_sites);
 	}
+}
+
+function yscale_selection()
+{
+	switch (d3.event.target.value)
+	{
+	case "pvalue":
+		yscale_mode = 0;
+		break;
+	case "entropy":
+		yscale_mode = 1;
+		if (entropy_scale.domain()[0] == -1)
+		{ //first time selection
+			entropy_scale.domain([0, _.max(entropies.full)]);
+		}
+		break;
+	case "constant":
+		yscale_mode = -1;
+		break;
+	}
+	
+	d3.selectAll(".sitebars")
+		.filter(function(d, i) { return i != selected_sites[_.sortedIndex(selected_sites, i)]; })
+		.transition(500)
+		.attr("y", function(d, i) { return overview_yscale(i); })
+		.attr("height", function(d, i) {return height - overview_yscale(i);});
 }
