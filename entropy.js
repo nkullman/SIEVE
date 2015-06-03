@@ -66,26 +66,17 @@ function generateTable(){
 }
 function updateTable(sites){
   canvas.attr("height",theight+(sites.length+4)*(fieldHeight+1)  );
-  var vaccine_entropies = sites.map(function(d) {
-    return entropies.vaccine[d];
-  });
-  var placebo_entropies = sites.map(function(d) {
-    return entropies.placebo[d];
-  });
-  var combined_entropies = sites.map(function(d) {
-    return entropies.full[d];
-  });
   var ent_data = sites.map(function(d, i)
   {
     return ["Env " + envmap[d].hxb2Pos,
-      vaccine_entropies[i],
-      placebo_entropies[i],
-      combined_entropies[i]];
+      entropies.vaccine[i],
+      entropies.placebo[i],
+      entropies.full[i]];
   });
   if(sites.length > 0){
-    var avg_data = ["Average Entropy", d3.mean(vaccine_entropies).toFixed(2),
-                            d3.mean(placebo_entropies).toFixed(2),
-                            d3.mean(combined_entropies).toFixed(2)];
+    var avg_data = ["Average Entropy", d3.mean(entropies.vaccine).toFixed(2),
+                            d3.mean(entropies.placebo).toFixed(2),
+                            d3.mean(entropies.full).toFixed(2)];
   } else {
      var avg_data = ["Average Entropy", 0.00,
                             0.00,
