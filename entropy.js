@@ -260,7 +260,7 @@ function updateTable(sites){
     var site = selected_sites[i];
 		selected_sites.splice(i, 1);
     var bar = d3.select("#sitebar" + site);
-    var yval = Math.min(0.95*height, yScale(2-pvalues[site]));
+    var yval = yScale(i);
 			bar.classed("selected",false)
 				.attr('opacity', 0.5)
 				.attr("y", yval )
