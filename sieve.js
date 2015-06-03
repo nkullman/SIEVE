@@ -265,19 +265,9 @@ function hxb2_selection()
 			{
 				var arr = d.split("-")
 					.map(function(e)
-					{ //convert hxb2 pos to index using binary search
-						console.log(e);
-						return _.sortedIndex(envmap, e, function(i)
-							{ //convert to hxb2 for comparison
-								if (i == this)
-								{ //already hxb2
-									return i;
-								} else {
-									return i.hxb2Pos;
-								}
-							}, e);
+					{ //convert hxb2 pos to index
+						return hxb2map[e];
 					});
-				console.log(arr);
 				if (arr.length == 1)
 				{
 					return arr;
