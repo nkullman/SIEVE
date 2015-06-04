@@ -290,6 +290,7 @@ function hxb2_selection()
 						.attr("height",height/5);
 				}
 			});
+		this.value = "";
 		update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
 		updateTable(selected_sites);
@@ -322,6 +323,7 @@ function pvalue_selection()
 					selected_sites.splice(_.sortedIndex(selected_sites, i), 1);
 				}
 			});
+		this.value = "";
 		update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
 		updateTable(selected_sites);
