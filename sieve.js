@@ -270,7 +270,7 @@ function hxb2_selection()
 {
 	if (d3.event.which == 13)
 	{
-		_.flatten(this.value.split(",")
+		_.flatten(this.value.replace(/\s+/g,"").split(",")
 			.map(function(d)
 			{
 				var arr = d.split("-")
