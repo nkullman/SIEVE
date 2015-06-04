@@ -11,17 +11,28 @@ var barmargin = {top: 5, right: 10, bottom: 0, left: 10},
 var barchartmargin = {top: 15, right: 100, bottom: 10, left: 50},
 	barchartwidth = 250,
 	barchartheight = 70;
+
+var margin =  {top: 20, right: 20, bottom: 30, left: 20};
+var width = 800 - margin.left - margin.right;
+var height =  110 - margin.top - margin.bottom;
 		
 var plac_scale = d3.scale.linear()
 	.range([0, barwidth]);
 var vac_scale = d3.scale.linear()
 	.range([0, barwidth]);
-	
+var pval_scale = d3.scale.log()
+	.domain([.1,1.1])
+	.range([0, .95*height]);
+var entropy_scale = d3.scale.linear()
+	.range([.95*height, 0])
+	.domain([-1, 0]); //will compute domain when scale is selected the first time.
+
 var selected_sites = [];
 
 var mouse_down = false;
 var shift_down = false;
 var last_updated;
+var yscale_mode = 0; //0 = pval, 1 = entropy, -1 = constant
 
 			
 
@@ -32,6 +43,23 @@ d3.select(window).on("mouseup", function(){ last_updated = undefined; mouse_down
 	.on("keyup", function () {shift_down = d3.event.shiftKey || d3.event.metaKey; });
 
 d3.select("#clear_selection_button").on("click", clear_selection);
+
+d3.select("#hxb2_select").on("keypress", hxb2_selection);
+d3.select("#pvalue_select").on("keypress", pvalue_selection);
+d3.select("#yscale_selector").on("input", yscale_selection);
+
+function overview_yscale(site)
+{
+	switch (yscale_mode)
+	{
+	case 0:
+		return pval_scale(pvalues[site]+.1);
+	case 1:
+		return entropy_scale(entropies.full[site]);
+	default:
+		return 0;
+	}
+}
 		
 /** Generate visualization */
 function generateVis(){
@@ -47,21 +75,14 @@ function generateVis(){
 function generateSiteSelector() {
 	
 	var update_throttled = _.throttle(update_charts, 500);
-  window.margin =  {top: 20, right: 20, bottom: 30, left: 20};
-  window.width = 800 - margin.left - margin.right;
-  window.height =  110 - margin.top - margin.bottom;
   
   window.xScale = d3.scale.linear()
     .domain([0, vaccine.sequence.length-1])
     .range([0, width]);
 	
-  window.yScale = d3.scale.log()
-    .domain([1, 2])
-    .range([height, 0]);
-	
 	window.xAxis = d3.svg.axis()
 			.scale(xScale)
-      .tickFormat(function(d,i){return "HXB2:" + envmap[d].hxb2Pos})
+      .tickFormat(function(d,i){return envmap[d].hxb2Pos})
 			.orient("bottom");
 			
 	window.sitebarwidth = xScale.range()[1] / d3.max(xScale.domain());
@@ -103,9 +124,9 @@ function generateSiteSelector() {
     	.attr("class","sitebars")
 		.attr("id", function (d,i) { return "sitebar" + i;})
 	  	.attr("x", function (d,i) { return xScale(i) - sitebarwidth/2; })
-		.attr("y", function (d,i) {return Math.min(0.95*height, yScale(2-pvalues[i]));} )
+		.attr("y", function (d,i) {return overview_yscale(i);} )
 		.attr("width", sitebarwidth)
-		.attr("height", function (d,i) {return height - Math.min(0.95*height, yScale(2-pvalues[i]));})
+		.attr("height", function (d,i) {return height - overview_yscale(i);})
 		.attr("fill", function (d) {
 			return aacolor(d);
 		})
@@ -118,9 +139,9 @@ function generateSiteSelector() {
 		.attr("class", "fgrdbars")
 		.attr("id", function (d,i) { return "fgrdbar" + i;})
 		.attr("x", function (d,i) { return xScale(i) - sitebarwidth/2; })
-		.attr("y", yScale(2.25))
+		.attr("y", -height/5)
 		.attr("width", sitebarwidth)
-		.attr("height", height - yScale(2.25))
+		.attr("height", 6*height/5)
 		.attr("fill", "white")
 		.attr("opacity", 0)
 		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d,i); })
@@ -191,15 +212,15 @@ function generateSiteSelector() {
 			// up it and set selected to true
 			bar.classed("selected",true)
 				.attr("opacity", 1)
-				.attr("y", yScale(2.25))
-				.attr("height", yScale(2) - yScale(2.25));
+				.attr("y", -height/5)
+				.attr("height", height/5);
 				
 		} else { // if already selected
 			// remove from array
-			var index = selected_sites.indexOf(j);
+			var index = _.sortedIndex(selected_sites, j);
 			selected_sites.splice(index, 1);
 			// reset formatting, set selected to false
-			var yval = Math.min(0.95*height, yScale(2-pvalues[j]));
+			var yval = overview_yscale(j);
 			bar.classed("selected",false)
 				.attr('opacity', 0.5)
 				.attr("y", function (d) { return yval;} )
@@ -223,7 +244,7 @@ function clear_selection()
 	for (var i = 0; i < selected_sites.length; i++) {
 		var site = selected_sites[i];
     	var bar = d3.select("#sitebar" + site);
-    	var yval = Math.min(0.95*height, yScale(2-pvalues[site]));
+    	var yval = overview_yscale(site);
 		bar.classed("selected",false)
 			.attr('opacity', 0.5)
 			.attr("y", yval )
@@ -233,4 +254,104 @@ function clear_selection()
 	update_AAsites([]);
 	updatePyramid([]);
 	updateTable([]);
+}
+
+function hxb2_selection()
+{
+	if (d3.event.which == 13)
+	{
+		_.flatten(this.value.split(",")
+			.map(function(d)
+			{
+				var arr = d.split("-")
+					.map(function(e)
+					{ //convert hxb2 pos to index
+						return hxb2map[e];
+					});
+				if (arr.length == 1)
+				{
+					return arr;
+				} else {
+					return d3.range(arr[0], arr[1]+1);
+				}
+			}))
+			.forEach(function(d)
+			{
+				var index = _.sortedIndex(selected_sites, d);
+				if (selected_sites[index] == d)
+				{ //already selected
+					return;
+				} else {
+					selected_sites.splice(index, 0, d);
+					
+					d3.select("#sitebar" + d).classed("selected",true)
+						.attr("opacity", 1)
+						.attr("y", -height/5)
+						.attr("height",height/5);
+				}
+			});
+		this.value = "";
+		update_AAsites(selected_sites);
+		updatePyramid(selected_sites);
+		updateTable(selected_sites);
+	}
+}
+
+function pvalue_selection()
+{
+	if (d3.event.which == 13)
+	{
+		var threshold = this.value;
+		d3.selectAll(".sitebars")
+			.each(function(d, i)
+			{
+				var bar = d3.select(this);
+				if (pvalues[i] < threshold && !bar.classed("selected"))
+				{
+					bar.classed("selected", true)
+						.attr("opacity", 1)
+						.attr("y", -height/5)
+						.attr("height", height/5);
+					selected_sites.splice(_.sortedIndex(selected_sites, i), 0, i);
+				} else if (pvalues[i] >= threshold && bar.classed("selected"))
+				{
+    				var yval = overview_yscale(i);
+					bar.classed("selected", false)
+						.attr("opacity", .5)
+						.attr("y", yval )
+						.attr("height", height - yval);
+					selected_sites.splice(_.sortedIndex(selected_sites, i), 1);
+				}
+			});
+		this.value = "";
+		update_AAsites(selected_sites);
+		updatePyramid(selected_sites);
+		updateTable(selected_sites);
+	}
+}
+
+function yscale_selection()
+{
+	switch (d3.event.target.value)
+	{
+	case "pvalue":
+		yscale_mode = 0;
+		break;
+	case "entropy":
+		yscale_mode = 1;
+		if (entropy_scale.domain()[0] == -1)
+		{ //first time selection
+			entropy_scale.domain([0, _.max(entropies.full)]);
+		}
+		break;
+	case "constant":
+		yscale_mode = -1;
+		break;
+	}
+	
+	d3.selectAll(".sitebars")
+		.filter(function(d, i) { return i != selected_sites[_.sortedIndex(selected_sites, i)]; })
+		.transition(500)
+		.attr("y", function(d, i) { return overview_yscale(i); })
+		.attr("height", function(d, i) {return height - overview_yscale(i);});
 }

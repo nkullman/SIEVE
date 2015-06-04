@@ -35,7 +35,12 @@
 				<tr><td></td><td><button id="export_button">Export SVG image</button></td><td class="help">?
 					<span>
 						Opens new window with the stacked bar charts for individual sites. Ctrl-S or similar to save in SVG format, which can be edited/converted in Inkscape or other editors or converted using an online tool such as CloudConvert.com.
-					</span></td></li>
+				</span></td></tr>
+				<tr><td>Overview Bar Height:</td><td><select id="yscale_selector">
+					<option value="pvalue">p-value</option>
+					<option value="entropy">Entropy</option>
+					<option value="constant">Constant</option>
+				</select></td></tr>
 				<tr><td>Color scheme:</td><td><select id="color_selector">
 					<option value="taylor">Taylor</option>
 					<option value="hydrophobicity">Hydrophobicity</option>
@@ -55,6 +60,15 @@
 					<option value="joint_prev">Joint Prevalence</option>
 					<option value="alpha">Alphabetical</option>
 				</select></td><td></td></tr>
+				<tr><td>Select by HXB2:</td><td><input type="text" id="hxb2_select" size="13"></input></td><td class="help">?
+					<span>
+						Select and append sites by HXB2 position, in a comma-separted list with single sites or ranges; e.g., 2, 5, 7-13, 506d.
+					</span></td></tr>
+				<tr><td>Select by p-value</td><td><input type="text" id="pvalue_select" size="13"></input></td><td class="help">?
+					<span>
+						Select all sites with p-value less than the threshold given.
+					</span>
+				</input></tr>
 			</table>
 		</div><div id="sitessvg"></div></div>
 	</div>

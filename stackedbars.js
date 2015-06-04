@@ -176,6 +176,24 @@ function create_AAsite_chart(site)
 			.attr("transform", "translate(12,9)")
 			.text(d);
 	});
+	var match_g = legend.append("g")
+		.attr("transform", AAlegend_translate(acids.length))
+		.on("mouseover", function() {
+			svg.selectAll(".matchbar")
+				.attr("opacity", 0.5);
+		})
+		.on("mouseout", function() {
+			svg.selectAll(".matchbar")
+				.attr("opacity", 1);
+		});
+	match_g.append("rect")
+		.attr("width", 10)
+		.attr("height", 10)
+		.style("fill", "grey");
+	match_g.append("text")
+		.attr("transform", "translate(12,9)")
+		.text(vaccine.sequence[site]);
+	
 	function sort_nest(a, b)
 	{
 		switch (sortmode)
@@ -247,6 +265,18 @@ function create_stacked_bar(svg, nest, scale, yloc)
 			{
 				return d.key + ": " + d.values + " Patients";
 			});
+	bar.append("rect")
+		.attr("x", scale(sum))
+		.attr("height", barheight)
+		.attr("width", scale.range()[1] - scale(sum))
+		.attr("class", "matchbar")
+		.style("fill", "grey")
+		.style("stroke-width", 1)
+		.style("stroke", "white")
+		.on("mouseover", function() { d3.select(this).attr("opacity", .5)})
+		.on("mouseout", function() { d3.select(this).attr("opacity", 1)})
+		.append("svg:title")
+			.text("Match: " + (scale.domain()[1] - sum) + " Patients");
 }
 
 function update_aasite_colors()
