@@ -29,10 +29,6 @@ body {
   fill-opacity: .125;
   shape-rendering: crispEdges;
 }
-
-#export_button {
-	display: block;
-}
 .overlay {
 	fill: rgba(0, 0, 0, .1);;
 	pointer-events: all;
