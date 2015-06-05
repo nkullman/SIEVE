@@ -85,11 +85,16 @@ function generateSiteSelector() {
       .tickFormat(function(d,i){return envmap[d].hxb2Pos})
 			.orient("bottom");
 			
-	window.yAxis = d3.svg.axis()
+	window.yAxisl = d3.svg.axis()
 		.scale(pval_scale)
-		.tickValues([.01 + 0.1, 0.05 + 0.1, 1 + 0.1])
-		.tickFormat(function(d) {return d - 0.1;})
+		.tickValues([0.01 + 0.1, 0.05 + 0.1, 0.2 + 0.1, 1 + 0.1])
+		.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;})
 		.orient("left");
+	window.yAxisr = d3.svg.axis()
+		.scale(pval_scale)
+		.tickValues([0.01 + 0.1, 0.05 + 0.1, 0.2 + 0.1, 1 + 0.1])
+		.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;})
+		.orient("right");
 			
 	window.sitebarwidth = xScale.range()[1] / d3.max(xScale.domain());
 			// = totalwidth/numbars
@@ -170,7 +175,11 @@ function generateSiteSelector() {
 		
 	siteselSVGg.append("g")
 		.attr("class", "y axis")
-		.call(yAxis);
+		.call(yAxisl);
+	siteselSVGg.append("g")
+		.attr("class", "y axis")
+		.attr("transform", "translate(" + width + ",0)")
+		.call(yAxisr);
 	
 	function refresh() {
 		if (!shift_down) {
