@@ -347,8 +347,6 @@ function yscale_selection()
 	case "pvalue":
 		yscale_mode = 0;
 		break;
-  case "qvalue":
-    yscale_mode = 2;
 	case "entropy":
 		yscale_mode = 1;
 		if (entropy_scale.domain()[0] == -1)
