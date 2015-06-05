@@ -25,6 +25,7 @@ var numvac = 0;
 var numplac = 0;
 /** Array of p-values */
 var pvalues =[];
+/** Array of Entropy Values */
 var entropies = {full:[],vaccine:[],placebo:[]};
 d3.text("data/env.aa.92TH023.fasta", function(vacdata) {
 	dovacparsing(vacdata);
