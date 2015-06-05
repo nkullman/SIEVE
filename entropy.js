@@ -5,9 +5,10 @@ var tmargin = {top: 20, right: 10, bottom: 20, left: 40},
 var fieldHeight = 25;
 var fieldWidth = 100;
 var buttonWidth = 25
-var colnames = ['Site','Vaccine Group','Placebo Group','Full Data'];
+var colnames = ['Site','Vaccine Group','Placebo Group','Combined Data'];
 
 var jointRow, averageRow, canvas, rowsGrp;
+var showEntropies = true;
 
 function generateTable(){
  
@@ -24,19 +25,49 @@ function generateTable(){
   var title = canvas.append("g");
     
   title.append("rect")
+    .attr("class","entropy title bar")
     .attr("x",buttonWidth)
-    .attr("width", 4*fieldWidth-1)
+    .attr("width", 2*fieldWidth-1)
     .attr("height", fieldHeight)
     .style("fill","black");
+  
+   title.append("rect")
+    .attr("class","mismatch title bar")
+    .attr("x",buttonWidth + 2*fieldWidth)
+    .attr("width", 2*fieldWidth)
+    .attr("height", fieldHeight)
+    .style("fill","grey");
 
   title.append("text")
-    .attr("x",twidth/2)
+    .attr("x",buttonWidth + fieldWidth)
     .attr("y",fieldHeight/2+4)
     .attr("text-anchor","middle")
     .style("fill","white")
     .style("font-size","15px")
     .text("Entropy Summary");
-      
+    
+  title.append("text")
+    .attr("x",fieldWidth*3 + buttonWidth)
+    .attr("y",fieldHeight/2+4)
+    .attr("text-anchor","middle")
+    .style("fill","white")
+    .style("font-size","15px")
+    .text("Mismatch Count Summary");
+  
+  title.append("rect")
+    .attr("x",buttonWidth)
+    .attr("width", 2*fieldWidth-1)
+    .attr("height", fieldHeight)
+    .style("opacity",0)
+    .on("click",displayEntropies);
+  
+  title.append("rect")
+    .attr("x",buttonWidth + 2*fieldWidth)
+    .attr("width", 2*fieldWidth-1)
+    .attr("height", fieldHeight)
+    .style("opacity",0)
+    .on("click",displayMismatchCounts);
+  
   // define groups for header and rows for the individual sites  
   var headerGrp = canvas.append("g").attr("class", "headerGrp");
   rowsGrp = canvas.append("g").attr("class","rowsGrp");
@@ -66,23 +97,77 @@ function generateTable(){
 }
 function updateTable(sites){
   canvas.attr("height",theight+(sites.length+4)*(fieldHeight+1)  );
+  
+  // Data in this section is a list of length sites.length
+  // each element is another list of length 4, corresponding to the rows
+  // each element of that list is a length 2, corresponding to either
+  // entropy or mismatch count
+  
+  // generating entropy data for table
   var ent_data = sites.map(function(d, i)
   {
-    return ["Env " + envmap[d].hxb2Pos,
-      entropies.vaccine[i],
-      entropies.placebo[i],
-      entropies.full[i]];
+    // obtaining mismatchcounts
+    var mmcountfull = 0;
+    var mmcountvaccine = 0;
+    var mmcountplacebo = 0;
+    for(var patient in seqID_lookup){
+      if(seqID_lookup[patient].mismatch != undefined){
+        var is_mismatch = seqID_lookup[patient].mismatch[d];
+        mmcountfull +=is_mismatch;
+        if(seqID_lookup[patient].vaccine){
+          mmcountvaccine += is_mismatch;
+        } else {
+          mmcountplacebo += is_mismatch;
+        }
+      }
+    }
+    return [["Env " + envmap[d].hxb2Pos,"Env " + envmap[d].hxb2Pos],
+      [entropies.vaccine[d],mmcountvaccine],
+      [entropies.placebo[d],mmcountplacebo],
+      [entropies.full[d],mmcountfull]];
   });
+  // average data
+  var avg_data;
   if(sites.length > 0){
-    var avg_data = ["Average Entropy", d3.mean(entropies.vaccine).toFixed(2),
-                            d3.mean(entropies.placebo).toFixed(2),
-                            d3.mean(entropies.full).toFixed(2)];
+    var temp = d3.range(sites.length);
+    var avg_data = [["Average Entropy","Average Mismatches"], 
+                    [d3.mean(temp.map(function(d){return ent_data[d][1][0]})).toFixed(2),
+                      d3.mean(temp.map(function(d){return ent_data[d][1][1]})).toFixed(2)],
+                    [d3.mean(temp.map(function(d){return ent_data[d][2][0]})).toFixed(2),
+                      d3.mean(temp.map(function(d){return ent_data[d][2][1]})).toFixed(2)],
+                    [d3.mean(temp.map(function(d){return ent_data[d][3][0]})).toFixed(2),
+                      d3.mean(temp.map(function(d){return ent_data[d][3][1]})).toFixed(2)]];
   } else {
-     var avg_data = ["Average Entropy", 0.00,
-                            0.00,
-                            0.00];
+     var avg_data = [["Average Entropy","Average Mismatches"], 
+                     [0.00,0.00],
+                     [0.00,0.00],       
+                     [0.00,0.00]];
   }
+  
+  // joint data
   var jts_data = gen_joint_entropies(sites);
+  
+  // generating mismatch data for table
+  var mismatch_data = sites.map(function(d)
+  {
+    var mmcountfull = 0;
+    var mmcountvaccine = 0;
+    var mmcountplacebo = 0;
+    for(var patient in seqID_lookup){
+      if(seqID_lookup[patient].mismatch != undefined){
+        var is_mismatch = seqID_lookup[patient].mismatch[d];
+        mmcountfull +=is_mismatch;
+        if(seqID_lookup[patient].vaccine){
+          mmcountvaccine += is_mismatch;
+        } else {
+          mmcountplacebo += is_mismatch;
+        }
+      }
+    }
+    return ["Env " + envmap[d].hxb2Pos,mmcountvaccine,mmcountplacebo,mmcountfull];
+  })
+  
+  
   // creates the aggregate rows
   var avgEnter = averageRow.selectAll("g")
     .data(avg_data)
@@ -98,23 +183,45 @@ function updateTable(sites){
     .style("fill","grey")
     .style("opacity",0.3);
     
-  avgEnter.append("text")
+/*   avgEnter.append("text")
+    .attr("class","average ent text")
     .attr("y", fieldHeight / 2)
     .attr("dy", ".35em")
     .attr("text-anchor","middle")
     .attr("x",fieldWidth/2)
-    .text(String);
+    .text(function(d){return d[0];});
+    
+  avgEnter.append("text")
+    .attr("class","average mm text")
+    .attr("y", fieldHeight / 2)
+    .attr("dy", ".35em")
+    .attr("text-anchor","middle")
+    .attr("x",fieldWidth/2)
+    .text(function(d){return d[1];}); */
   
   averageRow.selectAll("text").remove();
   
   averageRow.selectAll("g")
     .data(avg_data)
     .append("text")
+    .attr("class","entropy text")
     .attr("y", fieldHeight / 2)
     .attr("dy", ".35em")
     .attr("text-anchor","middle")
     .attr("x",fieldWidth/2)
-    .text(String);
+    .style("opacity",entropyTextOpacity())
+    .text(function(d){return d[0];});
+  
+  averageRow.selectAll("g")
+    .data(avg_data)
+    .append("text")
+    .attr("class","mismatch text")
+    .attr("x",fieldWidth/2)
+    .attr("y", fieldHeight / 2)
+    .attr("dy", ".35em")
+    .attr("text-anchor","middle")
+    .style("opacity",mismatchTextOpacity())
+    .text(function(d){return d[1];});
 
 
   
@@ -131,25 +238,30 @@ function updateTable(sites){
     .attr("height", fieldHeight)
     .style("fill","grey")
     .style("opacity",0.3);
-
-  jtEnter.append("text")
-    .attr("y", fieldHeight / 2)
-    .attr("dy", ".35em")
-    .attr("text-anchor","middle")
-    .attr("x",fieldWidth/2)
-  .text(String);  
   
   jointRow.selectAll("text").remove();
   
   jointRow.selectAll("g")
     .data(jts_data)
     .append("text")
+    .attr("class","entropy text")
+    .attr("x",fieldWidth/2)
+    .attr("y", fieldHeight / 2)
+    .attr("dy", ".35em")
+    .attr("text-anchor","middle")
+    .style("opacity",entropyTextOpacity())
+    .text(function(d){return d[0];});
+  
+  jointRow.selectAll("g")
+    .data(jts_data)
+    .append("text")
+    .attr("class","mismatch text")
     .attr("y", fieldHeight / 2)
     .attr("dy", ".35em")
     .attr("text-anchor","middle")
     .attr("x",fieldWidth/2)
-    .text(String);
-  
+    .style("opacity",mismatchTextOpacity())
+    .text(function(d){return d[1];});
   
   //creates all the site specific rows
   var rows = rowsGrp.selectAll(".row")
@@ -206,14 +318,22 @@ function updateTable(sites){
     .style("opacity",0.1);	
 		
 	cellsEnter.append("text")
+    .attr("class", "entropy text")
 		.attr("x", fieldWidth / 2)
 		.attr("y", fieldHeight / 2)
 		.attr("dy", ".35em")
     .attr("text-anchor","middle")
-    .style("opacity",0)
-    .transition()
-    .style("opacity",1)
-		.text(String);
+    .style("opacity",entropyTextOpacity())
+		.text(function(d){return d[0];});
+  
+  cellsEnter.append("text")
+    .attr("class","mismatch text")
+    .attr("x", fieldWidth / 2)
+		.attr("y", fieldHeight / 2)
+		.attr("dy", ".35em")
+    .attr("text-anchor","middle")
+    .style("opacity",mismatchTextOpacity())
+		.text(function(d,i){return d[1];});
   
   cells.exit().transition().remove();
   
@@ -223,14 +343,22 @@ function updateTable(sites){
     .remove();
   
   cells.append("text")
+    .attr("class","entropy text")
 		.attr("x", fieldWidth / 2)
 		.attr("y", fieldHeight / 2)
 		.attr("dy", ".35em")
     .attr("text-anchor","middle")
-    .style("opacity",0)
-    .transition()
-    .style("opacity",1)
-		.text(String);
+    .style("opacity",entropyTextOpacity())
+		.text(function(d){return d[0];});
+    
+  cells.append("text")
+    .attr("class","mismatch text")
+		.attr("x", fieldWidth / 2)
+		.attr("y", fieldHeight / 2)
+		.attr("dy", ".35em")
+    .attr("text-anchor","middle")
+    .style("opacity",mismatchTextOpacity())
+		.text(function(d){return d[1];});
     
   // Sets up rectangle which highlights the moused over row
   // Clicking will shift the selection bar to that site
@@ -262,10 +390,55 @@ function updateTable(sites){
 	}
 
 function gen_joint_entropies(sites){
-  var joint_entropies = ["Joint Entropy",jointentropy(sites,sequences.vaccine,numvac).toFixed(2),
-                          jointentropy(sites,sequences.placebo,numplac).toFixed(2),
-                          jointentropy(sites,sequences_raw,numvac+numplac).toFixed(2)];
+  var joint_entropies = [["Joint Entropy","N/A"],
+                         [jointentropy(sites,sequences.vaccine,numvac).toFixed(2),"N/A"],
+                         [jointentropy(sites,sequences.placebo,numplac).toFixed(2),"N/A"],
+                         [jointentropy(sites,sequences_raw,numvac+numplac).toFixed(2),"N/A"]];
   return joint_entropies;
+}
+
+function entropyTextOpacity(){
+  if(showEntropies){
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+function mismatchTextOpacity(){
+  if(showEntropies){
+    return 0;
+  } else {
+    return 1;
+  }
+}
+
+function displayEntropies(){
+  showEntropies = true;
+  canvas.select(".entropy.title.bar")
+    .style("fill","black");
+  canvas.select(".mismatch.title.bar")
+    .style("fill","grey");
+  canvas.selectAll(".mismatch.text")
+    .transition()
+    .style("opacity",0);
+  canvas.selectAll(".entropy.text")
+    .transition()
+    .style("opacity",1);
+}
+
+function displayMismatchCounts(){
+  showEntropies = false;
+  canvas.select(".mismatch.title.bar")
+    .style("fill","black");
+  canvas.select(".entropy.title.bar")
+    .style("fill","grey");
+  canvas.selectAll(".entropy.text")
+      .transition()
+      .style("opacity",0);
+  canvas.selectAll(".mismatch.text")
+    .transition()
+    .style("opacity",1);
 }
 
 function onClickChangeView(d,i){
