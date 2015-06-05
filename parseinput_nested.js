@@ -27,18 +27,17 @@ var numplac = 0;
 var pvalues =[];
 /** Array of Entropy Values */
 var entropies = {full:[],vaccine:[],placebo:[]};
-
-d3.text("env.aa.92TH023.fasta", function(vacdata) {
+d3.text("data/env.aa.92TH023.fasta", function(vacdata) {
 	dovacparsing(vacdata);
-  d3.csv("pvalues.csv").row(function(d) {pvalues.push(+d.pvalue);})
+  d3.csv("data/pvalues.csv").row(function(d) {pvalues.push(+d.pvalue);})
     .get(function(error, rows) {;});
-	d3.csv("rv144_trt_lookup.csv", function(trt_lookup_data) {
+	d3.csv("data/rv144_trt_lookup.csv", function(trt_lookup_data) {
 		createdictionary(trt_lookup_data);
-		d3.csv("rv144.env.mismatch.distance.csv", function(mmdata) {
+		d3.csv("data/rv144.env.mismatch.distance.csv", function(mmdata) {
 			addmmtodict(mmdata);
-			d3.text("rv144.env.aa.fasta", function(seqdata) {
+			d3.text("data/rv144.env.aa.fasta", function(seqdata) {
 				doseqparsing(seqdata);
-				d3.csv("env.map.csv", function(mapdata){
+				d3.csv("data/env.map.csv", function(mapdata){
 					envmap = mapdata;
 					envmap.forEach(function(d, i)
 						{

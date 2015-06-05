@@ -449,5 +449,5 @@ function onClickChangeView(d,i){
   var t = [-((site/vaccine.sequence.length)*(width)*(s-1) -
           (width+margin.left)/(s*2)), 0];
   // transition not smooth. needs help.
-  siteselSVG.transition().call(zoom.translate(t).scale(s).event);
+  siteselSVGg.transition().call(zoom.translate(t).scale(s).event);
 }

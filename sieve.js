@@ -85,23 +85,28 @@ function generateSiteSelector() {
       .tickFormat(function(d,i){return envmap[d].hxb2Pos})
 			.orient("bottom");
 			
+	window.yAxis = d3.svg.axis()
+		.scale(overview_yscale)
+		.orient("left");
+			
 	window.sitebarwidth = xScale.range()[1] / d3.max(xScale.domain());
 			// = totalwidth/numbars
 	
 	window.zoom = d3.behavior.zoom().x(xScale).scaleExtent([1,100]).on("zoom", refresh);
 	
-	var siteselSVGfieldset = d3.select("#overview").append("fieldset")
+	var overviewfieldset = d3.select("#overview").append("fieldset")
 		.attr("class", "selectionfieldset");
 		
-	siteselSVGfieldset.append("legend")
+	overviewfieldset.append("legend")
 		.attr("border", "1px black solid")
 		.append("text")
 			.text("Vaccine sequence: " + vaccine.ID);
 	
-	window.siteselSVG = siteselSVGfieldset.append("svg")
-	    .attr("width", width + margin.left + margin.right)
+	window.siteselSVGg = overviewfieldset.append("svg")
+	    .attr("width", width + margin.right)
 	    .attr("height", height + margin.top + margin.bottom)
 		.attr("id", "siteselSVG")
+		.attr("transform", "translate(" + margin.left + ",0)")
 		.append("g")
 		.attr("id", "siteselSVGg")
 		.attr("width", width)
@@ -109,15 +114,15 @@ function generateSiteSelector() {
 		.attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
 		.call(zoom);
 		
-	siteselSVG.on("mouseout", function() {d3.select("#tooltip").remove(); });
+	siteselSVGg.on("mouseout", function() {d3.select("#tooltip").remove(); });
 		
-	siteselSVG.append("rect")
+	siteselSVGg.append("rect")
 		.attr("class", "overlay")
 		.attr("transform", "translate(" + (-margin.left) + ", " + (-margin.top) + ")")
 	    .attr("width", width + margin.left + margin.right)
 	    .attr("height", height + margin.top + margin.bottom);
 		
-	window.sitebars = siteselSVG.selectAll(".sitebars")
+	window.sitebars = siteselSVGg.selectAll(".sitebars")
 	    .data(vaccine.sequence);
     
 	sitebars.enter().append("rect")
@@ -132,7 +137,7 @@ function generateSiteSelector() {
 		})
 		.attr("opacity", 0.5);
 		
-	window.foregroundbars = siteselSVG.selectAll(".foregroundbars")
+	window.foregroundbars = siteselSVGg.selectAll(".foregroundbars")
 		.data(vaccine.sequence);
 		
 	foregroundbars.enter().append("rect")
@@ -157,10 +162,15 @@ function generateSiteSelector() {
 			}
 		});
 		
-	siteselSVG.append("g")
+	siteselSVGg.append("g")
 		.attr("class", "x axis")
 		.attr("transform", "translate(0," + (height + 5) + ")")
 		.call(xAxis);
+		
+	/*siteselSVGg.append("g")
+		.attr("class", "y axis")
+		.attr("transform", "translate(5,5)")
+		.call(yAxis);*/
 	
 	function refresh() {
 		if (!shift_down) {
@@ -174,13 +184,13 @@ function generateSiteSelector() {
 			
 			sitebars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
 			foregroundbars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
-			siteselSVG.select(".x.axis").call(xAxis.scale(xScale));
+			siteselSVGg.select(".x.axis").call(xAxis.scale(xScale));
 		}
 	}
 	
 	function bar_mousedover(d, i) {
 		var update_array = [];
-		siteselSVG.append("text")
+		siteselSVGg.append("text")
 			.attr("id", "tooltip")
 			.attr("x", margin.left + width)
 			.attr("y", -margin.top/2)
@@ -260,7 +270,7 @@ function hxb2_selection()
 {
 	if (d3.event.which == 13)
 	{
-		_.flatten(this.value.split(",")
+		_.flatten(this.value.replace(/\s+/g,"").split(",")
 			.map(function(d)
 			{
 				var arr = d.split("-")
@@ -356,4 +366,6 @@ function yscale_selection()
 		.transition(500)
 		.attr("y", function(d, i) { return overview_yscale(i); })
 		.attr("height", function(d, i) {return height - overview_yscale(i);});
+		
+	siteselSVGg.select(".y.axis").call(yAxis.scale(overview_yscale));
 }
