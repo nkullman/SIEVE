@@ -57,7 +57,7 @@ function overview_yscale(site)
 	case 1:
 		return entropy_scale(entropies.full[site]);
   case 2:
-    return pval_scale(qvalues[site]+.1)
+    return pval_scale(qvalues[site]+.1);
 	default:
 		return 0;
 	}
