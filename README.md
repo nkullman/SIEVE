@@ -12,8 +12,8 @@ A breakdown of how the work was split among the group members and a commentary o
 
 This is an example repository for the final project submission.  Put your abstract from your final paper here.
 
-[Poster](https://github.com/CSE512-15S/fp-jheer-domoritz-jsnydes/raw/master/final/poster-jheer-kanitw.pdf),
-[Final Paper](https://github.com/CSE512-15S/fp-jheer-domoritz-jsnydes/raw/master/final/paper-jheer-kanitw.pdf),
+[Poster](https://github.com/CSE512-15S/fp-nkullman-gclenagh-wfyang/raw/master/poster/Poster.pdf),
+[Progress Paper](https://github.com/CSE512-15S/fp-nkullman-gclenagh-wfyang/raw/master/progress/progressreport.pdf),
 [Webpage](http://cse512-15s.github.io/fp-nkullman-gclenagh-wfyang/description.html)
 
 ## Running Instructions
