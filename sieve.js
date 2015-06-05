@@ -35,7 +35,6 @@ var last_updated;
 var yscale_mode = 0; //0 = pval, 1 = entropy, -1 = constant
 
 var pval_scale_ticks = [0.01 + 0.1, 0.05 + 0.1, 0.2 + 0.1, 1 + 0.1];
-var entropy_scale_ticks = [];		
 
 // clear selecting mode even if you release your mouse elsewhere.
 d3.select(window).on("mouseup", function(){ last_updated = undefined; mouse_down = false; })
@@ -356,8 +355,10 @@ function yscale_selection()
 	{
 	case "pvalue":
 		yscale_mode = 0;
-		yAxisl.scale(pval_scale).tickValues(pval_scale_ticks);
-		yAxisr.scale(pval_scale).tickValues(pval_scale_ticks);
+		yAxisl.scale(pval_scale).tickValues(pval_scale_ticks)
+			.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;});
+		yAxisr.scale(pval_scale).tickValues(pval_scale_ticks)
+			.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;});
 		break;
 	case "entropy":
 		yscale_mode = 1;
@@ -365,8 +366,10 @@ function yscale_selection()
 		{ //first time selection
 			entropy_scale.domain([0, _.max(entropies.full)]);
 		}
-		yAxisl.scale(entropy_scale).tickValues();
-		yAxisr.scale(entropy_scale).tickValues();
+		yAxisl.scale(entropy_scale).tickValues(d3.range(0, Math.ceil(entropy_scale.domain()[1]+1)))
+			.tickFormat(function(d) {return Math.round(d*100)/100;});
+		yAxisr.scale(entropy_scale).tickValues(d3.range(0, Math.ceil(entropy_scale.domain()[1])))
+			.tickFormat(function(d) {return Math.round(d*100)/100;});;
 		break;
 	case "constant":
 		yscale_mode = -1;
