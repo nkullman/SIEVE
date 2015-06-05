@@ -12,7 +12,7 @@ var barchartmargin = {top: 15, right: 100, bottom: 10, left: 50},
 	barchartwidth = 250,
 	barchartheight = 70;
 
-var margin =  {top: 20, right: 20, bottom: 30, left: 20};
+var margin =  {top: 20, right: 50, bottom: 30, left: 30};
 var width = 800 - margin.left - margin.right;
 var height =  110 - margin.top - margin.bottom;
 		
@@ -86,7 +86,9 @@ function generateSiteSelector() {
 			.orient("bottom");
 			
 	window.yAxis = d3.svg.axis()
-		.scale(overview_yscale)
+		.scale(pval_scale)
+		.tickValues([.01 + 0.1, 0.05 + 0.1, 1 + 0.1])
+		.tickFormat(function(d) {return d - 0.1;})
 		.orient("left");
 			
 	window.sitebarwidth = xScale.range()[1] / d3.max(xScale.domain());
@@ -103,10 +105,9 @@ function generateSiteSelector() {
 			.text("Vaccine sequence: " + vaccine.ID);
 	
 	window.siteselSVGg = overviewfieldset.append("svg")
-	    .attr("width", width + margin.right)
+	    .attr("width", width + margin.right + margin.left)
 	    .attr("height", height + margin.top + margin.bottom)
 		.attr("id", "siteselSVG")
-		.attr("transform", "translate(" + margin.left + ",0)")
 		.append("g")
 		.attr("id", "siteselSVGg")
 		.attr("width", width)
@@ -167,10 +168,9 @@ function generateSiteSelector() {
 		.attr("transform", "translate(0," + (height + 5) + ")")
 		.call(xAxis);
 		
-	/*siteselSVGg.append("g")
+	siteselSVGg.append("g")
 		.attr("class", "y axis")
-		.attr("transform", "translate(5,5)")
-		.call(yAxis);*/
+		.call(yAxis);
 	
 	function refresh() {
 		if (!shift_down) {
@@ -346,6 +346,7 @@ function yscale_selection()
 	{
 	case "pvalue":
 		yscale_mode = 0;
+		yAxis.scale(pval_scale);
 		break;
 	case "entropy":
 		yscale_mode = 1;
@@ -353,6 +354,7 @@ function yscale_selection()
 		{ //first time selection
 			entropy_scale.domain([0, _.max(entropies.full)]);
 		}
+		yAxis.scale(entropy_scale);
 		break;
 	case "constant":
 		yscale_mode = -1;
@@ -365,5 +367,5 @@ function yscale_selection()
 		.attr("y", function(d, i) { return overview_yscale(i); })
 		.attr("height", function(d, i) {return height - overview_yscale(i);});
 		
-	siteselSVGg.select(".y.axis").call(yAxis.scale(overview_yscale));
+	siteselSVGg.select(".y.axis").transition().call(yAxis);
 }

@@ -83,3 +83,7 @@ table {
 .selectionfieldset {
   display: inline-block;
 }
+
+.y.axis path {
+  display: none;
+}
