@@ -25,15 +25,11 @@ var numvac = 0;
 var numplac = 0;
 /** Array of p-values */
 var pvalues =[];
-/** Array of q-values (False Discovery Rate adjusted P-values) */
-var qvalues = [];
 /** Array of Entropy Values */
 var entropies = {full:[],vaccine:[],placebo:[]};
 
 d3.text("env.aa.92TH023.fasta", function(vacdata) {
 	dovacparsing(vacdata);
-  d3.csv("qvalues.csv").row(function(d) {qvalues.push(+d.qvalue);})
-    .get(function(error, rows) {;});
   d3.csv("pvalues.csv").row(function(d) {pvalues.push(+d.pvalue);})
     .get(function(error, rows) {;});
 	d3.csv("rv144_trt_lookup.csv", function(trt_lookup_data) {
