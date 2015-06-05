@@ -34,7 +34,8 @@ var shift_down = false;
 var last_updated;
 var yscale_mode = 0; //0 = pval, 1 = entropy, -1 = constant
 
-			
+var pval_scale_ticks = [0.01 + 0.1, 0.05 + 0.1, 0.2 + 0.1, 1 + 0.1];
+var entropy_scale_ticks = [];		
 
 // clear selecting mode even if you release your mouse elsewhere.
 d3.select(window).on("mouseup", function(){ last_updated = undefined; mouse_down = false; })
@@ -87,12 +88,12 @@ function generateSiteSelector() {
 			
 	window.yAxisl = d3.svg.axis()
 		.scale(pval_scale)
-		.tickValues([0.01 + 0.1, 0.05 + 0.1, 0.2 + 0.1, 1 + 0.1])
+		.tickValues(pval_scale_ticks)
 		.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;})
 		.orient("left");
 	window.yAxisr = d3.svg.axis()
 		.scale(pval_scale)
-		.tickValues([0.01 + 0.1, 0.05 + 0.1, 0.2 + 0.1, 1 + 0.1])
+		.tickValues(pval_scale_ticks)
 		.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;})
 		.orient("right");
 			
@@ -174,10 +175,10 @@ function generateSiteSelector() {
 		.call(xAxis);
 		
 	siteselSVGg.append("g")
-		.attr("class", "y axis")
+		.attr("class", "y axis l")
 		.call(yAxisl);
 	siteselSVGg.append("g")
-		.attr("class", "y axis")
+		.attr("class", "y axis r")
 		.attr("transform", "translate(" + width + ",0)")
 		.call(yAxisr);
 	
@@ -355,7 +356,8 @@ function yscale_selection()
 	{
 	case "pvalue":
 		yscale_mode = 0;
-		yAxis.scale(pval_scale);
+		yAxisl.scale(pval_scale).tickValues(pval_scale_ticks);
+		yAxisr.scale(pval_scale).tickValues(pval_scale_ticks);
 		break;
 	case "entropy":
 		yscale_mode = 1;
@@ -363,10 +365,13 @@ function yscale_selection()
 		{ //first time selection
 			entropy_scale.domain([0, _.max(entropies.full)]);
 		}
-		yAxis.scale(entropy_scale);
+		yAxisl.scale(entropy_scale).tickValues();
+		yAxisr.scale(entropy_scale).tickValues();
 		break;
 	case "constant":
 		yscale_mode = -1;
+		yAxisl.scale(entropy_scale).tickValues(0);
+		yAxisr.scale(entropy_scale).tickValues(0);
 		break;
 	}
 	
@@ -376,5 +381,6 @@ function yscale_selection()
 		.attr("y", function(d, i) { return overview_yscale(i); })
 		.attr("height", function(d, i) {return height - overview_yscale(i);});
 		
-	siteselSVGg.select(".y.axis").transition().call(yAxis);
+	siteselSVGg.select(".y.axis.l").transition().call(yAxisl);
+	siteselSVGg.select(".y.axis.r").transition().call(yAxisr);
 }
