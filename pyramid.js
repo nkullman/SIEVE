@@ -1,21 +1,40 @@
+var mismatchmode = 0 //0 = pyramid, 1 = box plot
+
+var pyramid_margin = {
+      top: 50,
+      right: 20,
+      bottom: 24,
+      left: 25,
+      middle: 20
+};
+
+var pyramid_width = 400,
+    pyramid_height = 150;
+
+// CREATE SVG
+var pyramid_svg = d3.select('#group').append('svg')
+      .attr('width', pyramid_margin.left + pyramid_width + pyramid_margin.right)
+      .attr('height', pyramid_margin.top + pyramid_height + pyramid_margin.bottom)
+      // ADD A GROUP FOR THE SPACE WITHIN THE MARGINS
+      .append('g')
+        .attr('transform', translation(pyramid_margin.left, pyramid_margin.top));
 
 function updatePyramid(sites){
     var possiblecounts = [];
     for(var patient in seqID_lookup){
       if(seqID_lookup[patient].mismatch != undefined){
-        mmcount = 0;
+        var mmcount = 0;
         for(var i = 0; i < sites.length; i++){
             mmcount += seqID_lookup[patient].mismatch[sites[i]]; 
         }
       }
       possiblecounts.push(mmcount);
     }
-    mincounts = d3.min(possiblecounts);
-    maxcounts = d3.max(possiblecounts);
-    skipcount = Math.ceil((maxcounts-mincounts)/16);
+    var mincounts = d3.min(possiblecounts);
+    var maxcounts = d3.max(possiblecounts);
+    var skipcount = Math.ceil((maxcounts-mincounts)/16);
     var tickvals = d3.range(mincounts,maxcounts+1).filter(function(d,i){return (i % skipcount === 0)});
-    PyramidDiv = d3.select("#group");
-    mdata = [];
+    var mdata = [];
     
     for(var i = 0; i < d3.max(possiblecounts)+1; i++){
         mdata.push({mismatches:i.toString(), vaccine:0, placebo:0});
@@ -33,27 +52,18 @@ function updatePyramid(sites){
           }
         }  
     }
-    
-  var w = 400,
-      h = 150;
   var maxValue = Math.max(
     d3.max(mdata, function(d) { return d.vaccine/numvac; }),
     d3.max(mdata, function(d) { return d.placebo/numplac; })
-  );    
-  var margin = {
-      top: 50,
-      right: 20,
-      bottom: 24,
-      left: 25,
-      middle: 20
-    };
-        
+  );
+  if (mismatchmode == 0)
+  {
     // the width of each side of the chart
-  var regionWidth = w/2 - margin.middle;
+  var regionWidth = pyramid_width/2 - pyramid_margin.middle;
 
     // these are the x-coordinates of the y-axes
   var pointA = regionWidth,
-        pointB = w - regionWidth;
+        pointB = pyramid_width - regionWidth;
     
   var xScale = d3.scale.linear()
       .domain([0, maxValue])
@@ -62,14 +72,14 @@ function updatePyramid(sites){
    
   var yScale = d3.scale.ordinal()
       .domain(d3.range(mincounts,maxcounts+1))
-      .rangeRoundBands([h,0],0.1);
+      .rangeRoundBands([pyramid_height,0],0.1);
 
   var yAxisLeft = d3.svg.axis()
       .scale(yScale)
       .orient('right')
       .tickValues(tickvals)
       .tickSize(4,0)
-      .tickPadding(margin.middle-4);
+      .tickPadding(pyramid_margin.middle-4);
 
   var yAxisRight = d3.svg.axis()
       .scale(yScale)
@@ -90,30 +100,30 @@ function updatePyramid(sites){
       .ticks(5)
       .tickFormat(d3.format(''));
       
-  PyramidDiv.select(".axis.y.left")
+  pyramid_svg.select(".axis.y.left")
             .transition()
             .call(yAxisLeft)
             .selectAll('text')
             .style('text-anchor', 'middle');
             
-  PyramidDiv.select('.axis.y.right')
+  pyramid_svg.select('.axis.y.right')
             .transition()
             .call(yAxisRight);
             
-  PyramidDiv.transition()
+  pyramid_svg.transition()
             .select('.axis.x.left')
             .call(xAxisLeft);
   
-  PyramidDiv.select('.axis.x.right')
+  pyramid_svg.select('.axis.x.right')
             .transition()
             .call(xAxisRight);
             
-  var leftBars = PyramidDiv.select('.lgroup')
+  var leftBars = pyramid_svg.select('.lgroup')
                            .selectAll('.bar.left')
                            .data(mdata,id);
   leftBars.exit().remove();
   
-  var rightBars = PyramidDiv.select('.rgroup')
+  var rightBars = pyramid_svg.select('.rgroup')
                             .selectAll('.bar.right')
                             .data(mdata,id);
   rightBars.exit().remove();
@@ -142,8 +152,7 @@ function updatePyramid(sites){
            .attr('y', function(d) {return yScale(d.mismatches); })
            .attr('width', function(d) { return xScale(d.placebo / numplac); })
            .attr('height', yScale.rangeBand()); 
-           
-
+  }        
 }
 function drawPyramid(sites){
     var possiblecounts = [];
@@ -175,33 +184,13 @@ function drawPyramid(sites){
         }
         
     }
-    var w = 400,
-        h = 150;
-        
-    // margin.middle is distance from center line to each y-axis
-    var margin = {
-      top: 50,
-      right: 20,
-      bottom: 24,
-      left: 25,
-      middle: 20
-    };
         
     // the width of each side of the chart
-    var regionWidth = w/2 - margin.middle;
+    var regionWidth = pyramid_width/2 - pyramid_margin.middle;
 
     // these are the x-coordinates of the y-axes
     var pointA = regionWidth,
-        pointB = w - regionWidth;
-      
-    // CREATE SVG
-    var svg = d3.select('#group').append('svg')
-      .attr('width', margin.left + w + margin.right)
-      .attr('height', margin.top + h + margin.bottom)
-      // ADD A GROUP FOR THE SPACE WITHIN THE MARGINS
-      .append('g')
-        .attr('transform', translation(margin.left, margin.top));  
-
+        pointB = pyramid_width - regionWidth; 
     
     // the xScale goes from 0 to the width of a region
     //  it will be reversed for the left x-axis
@@ -220,14 +209,14 @@ function drawPyramid(sites){
 
     var yScale = d3.scale.ordinal()
       .domain(mmdata.map(function(d) { return d.mismatches; }))
-      .rangeRoundBands([h,0], 0.1);
+      .rangeRoundBands([pyramid_height,0], 0.1);
 
     var yAxisLeft = d3.svg.axis()
       .scale(yScale)
       .orient('right')
       .ticks(18)
       .tickSize(4,0)
-      .tickPadding(margin.middle-4);
+      .tickPadding(pyramid_margin.middle-4);
 
     var yAxisRight = d3.svg.axis()
       .scale(yScale)
@@ -248,57 +237,57 @@ function drawPyramid(sites){
       .ticks(5)
       .tickFormat(d3.format(''));
 
-    var leftBarGroup = svg.append('g')
+    var leftBarGroup = pyramid_svg.append('g')
       .attr('class', 'lgroup')
       .attr('transform', translation(pointA, 0) + 'scale(-1,1)');
-    var rightBarGroup = svg.append('g')
+    var rightBarGroup = pyramid_svg.append('g')
       .attr('class', 'rgroup')
       .attr('transform', translation(pointB, 0));
 
-    svg.append('g')
+    pyramid_svg.append('g')
       .attr('class', 'axis y left')
       .attr('transform', translation(pointA, 0))
       .call(yAxisLeft)
       .selectAll('text')
       .style('text-anchor', 'middle');
 
-    svg.append('g')
+    pyramid_svg.append('g')
       .attr('class', 'axis y right')
       .attr('transform', translation(pointB, 0))
       .call(yAxisRight);
      
      // draw title
-    svg.append("text")
-      .attr("x",w/2)
+    pyramid_svg.append("text")
+      .attr("x",pyramid_width/2)
       .attr("y",-30)
       .style("text-anchor","middle")
       .style("font-size","15px")
       .text("Distribution of Mismatch Counts Across Selected Sites");
     // labels etc.  
-    svg.append('text')
+    pyramid_svg.append('text')
       .text("Vaccine Group")
       .attr('x',0)
       .attr('y',0);
-    svg.append('text')
+    pyramid_svg.append('text')
       .text("Placebo Group")
       .attr('x',330)
       .attr('y',0);
       
-    svg.append("text")
+    pyramid_svg.append("text")
       .text("Number of Mismatches")
-      .attr("x",w/2)
+      .attr("x",pyramid_width/2)
       .attr("y",-2)
       .style("text-anchor","middle");
 
-    svg.append('g')
+    pyramid_svg.append('g')
       .attr('class', 'axis x left')
-      .attr('transform', translation(0, h))
+      .attr('transform', translation(0, pyramid_height))
       .text("Vaccine Group")
       .call(xAxisLeft);
 
-    svg.append('g')
+    pyramid_svg.append('g')
       .attr('class', 'axis x right')
-      .attr('transform', translation(pointB, h))
+      .attr('transform', translation(pointB, pyramid_height))
       .call(xAxisRight);
 
     leftBarGroup.selectAll('.bar.left')
