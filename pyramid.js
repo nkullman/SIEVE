@@ -21,6 +21,9 @@ var pyramid_svg = d3.select('#group').append('svg')
       .append('g')
         .attr('transform', translation(pyramid_margin.left, pyramid_margin.top));
 
+d3.select("#mismatch_selector")
+  .on("input", update_mismatchmode);
+
 function updatePyramid(sites){
   if (mismatchmode == 0)
   {
@@ -167,9 +170,9 @@ function updatePyramid(sites){
         var mmcount = d3.sum(sites.map(function(d) { return seqID_lookup[patient].mismatch[d]; }));
         if (seqID_lookup[patient].vaccine)
         {
-           mmdata[0].push(mmcount/numvac);
+           mmdata[0].push(mmcount);
         } else {
-           mmdata[1].push(mmcount/numplac);
+           mmdata[1].push(mmcount);
         }
       }
     }
@@ -180,7 +183,7 @@ function updatePyramid(sites){
       .nice(); 
     var yscale = d3.scale.ordinal()
       .domain([0, 1])
-      .rangeRoundPoints([0, 100]);
+      .rangeRoundPoints([20, 100]);
     var xaxis = d3.svg.axis()
       .scale(xscale)
       .orient("bottom");
@@ -416,9 +419,9 @@ function drawBoxplot(sites)
       var mmcount = d3.sum(sites.map(function(d) { return seqID_lookup[patient].mismatch[d]; }));
       if (seqID_lookup[patient].vaccine)
       {
-        mmdata[0].push(mmcount/numvac);
+        mmdata[0].push(mmcount);
       } else {
-        mmdata[1].push(mmcount/numplac);
+        mmdata[1].push(mmcount);
       }
     }
   }
@@ -430,7 +433,7 @@ function drawBoxplot(sites)
   
   var yscale = d3.scale.ordinal()
     .domain([0, 1])
-    .rangeRoundPoints([0, 100]);
+    .rangeRoundPoints([20, 100]);
   
   var xaxis = d3.svg.axis()
     .scale(xscale)
@@ -440,6 +443,13 @@ function drawBoxplot(sites)
     .scale(yscale)
     .orient("left")
     .tickFormat(function(d) { return ["Vaccine Group", "Placebo Group"][d]; });
+  
+    pyramid_svg.append("text")
+      .attr("x",pyramid_width/2)
+      .attr("y",-30)
+      .style("text-anchor","middle")
+      .style("font-size","15px")
+      .text("Distribution of Mismatch Counts Across Selected Sites");
   
   pyramid_svg.selectAll(".box")
     .data(mmdata)
@@ -493,9 +503,13 @@ function drawBoxplot(sites)
   }
   
   pyramid_svg.append("g")
-    .attr("transform", translation(leftmargin, 100+box_height))
+    .attr("transform", translation(leftmargin, yscale(1)+box_height/2+10))
     .attr("class", "xbox axis")
-    .call(xaxis);
+    .call(xaxis)
+    .append("text")
+      .attr("transform", translation(xscale.range()[1]/2, 30))
+      .style("text-anchor", "middle")
+      .text("Number of Mismatches");
   
   pyramid_svg.append("g")
     .attr("class", "ybox axis")
@@ -503,18 +517,21 @@ function drawBoxplot(sites)
     .call(yaxis);
 }
 
-function update_mismatchmode(mode)
+function update_mismatchmode()
 {
   var parent = d3.select(pyramid_svg.node().parentNode);
   pyramid_svg.remove();
   pyramid_svg = parent.append('g')
         .attr('transform', translation(pyramid_margin.left, pyramid_margin.top));
-  mismatchmode = mode;
-  switch (mode)
+  switch (d3.event.target.value)
   {
-  case 0:
+  case "pyramid":
+    mismatchmode = 0;
     drawPyramid(selected_sites);
-  case 1:
+    return;
+  case "box":
+    mismatchmode = 1;
     drawBoxplot(selected_sites);
+    return;
   }
 }
