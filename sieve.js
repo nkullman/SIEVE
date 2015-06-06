@@ -12,9 +12,9 @@ var barchartmargin = {top: 15, right: 100, bottom: 10, left: 50},
 	barchartwidth = 250,
 	barchartheight = 70;
 
-var margin =  {top: 20, right: 50, bottom: 30, left: 30};
+var margin =  {top: 20, right: 50, bottom: 40, left: 50};
 var width = 800 - margin.left - margin.right;
-var height =  110 - margin.top - margin.bottom;
+var height =  140 - margin.top - margin.bottom;
 		
 var plac_scale = d3.scale.linear()
 	.range([0, barwidth]);
@@ -35,6 +35,12 @@ var last_updated;
 var yscale_mode = 0; //0 = pval, 1 = entropy, -1 = constant
 
 var pval_scale_ticks = [0.01 + 0.1, 0.05 + 0.1, 0.2 + 0.1, 1 + 0.1];
+function entropy_scale_ticks(entropy_scale_domain){
+	var ticks = d3.range(0, entropy_scale_domain[1]);
+	ticks.push(entropy_scale_domain[1]);
+	return ticks;
+}
+var selaxistitle = "p-value";
 
 // clear selecting mode even if you release your mouse elsewhere.
 d3.select(window).on("mouseup", function(){ last_updated = undefined; mouse_down = false; })
@@ -172,13 +178,26 @@ function generateSiteSelector() {
 		.attr("class", "x axis")
 		.attr("transform", "translate(0," + (height + 5) + ")")
 		.call(xAxis);
+	d3.select("#siteselSVG").append("text")
+		.attr("class", "x axis label")
+		.attr("text-anchor", "middle")
+		.attr("x", (width + margin.left + margin.right)/2)
+		.attr("y", (height + margin.top + .9*margin.bottom))
+		.text("HXB2 position");
 		
 	siteselSVGg.append("g")
 		.attr("class", "y axis l")
+		.attr("transform", "translate(-5,0)")
 		.call(yAxisl);
+	siteselSVGg.append("text")
+		.attr("class", "y axis label")
+		.attr("text-anchor", "end")
+		.attr("x", -5)
+		.attr("y", -margin.top/2)
+		.text(selaxistitle);
 	siteselSVGg.append("g")
 		.attr("class", "y axis r")
-		.attr("transform", "translate(" + width + ",0)")
+		.attr("transform", "translate(" + (width+5) + ",0)")
 		.call(yAxisr);
 	
 	function refresh() {
@@ -204,8 +223,18 @@ function generateSiteSelector() {
 			.attr("x", margin.left + width)
 			.attr("y", -margin.top/2)
 			.attr("text-anchor", "end")
-			.text("HXB2 Pos: " + envmap[i].hxb2Pos +
-					" // p-value: " + pvalues[i].toPrecision(2));
+			.text(function () {
+				console.log("d is " + d + " and i is " + i);
+				if (yscale_mode === 0){ 
+					return "HXB2 Pos: " + envmap[i].hxb2Pos +
+						" // p-value: " + pvalues[i].toPrecision(2);
+				} else if (yscale_mode === 1) {
+					return "HXB2 Pos: " + envmap[i].hxb2Pos +
+						" // entropy: " + entropies.full[i];
+				} else {
+					return "HXB2 Pos: " + envmap[i].hxb2Pos;
+				}
+			});
 		
 		if (!mouse_down || !shift_down) { return; }
 		
@@ -359,6 +388,7 @@ function yscale_selection()
 			.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;});
 		yAxisr.scale(pval_scale).tickValues(pval_scale_ticks)
 			.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;});
+		selaxistitle = "p-value";
 		break;
 	case "entropy":
 		yscale_mode = 1;
@@ -366,15 +396,18 @@ function yscale_selection()
 		{ //first time selection
 			entropy_scale.domain([0, _.max(entropies.full)]);
 		}
-		yAxisl.scale(entropy_scale).tickValues(d3.range(0, Math.ceil(entropy_scale.domain()[1]+1)))
+		
+		yAxisl.scale(entropy_scale).tickValues(entropy_scale_ticks(entropy_scale.domain()))
 			.tickFormat(function(d) {return Math.round(d*100)/100;});
-		yAxisr.scale(entropy_scale).tickValues(d3.range(0, Math.ceil(entropy_scale.domain()[1])))
-			.tickFormat(function(d) {return Math.round(d*100)/100;});;
+		yAxisr.scale(entropy_scale).tickValues(entropy_scale_ticks(entropy_scale.domain()))
+			.tickFormat(function(d) {return Math.round(d*100)/100;});
+		selaxistitle = "entropy";
 		break;
 	case "constant":
 		yscale_mode = -1;
 		yAxisl.scale(entropy_scale).tickValues(0);
 		yAxisr.scale(entropy_scale).tickValues(0);
+		selaxistitle = "";
 		break;
 	}
 	
@@ -386,4 +419,5 @@ function yscale_selection()
 		
 	siteselSVGg.select(".y.axis.l").transition().call(yAxisl);
 	siteselSVGg.select(".y.axis.r").transition().call(yAxisr);
+	d3.select(".y.axis.label").text(selaxistitle);
 }
