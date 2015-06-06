@@ -40,7 +40,7 @@ function entropy_scale_ticks(entropy_scale_domain){
 	ticks.push(entropy_scale_domain[1]);
 	return ticks;
 }
-var selaxistitle = "p-val";
+var selaxistitle = "p-value";
 
 // clear selecting mode even if you release your mouse elsewhere.
 d3.select(window).on("mouseup", function(){ last_updated = undefined; mouse_down = false; })
@@ -189,6 +189,12 @@ function generateSiteSelector() {
 		.attr("class", "y axis l")
 		.attr("transform", "translate(-5,0)")
 		.call(yAxisl);
+	siteselSVGg.append("text")
+		.attr("class", "y axis label")
+		.attr("text-anchor", "end")
+		.attr("x", -5)
+		.attr("y", -margin.top/2)
+		.text(selaxistitle);
 	siteselSVGg.append("g")
 		.attr("class", "y axis r")
 		.attr("transform", "translate(" + (width+5) + ",0)")
@@ -372,6 +378,7 @@ function yscale_selection()
 			.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;});
 		yAxisr.scale(pval_scale).tickValues(pval_scale_ticks)
 			.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;});
+		selaxistitle = "p-value";
 		break;
 	case "entropy":
 		yscale_mode = 1;
@@ -384,11 +391,13 @@ function yscale_selection()
 			.tickFormat(function(d) {return Math.round(d*100)/100;});
 		yAxisr.scale(entropy_scale).tickValues(entropy_scale_ticks(entropy_scale.domain()))
 			.tickFormat(function(d) {return Math.round(d*100)/100;});
+		selaxistitle = "entropy";
 		break;
 	case "constant":
 		yscale_mode = -1;
 		yAxisl.scale(entropy_scale).tickValues(0);
 		yAxisr.scale(entropy_scale).tickValues(0);
+		selaxistitle = "";
 		break;
 	}
 	
@@ -400,4 +409,5 @@ function yscale_selection()
 		
 	siteselSVGg.select(".y.axis.l").transition().call(yAxisl);
 	siteselSVGg.select(".y.axis.r").transition().call(yAxisr);
+	d3.select(".y.axis.label").text(selaxistitle);
 }
