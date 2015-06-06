@@ -223,8 +223,18 @@ function generateSiteSelector() {
 			.attr("x", margin.left + width)
 			.attr("y", -margin.top/2)
 			.attr("text-anchor", "end")
-			.text("HXB2 Pos: " + envmap[i].hxb2Pos +
-					" // p-value: " + pvalues[i].toPrecision(2));
+			.text(function () {
+				console.log("d is " + d + " and i is " + i);
+				if (yscale_mode === 0){ 
+					return "HXB2 Pos: " + envmap[i].hxb2Pos +
+						" // p-value: " + pvalues[i].toPrecision(2);
+				} else if (yscale_mode === 1) {
+					return "HXB2 Pos: " + envmap[i].hxb2Pos +
+						" // entropy: " + entropies.full[i];
+				} else {
+					return "HXB2 Pos: " + envmap[i].hxb2Pos;
+				}
+			});
 		
 		if (!mouse_down || !shift_down) { return; }
 		
