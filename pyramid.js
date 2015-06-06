@@ -11,6 +11,8 @@ var pyramid_margin = {
 var pyramid_width = 400,
     pyramid_height = 150;
 
+var box_width = 300, box_height = 50;
+
 // CREATE SVG
 var pyramid_svg = d3.select('#group').append('svg')
       .attr('width', pyramid_margin.left + pyramid_width + pyramid_margin.right)
@@ -158,7 +160,7 @@ function drawPyramid(sites){
     var possiblecounts = [];
     for(var patient in seqID_lookup){
       if(seqID_lookup[patient].mismatch != undefined){
-        mmcount = 0;
+        var mmcount = 0;
         for(var i = 0; i < sites.length; i++){
             mmcount += seqID_lookup[patient].mismatch[sites[i]]; 
         }
@@ -166,7 +168,7 @@ function drawPyramid(sites){
       possiblecounts.push(mmcount);
     }
     
-    mmdata = [];
+    var mmdata = [];
     for(var i = 0; i < sites.length+1; i++){
         mmdata.push({mismatches:i.toString(), vaccine:0, placebo:0});
         }
@@ -184,9 +186,20 @@ function drawPyramid(sites){
         }
         
     }
+    
+  if (mismatchmode == 0)
+  {
         
     // the width of each side of the chart
     var regionWidth = pyramid_width/2 - pyramid_margin.middle;
+    var mincounts = d3.min(possiblecounts);
+    var maxcounts = d3.max(possiblecounts);
+    var skipcount = Math.ceil((maxcounts-mincounts)/16);
+    var tickvals = d3.range(mincounts,maxcounts+1).filter(function(d,i){return (i % skipcount === 0)});
+    var maxValue = Math.max(
+      d3.max(mmdata, function(d) { return d.vaccine; })/numvac,
+      d3.max(mmdata, function(d) { return d.placebo; })/numplac
+    );
 
     // these are the x-coordinates of the y-axes
     var pointA = regionWidth,
@@ -195,33 +208,25 @@ function drawPyramid(sites){
     // the xScale goes from 0 to the width of a region
     //  it will be reversed for the left x-axis
     var xScale = d3.scale.linear()
-      .domain([0, 1])
+      .domain([0, maxValue])
       .range([0, regionWidth])
       .nice();
 
-    var xScaleLeft = d3.scale.linear()
-      .domain([0, 1])
-      .range([regionWidth, 0]);
-
-    var xScaleRight = d3.scale.linear()
-      .domain([0, 1])
-      .range([0, regionWidth]);
-
     var yScale = d3.scale.ordinal()
-      .domain(mmdata.map(function(d) { return d.mismatches; }))
+      .domain(d3.range(mincounts,maxcounts+1))
       .rangeRoundBands([pyramid_height,0], 0.1);
 
     var yAxisLeft = d3.svg.axis()
       .scale(yScale)
       .orient('right')
-      .ticks(18)
+      .ticks(tickvals)
       .tickSize(4,0)
       .tickPadding(pyramid_margin.middle-4);
 
     var yAxisRight = d3.svg.axis()
       .scale(yScale)
       .orient('left')
-      .ticks(18)
+      .ticks(tickvals)
       .tickSize(4,0)
       .tickFormat('');
 
@@ -308,11 +313,26 @@ function drawPyramid(sites){
         .attr('y', function(d) { return yScale(d.mismatches); })
         .attr('width', function(d) { return xScale(d.placebo / numplac); })
         .attr('height', yScale.rangeBand()).style("fill","steelblue");
-    }
+  } else if(mismatchmode == 1)
+  {
+      
+  }
+}
+
 function translation(x,y) {
   return 'translate(' + x + ',' + y + ')';
-  }
+}
   
- function id(d){
-   return d.mismatches;
- }
+function id(d){
+  return d.mismatches;
+}
+
+function update_mismatchmode(mode)
+{
+  var parent = d3.select(pyramid_svg.node().parentNode);
+  pyramid_svg.remove();
+  pyramid_svg = parent.append('g')
+        .attr('transform', translation(pyramid_margin.left, pyramid_margin.top));
+  mismatchmode = mode;
+  drawPyramid(selected_sites);
+}
