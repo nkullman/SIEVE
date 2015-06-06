@@ -186,9 +186,6 @@ function drawPyramid(sites){
         }
         
     }
-    
-  if (mismatchmode == 0)
-  {
         
     // the width of each side of the chart
     var regionWidth = pyramid_width/2 - pyramid_margin.middle;
@@ -313,10 +310,6 @@ function drawPyramid(sites){
         .attr('y', function(d) { return yScale(d.mismatches); })
         .attr('width', function(d) { return xScale(d.placebo / numplac); })
         .attr('height', yScale.rangeBand()).style("fill","steelblue");
-  } else if(mismatchmode == 1)
-  {
-      
-  }
 }
 
 function translation(x,y) {
@@ -327,6 +320,92 @@ function id(d){
   return d.mismatches;
 }
 
+function drawBoxplot(sites)
+{
+  var mmdata = [[],[]];
+  for (var patient in seqID_lookup)
+  {
+    if (seqID_lookup[patient].mismatch != undefined)
+    {
+      var mmcount = d3.sum(sites.map(function(d) { return seqID_lookup[patient].mismatch[d]; }));
+      if (seqID_lookup[patient].vaccine)
+      {
+        mmdata[0].push(mmcount/numvac);
+      } else {
+        mmdata[1].push(mmcount/numplac);
+      }
+    }
+  }
+  
+  var xscale = d3.scale.linear()
+    .domain([0, Math.max(d3.max(mmdata[0]), d3.max(mmdata[1]))])
+    .range([0, box_width])
+    .nice();
+  
+  var yscale = d3.scale.ordinal()
+    .domain([0, 1])
+    .rangeRoundPoints([0, 100]);
+  
+  var xaxis = d3.svg.axis()
+    .scale(xscale)
+    .orient("bottom");
+  
+  var yaxis = d3.svg.axis()
+    .scale(yscale)
+    .orient("left");
+  
+  pyramid_svg.selectAll("g")
+    .data(mmdata)
+    .enter().append("g")
+      .attr("class", "box")
+      .attr("transform", function(d, i) {return translation(5, yscale(i)); })
+      .each(create_box);
+  function create_box(d, i)
+  {
+    var box = d3.select(this);
+    var arr = d.sort(d3.ascending);
+    var q0 = d3.quantile(arr, 0),
+      q1 = d3.quantile(arr, .25),
+      q2 = d3.quantile(arr, .5),
+      q3 = d3.quantile(arr, .75),
+      q4 = d3.quantile(arr, 1);
+    box.append("rect")
+      .attr("class", "middle50")
+      .attr("x", xscale(q1))
+      .attr("y", -box_height/2)
+      .attr("width", xscale(q3-q1))
+      .attr("height", box_height);
+      
+    box.append("line")
+      .attr("class", "median")
+      .attr("x1", xscale(q2))
+      .attr("x2", xscale(q2))
+      .attr("y1", -box_height/2)
+      .attr("y2", box_height/2);
+    
+    box.append("line")
+      .attr("class", "outer25")
+      .attr("x1", xscale(q3))
+      .attr("x2", xscale(q4));
+    box.append("line")
+      .attr("class", "outer25")
+      .attr("x1", xscale(q0))
+      .attr("x2", xscale(q1));
+    box.append("line")
+      .attr("class", "whisker")
+      .attr("x1", xscale(q0))
+      .attr("x2", xscale(q0))
+      .attr("y1", -box_height/2)
+      .attr("y2", box_height/2);
+      box.append("line")
+      .attr("class", "whisker")
+      .attr("x1", xscale(q4))
+      .attr("x2", xscale(q4))
+      .attr("y1", -box_height/2)
+      .attr("y2", box_height/2);
+  }
+}
+
 function update_mismatchmode(mode)
 {
   var parent = d3.select(pyramid_svg.node().parentNode);
@@ -334,5 +413,11 @@ function update_mismatchmode(mode)
   pyramid_svg = parent.append('g')
         .attr('transform', translation(pyramid_margin.left, pyramid_margin.top));
   mismatchmode = mode;
-  drawPyramid(selected_sites);
+  switch (mode)
+  {
+  case 0:
+    drawPyramid(selected_sites);
+  case 1:
+    drawBoxplot(fig3array);
+  }
 }

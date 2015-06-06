@@ -87,3 +87,21 @@ table {
 .y.axis path {
   display: none;
 }
+
+.box .whisker,
+.box .median {
+  stroke: #000;
+  stroke-width: 1px;
+}
+
+.box .middle50 {
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 1px;
+}
+
+.box .outer25 {
+  stroke: #000;
+  stroke-width: 1px;
+  stroke-dasharray: 3,3;
+}
