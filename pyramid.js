@@ -141,14 +141,26 @@ function updatePyramid(sites){
         .attr('width', function(d) {return xScale(d.vaccine / numvac); })
         .attr('height', yScale.rangeBand())
         .style("fill","red");
+    d3.selectAll(".bar.left>title").remove();
+    d3.selectAll(".bar.left")
+      .on("mouseover", function() {d3.select(this).attr("opacity", 0.5);})
+      .on("mouseout", function() {d3.select(this).attr("opacity", 1);})
+      .append("svg:title")
+        .text(function(d){return ((d.vaccine/numvac)*100).toPrecision(2) + "% of patients";});
         
   rightBars.enter().append('rect')
         .attr('class','bar right')
         .attr('x', 0)
         .attr('y', function(d) {return yScale(d.mismatches); })
-        .attr('width', function(d) {return xScale(d.vaccine / numvac); })
+        .attr('width', function(d) {return xScale(d.placebo / numplac); })
         .attr('height', yScale.rangeBand())
         .style("fill","steelblue");
+   d3.selectAll(".bar.right>title").remove();
+   d3.selectAll(".bar.right")
+      .on("mouseover", function() {d3.select(this).attr("opacity", 0.5);})
+      .on("mouseout", function() {d3.select(this).attr("opacity", 1);})
+      .append("svg:title")
+        .text(function(d) {return ((d.placebo/numplac)*100).toPrecision(2) + "% of patients";});
   leftBars.transition()
           .attr('y', function(d) {return yScale(d.mismatches); })
           .attr('width', function(d) {return xScale(d.vaccine / numvac); })
