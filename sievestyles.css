@@ -83,3 +83,28 @@ table {
 .selectionfieldset {
   display: inline-block;
 }
+
+.y.axis path {
+  display: none;
+}
+
+.box .whisker {
+  stroke: #000;
+  stroke-width: 1px;
+}
+.box .median {
+  stroke: #000;
+  stroke-width: 2px;
+}
+
+.box .middle50 {
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 1px;
+}
+
+.box .outer25 {
+  stroke: #000;
+  stroke-width: 1px;
+  stroke-dasharray: 3,3;
+}
