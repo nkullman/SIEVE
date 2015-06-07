@@ -275,7 +275,8 @@ function updatePyramid(sites){
           .attr("cx", xscale)
           .attr("r", box_height/16);
     }
-  }        
+  }
+  if (selected_sites.length === 0) {d3.selectAll(".bar.left,.bar.right").remove();}        
 }
 function drawPyramid(sites){
     var possiblecounts = [];
@@ -431,6 +432,8 @@ function drawPyramid(sites){
         .attr('y', function(d) { return yScale(d.mismatches); })
         .attr('width', function(d) { return xScale(d.placebo / numplac); })
         .attr('height', yScale.rangeBand()).style("fill","steelblue");
+        
+    if (selected_sites.length === 0) {d3.selectAll(".bar.right,.bar.left").remove();}
 }
 
 function translation(x,y) {
