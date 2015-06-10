@@ -15,6 +15,6 @@ Access our visualization at http://cse512-15s.github.io/fp-nkullman-gclenagh-wfy
 
 ## Credits
 
-* Nick Kullman: Overview chart, loading files
-* Graham Clenaghan: Site stacked bar charts, selection, options 
-* Wayne Yang: Statistics/R calculations, pyramid chart, entropy table 
+* Nick Kullman: Overview chart navigation and design, loading files
+* Graham Clenaghan: Site stacked bar charts, selection, options, box plots
+* Wayne Yang: Statistics/R calculations, pyramid chart, entropy and mismatch table 
