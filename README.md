@@ -2,7 +2,7 @@ S.I.E.V.E: Statistical Interactive Explorer of Vaccine Efficacy
 ===============
 Nick Kullman, Graham Clenaghan, Wayne Yang
 
-![Overview](images/overview.png)
+![Overview](images/summary.png)
 
 SIEVE is an intereactive visualization for exploring data from vaccine studies. Specifically, we aim to aid the process of sieve analysis, which compares the genetic sequences of viruses found in infected patients between vaccine and placebo groups. The visualization allows researchers in the field to study the affect of a vaccine at the level of the amino acids in the breakthrough viruses, and find statistically significant differences in the groups. This work was done in collaboration with Andrew Gartland and Allan DeCamp at Fred Hutch.
 
