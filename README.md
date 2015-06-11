@@ -6,8 +6,8 @@ Nick Kullman, Graham Clenaghan, Wayne Yang
 
 SIEVE is an intereactive visualization for exploring data from vaccine studies. Specifically, we aim to aid the process of sieve analysis, which compares the genetic sequences of viruses found in infected patients between vaccine and placebo groups. The visualization allows researchers in the field to study the affect of a vaccine at the level of the amino acids in the breakthrough viruses, and find statistically significant differences in the groups. This work was done in collaboration with Andrew Gartland and Allan DeCamp at Fred Hutch.
 
-[Poster](https://github.com/CSE512-15S/fp-nkullman-gclenagh-wfyang/raw/master/poster/Poster.pdf),
-[Paper](https://github.com/CSE512-15S/fp-nkullman-gclenagh-wfyang/blob/master/final/Poster.pdf),
+[Poster](https://github.com/CSE512-15S/fp-nkullman-gclenagh-wfyang/blob/master/poster/Poster.pdf),
+[Paper](https://github.com/CSE512-15S/fp-nkullman-gclenagh-wfyang/blob/master/final/Paper.pdf),
 [Webpage](http://cse512-15s.github.io/fp-nkullman-gclenagh-wfyang/description.html)
 
 ## Running Instructions
