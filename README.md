@@ -14,6 +14,19 @@ SIEVE is an intereactive visualization for exploring data from vaccine studies. 
 
 Access our visualization at http://cse512-15s.github.io/fp-nkullman-gclenagh-wfyang/main.html or download this repository and run `python -m SimpleHTTPServer 9000` and access this from http://localhost:9000/main.html.
 
+## Research/Development Process
+
+The researchers we worked with wanted an interactive and automated version of graphics which had already appeared in a paper:
+
+![fig2](progress/fig2.jpg)
+![fig3](progress/fig3.jpg)
+
+We used these as inspiration and split the project into three parts which were our initial roles: Nick worked on an overview chart which showed the entire reference genome and would allow selection of sites,
+Graham worked on a stacked bar chart showing the mismatch counts for each site, and Wayne implemented the statistics methods and wrote graphics and a table to put statistics for the selected group as a whole.
+
+After the first working prototype, we met again with the researchers and continued to polish the tool and tailor it to how they intended to use it, for instance adding a "Select by HXB2" option so that if
+one had a specific site in mind, they could select it without having to use the interface to find it. 
+
 ## Credits
 
 * Nick Kullman: Overview chart navigation and design, loading files
