@@ -141,14 +141,26 @@ function updatePyramid(sites){
         .attr('width', function(d) {return xScale(d.vaccine / numvac); })
         .attr('height', yScale.rangeBand())
         .style("fill","red");
+    d3.selectAll(".bar.left>title").remove();
+    d3.selectAll(".bar.left")
+      .on("mouseover", function() {d3.select(this).attr("opacity", 0.5);})
+      .on("mouseout", function() {d3.select(this).attr("opacity", 1);})
+      .append("svg:title")
+        .text(function(d){return ((d.vaccine/numvac)*100).toPrecision(2) + "% of patients";});
         
   rightBars.enter().append('rect')
         .attr('class','bar right')
         .attr('x', 0)
         .attr('y', function(d) {return yScale(d.mismatches); })
-        .attr('width', function(d) {return xScale(d.vaccine / numvac); })
+        .attr('width', function(d) {return xScale(d.placebo / numplac); })
         .attr('height', yScale.rangeBand())
         .style("fill","steelblue");
+   d3.selectAll(".bar.right>title").remove();
+   d3.selectAll(".bar.right")
+      .on("mouseover", function() {d3.select(this).attr("opacity", 0.5);})
+      .on("mouseout", function() {d3.select(this).attr("opacity", 1);})
+      .append("svg:title")
+        .text(function(d) {return ((d.placebo/numplac)*100).toPrecision(2) + "% of patients";});
   leftBars.transition()
           .attr('y', function(d) {return yScale(d.mismatches); })
           .attr('width', function(d) {return xScale(d.vaccine / numvac); })
@@ -207,11 +219,19 @@ function updatePyramid(sites){
     {
       var box = d3.select(this);
       var arr = d.sort(d3.ascending);
-      var q0 = d3.quantile(arr, 0),
-        q1 = d3.quantile(arr, .25),
+      var q1 = d3.quantile(arr, .25),
         q2 = d3.quantile(arr, .5),
-        q3 = d3.quantile(arr, .75),
-        q4 = d3.quantile(arr, 1);
+        q3 = d3.quantile(arr, .75);
+        
+      var lower_cutoff = q2 - 1.5*(q3-q1);
+      var upper_cutoff = q2 + 1.5*(q3-q1);
+    
+      var outliers = arr.splice(0, _.sortedIndex(arr, lower_cutoff-.25)) //remove and save lower outliers
+      outliers = outliers.concat(arr.splice(_.sortedIndex(arr, upper_cutoff+.25), Infinity)) //remove upper outliers
+    
+      var q0 = arr[0];
+      var q4 = arr[arr.length-1];
+    
       
      box.select(".middle50").transition()
       .attr("x", xscale(q1))
@@ -241,8 +261,22 @@ function updatePyramid(sites){
       .attr("x2", xscale(q4))
       .attr("y1", -box_height/2)
       .attr("y2", box_height/2);
+    
+      var outlier_selection = box.selectAll(".outlier")
+        .data(outliers);
+      
+      outlier_selection.transition()
+        .attr("cx", xscale);
+      outlier_selection.exit().transition()
+        .attr("opacity", 0)
+        .remove();
+      outlier_selection.enter().append("circle")
+          .attr("class", "outlier")
+          .attr("cx", xscale)
+          .attr("r", box_height/16);
     }
-  }        
+  }
+  if (selected_sites.length === 0) {d3.selectAll(".bar.left,.bar.right").remove();}        
 }
 function drawPyramid(sites){
     var possiblecounts = [];
@@ -398,6 +432,8 @@ function drawPyramid(sites){
         .attr('y', function(d) { return yScale(d.mismatches); })
         .attr('width', function(d) { return xScale(d.placebo / numplac); })
         .attr('height', yScale.rangeBand()).style("fill","steelblue");
+        
+    if (selected_sites.length === 0) {d3.selectAll(".bar.right,.bar.left").remove();}
 }
 
 function translation(x,y) {
@@ -461,11 +497,19 @@ function drawBoxplot(sites)
   {
     var box = d3.select(this);
     var arr = d.sort(d3.ascending);
-    var q0 = d3.quantile(arr, 0),
-      q1 = d3.quantile(arr, .25),
+    var q1 = d3.quantile(arr, .25),
       q2 = d3.quantile(arr, .5),
-      q3 = d3.quantile(arr, .75),
-      q4 = d3.quantile(arr, 1);
+      q3 = d3.quantile(arr, .75);
+    
+    var lower_cutoff = q2 - 1.5*(q3-q1);
+    var upper_cutoff = q2 + 1.5*(q3-q1);
+    
+    var outliers = arr.splice(0, _.sortedIndex(arr, lower_cutoff-.25)) //remove and save lower outliers
+    outliers = outliers.concat(arr.splice(_.sortedIndex(arr, upper_cutoff+.25), Infinity)) //remove upper outliers
+    
+    var q0 = arr[0];
+    var q4 = arr[arr.length-1];
+    
     box.append("rect")
       .attr("class", "middle50")
       .attr("x", xscale(q1))
@@ -500,6 +544,13 @@ function drawBoxplot(sites)
       .attr("x2", xscale(q4))
       .attr("y1", -box_height/2)
       .attr("y2", box_height/2);
+      
+      box.selectAll(".outlier")
+        .data(outliers)
+        .enter().append("circle")
+          .attr("class", "outlier")
+          .attr("cx", xscale)
+          .attr("r", box_height/16);
   }
   
   pyramid_svg.append("g")

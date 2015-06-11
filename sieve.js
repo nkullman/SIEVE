@@ -224,7 +224,6 @@ function generateSiteSelector() {
 			.attr("y", -margin.top/2)
 			.attr("text-anchor", "end")
 			.text(function () {
-				console.log("d is " + d + " and i is " + i);
 				if (yscale_mode === 0){ 
 					return "HXB2 Pos: " + envmap[i].hxb2Pos +
 						" // p-value: " + pvalues[i].toPrecision(2);
