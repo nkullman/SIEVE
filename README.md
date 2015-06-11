@@ -21,11 +21,9 @@ The researchers we worked with wanted an interactive and automated version of gr
 ![fig2](progress/fig2.jpg)
 ![fig3](progress/fig3.jpg)
 
-We used these as inspiration and split the project into three parts which were our initial roles: Nick worked on an overview chart which showed the entire reference genome and would allow selection of sites,
-Graham worked on a stacked bar chart showing the mismatch counts for each site, and Wayne implemented the statistics methods and wrote graphics and a table to put statistics for the selected group as a whole.
+We used these as inspiration and split the project into three parts which were our initial roles: Nick worked on an overview chart which showed the entire reference genome and would allow selection of sites, Graham worked on a stacked bar chart showing the mismatch counts for each site, and Wayne implemented the statistics methods and wrote graphics and a table to put statistics for the selected group as a whole. The overview/selection portion proved to be the most difficult to design and implement, and we spent the most time fine-tuning this to have the navigation and selection be natural: everyone on the team had some role in the final product.
 
-After the first working prototype, we met again with the researchers and continued to polish the tool and tailor it to how they intended to use it, for instance adding a "Select by HXB2" option so that if
-one had a specific site in mind, they could select it without having to use the interface to find it. 
+After getting the first working prototype running, we met again with the researchers and continued to polish the tool and tailor it to how they intended to use it, for instance adding a "Select by HXB2" option so that if one had a specific site in mind, they could select it without having to use the interface to find it.
 
 ## Credits
 
