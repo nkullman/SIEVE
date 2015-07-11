@@ -25,6 +25,11 @@ d3.select("#mismatch_selector")
   .on("input", update_mismatchmode);
 
 function updatePyramid(sites){
+  /*  Updates either the pyramid or the box plot, whichever mode is selected
+      using data from the selected sites. In each case, smoothly translate the chart
+      as sites are selected or deselected (though the stats are recomputed entirely each time)
+      The relevant data in each case is the number of mismatches each patient has with the
+      vaccine sequence at the selected sites.*/
   if (mismatchmode == 0)
   {
     var possiblecounts = [];
@@ -174,7 +179,9 @@ function updatePyramid(sites){
   }
   } else {
     //update box plot
-    var mmdata = [[],[]];
+    var mmdata = [[],[]]; 
+    //mmdata[0] = array of the count of mismatches for each vaccine-recieving patient in selected region
+    //mmdata[1] = same for placebo patients
     for (var patient in seqID_lookup)
     {
       if (seqID_lookup[patient].mismatch != undefined)
@@ -217,6 +224,8 @@ function updatePyramid(sites){
     
     function update_box(d, i)
     {
+      /*  Computes the necessary statistics and updates the
+          box plot as necessary */
       var box = d3.select(this);
       var arr = d.sort(d3.ascending);
       var q1 = d3.quantile(arr, .25),
@@ -256,7 +265,7 @@ function updatePyramid(sites){
       .attr("x2", xscale(q0))
       .attr("y1", -box_height/2)
       .attr("y2", box_height/2);
-      box.select(".whisker.high").transition()
+    box.select(".whisker.high").transition()
       .attr("x1", xscale(q4))
       .attr("x2", xscale(q4))
       .attr("y1", -box_height/2)
@@ -446,6 +455,7 @@ function id(d){
 
 function drawBoxplot(sites)
 {
+  //Create box plot for the first time (instead of updating as in updatePyramid())
   var leftmargin = 75;
   var mmdata = [[],[]];
   for (var patient in seqID_lookup)
@@ -570,6 +580,8 @@ function drawBoxplot(sites)
 
 function update_mismatchmode()
 {
+  /*  Callback function for the selection of which chart to draw
+      In each case, change mismatchmode and redraw everything.  */
   var parent = d3.select(pyramid_svg.node().parentNode);
   pyramid_svg.remove();
   pyramid_svg = parent.append('g')

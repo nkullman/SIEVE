@@ -56,6 +56,9 @@ d3.select("#yscale_selector").on("input", yscale_selection);
 
 function overview_yscale(site)
 {
+	/*	returns the y of a site bar based on the currently selected
+		scale
+	*/
 	switch (yscale_mode)
 	{
 	case 0:
@@ -81,6 +84,11 @@ function generateVis(){
 function generateSiteSelector() {
 	
 	var update_throttled = _.throttle(update_charts, 500);
+	/*	This throttling is very important to the function of the selection chart:
+		If the script is busy processing the previous selection, it won't get the
+		mousedover callback, so won't select every site. This function limits
+		how often the script attempts to process the selected sites when making
+		a sweep over the site selection chart.	*/
   
   window.xScale = d3.scale.linear()
     .domain([0, vaccine.sequence.length-1])
@@ -161,6 +169,7 @@ function generateSiteSelector() {
 		.attr("height", 6*height/5)
 		.attr("fill", "white")
 		.attr("opacity", 0)
+		//bar_mousedover expects 'this' to be the element moused over
 		.on("mouseover", function(d, i) { this.f = bar_mousedover; this.f(d,i); })
 		.on("mousedown", function(d, i) { mouse_down = true; selection_start = i; this.f = bar_mousedover; this.f(d, i); })
 		.on("mouseout", function() {d3.select("#tooltip").remove();})
@@ -217,8 +226,17 @@ function generateSiteSelector() {
 	}
 	
 	function bar_mousedover(d, i) {
+		/*	Callback when a bar in the selection chart is moused over
+			Since this function will be throttled, it must keep track of the
+			last time it was called and the assumption is if it was last called
+			on item x, is now being called on y, and the mouse was never released
+			between the two events, it should select everything between x and y.
+			After building the new selection list, it calls all the update routines
+			for the various charts. */
 		var update_array = [];
 		siteselSVGg.append("text")
+			//even when the mouse isn't selected, update the legend with information
+			//about the moused over site.
 			.attr("id", "tooltip")
 			.attr("x", margin.left + width)
 			.attr("y", -margin.top/2)
@@ -288,6 +306,9 @@ function generateSiteSelector() {
 
 function clear_selection()
 {
+	/*	Remove everything from selection by lowering
+		the bars in the overview and calling each chart's
+		update routine */
 	for (var i = 0; i < selected_sites.length; i++) {
 		var site = selected_sites[i];
     	var bar = d3.select("#sitebar" + site);
@@ -305,8 +326,12 @@ function clear_selection()
 
 function hxb2_selection()
 {
-	if (d3.event.which == 13)
+	/*	Select by HXB2 position, callback routine for text entry */
+	if (d3.event.which == 13) //Enter button pressed
 	{
+		/*	Remove whitespace, take each item in a comma separated list, convert to index
+			and if it is a range (eg 4-7), replace it with an array (eg [4, 5, 6, 7])
+			then flatten into one big array of sites.*/
 		_.flatten(this.value.replace(/\s+/g,"").split(",")
 			.map(function(d)
 			{
@@ -319,7 +344,7 @@ function hxb2_selection()
 				{
 					return arr;
 				} else {
-					return d3.range(arr[0], arr[1]+1);
+					return d3.range(arr[0], arr[1]+1); //interval including endpoints
 				}
 			}))
 			.forEach(function(d)
@@ -346,6 +371,8 @@ function hxb2_selection()
 
 function pvalue_selection()
 {
+	/* Selects all sites with p-value < given value,
+		and removes sites with p-value >= given */
 	if (d3.event.which == 13)
 	{
 		var threshold = this.value;
