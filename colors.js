@@ -5,7 +5,7 @@ function aa_to_color(palette, aa)
 	{
 		case "chemistry":
 			switch (aa)
-			{
+			{ //I'm sure there's a better way to do this.
 				case "G":
 				case "S":
 				case "T":
