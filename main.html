@@ -1,89 +1,388 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<script src="d3.v3.min.js"></script>
-<script src="lodash.min.js"></script>
-<link rel="stylesheet" type="text/css" href="sievestyles.css">
-<title>S.I.E.V.E.</title>
-</head>
-<body>
-<div id="parent">
-	<div class="title">
-		<strong>S.I.E.V.E.</strong>
-		<span class="subtitle">Statistical Interactive Explorer of Vaccine Efficacy</span>
-		<span class="help" id="sievehelplink">help
-			<span id="generaltoolhelp">
-				<h3>How to use this tool:</h3>
-				<ul>
-					<li>Use the vaccine sequence in the shaded area to select sites</li>
-					<li>Scroll and double-click to zoom</li>
-					<li>Click and drag to pan</li>
-					<li>Hold shift and click+drag to select sites</li>
-				</ul>
-			</span>
-		</span>
-		<!--<script src = "sievehelp.js"></script>-->
-	</div>
-	<div id="overview"></div>
-	<div id="drilldown">
-    <div id="group"></div>
-		<div id="sites">
-    <div id="options">
-			<table>
-				<tr><td></td><td><button id="clear_selection_button">Clear Selection</button></td><td></td></tr>
-				<tr><td></td><td><button id="export_button">Export SVG image</button></td><td class="help">?
-					<span>
-						Opens new window with the stacked bar charts for individual sites. Ctrl-S or similar to save in SVG format, which can be edited/converted in Inkscape or other editors or converted using an online tool such as CloudConvert.com.
-				</span></td></tr>
-				<tr><td>Distribution Chart</td><td><select id="mismatch_selector">
-					<option value="pyramid">Pyramid</option>
-					<option value="box">Box and Whisker</option>
-				</select></td></tr>
-				<tr><td>Overview Bar Height:</td><td><select id="yscale_selector">
- 					<option value="pvalue">p-value</option>
-					<option value="entropy">Entropy</option>
-					<option value="constant">Constant</option>
-				</select></td></tr>
-				<tr><td>Color scheme:</td><td><select id="color_selector">
-					<option value="taylor">Taylor</option>
-					<option value="hydrophobicity">Hydrophobicity</option>
-					<option value="chemistry">Chemistry</option>
-					<option value="d3">D3</option>
-				</select></td><td class="help">?
-					<span>
-						Choose amino acid color encoding. <br>
-						Taylor: W. Taylor, Protein Engineering, Vol 10 , 743-746 (1997) <br>
-						Hydrophobicity: blue = hydrophilic, green = neutral, black = hydrophobic (WebLogo 3 default)<br>
-						Chemistry: green = polar, purple = neutral, blue = basic, red = acidic, black = hydrophobic (Weblogo 1 and 2 and makelogo default)<br>
-						D3: D3's default 20 category color scheme
-						
-					</span>
-				</td></tr>
-				<tr><td>Bar Sorting:</td><td><select id="sort_selector">
-					<option value="joint_prev">Joint Prevalence</option>
-					<option value="alpha">Alphabetical</option>
-				</select></td><td></td></tr>
-				<tr><td>Select by HXB2:</td><td><input type="text" id="hxb2_select" size="13"></input></td><td class="help">?
-					<span>
-						Select and append sites by HXB2 position, in a comma-separted list with single sites or ranges; e.g., 2, 5, 7-13, 506d.
-					</span></td></tr>
-				<tr><td>Select by p-value</td><td><input type="text" id="pvalue_select" size="13"></input></td><td class="help">?
-					<span>
-						Select all sites with p-value less than the threshold given.
-					</span>
-				</input></tr>
-			</table>
-		</div><div id="sitessvg"></div></div>
-	</div>
-</div>
+<!-- NEXT: figure out how to make SVGs expand/shrink with container size -->
 
-<script src="entropy.js"></script>
-<script src="colors.js"></script>
-<script src="summarystats.js"></script>
-<script src="parseinput_nested.js"></script>
-<script src="sieve.js"></script>
-<script src="stackedbars.js"></script>
-<script src="pyramid.js"></script>
-</body>
-</html>
+
+<html><head>
+      <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" type="text/css" href="SieveWebpageStyles.css">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script><style type="text/css"></style>
+      <title>SIEVE</title>
+   </head>
+   <body class=" hasGoogleVoiceExt">
+   <div class="wrapper">
+         <nav>
+               <ul>
+                     <a id="headline-link" href="/"><li id="headline-li"><span id="headline-span">SIEVE</span><br>Statistical Interactive Explorer of Vaccine Efficacy</li></a>
+                     <a href="/datasets/"><li>Other sieve analysis datasets</li></a>
+                     <a href="/upload/"><li>Upload your own data</li></a>
+					 <a href="/about/"><li>About</li></a>
+               </ul>
+               <div class="handle">SIEVE <span>Menu ☰</span></div>
+         </nav>
+         
+      <main>
+      <div class="nav-fs-wrap">
+		  <fieldset class="protein-nav-wrap">
+			  <legend>VaccineNameHere</legend>
+			  <div class="protein-nav-opts">
+				  Option 1 <br>
+				  Option 2 <br>
+				  Option 3 <br>
+			  </div><!--protein-nav-opts-->
+			  <div class="protein-nav">
+				  <svg width="400" height="110">
+					  <rect width="300" height="100" style="fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)">
+				  </svg>
+				  <p>
+					  Navigation and selection area for protein
+				  </p>
+			  </div><!--protein-nav-->
+		  </fieldset> <!--protein-nav-wrap-->
+      </div> <!--nav-fs-wrap-->
+		  <fieldset class="drilldown-wrap">
+			  <div class="table">
+				  <table>
+  <tr style="width:100%">
+    <td>Jill</td>
+    <td>Smith</td>		
+    <td>50</td>
+  </tr>
+  <tr>
+    <td>Eve</td>
+    <td>Jackson</td>		
+    <td>94</td>
+  </tr>
+  <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+ </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>Jill</td>
+    <td>Smith</td>		
+    <td>50</td>
+  </tr>
+  <tr>
+    <td>Eve</td>
+    <td>Jackson</td>		
+    <td>94</td>
+  </tr>
+  <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>Jill</td>
+    <td>Smith</td>		
+    <td>50</td>
+  </tr>
+  <tr>
+    <td>Eve</td>
+    <td>Jackson</td>		
+    <td>94</td>
+  </tr>
+  <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>Jill</td>
+    <td>Smith</td>		
+    <td>50</td>
+  </tr>
+  <tr>
+    <td>Eve</td>
+    <td>Jackson</td>		
+    <td>94</td>
+  </tr>
+  <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>Jill</td>
+    <td>Smith</td>		
+    <td>50</td>
+  </tr>
+  <tr>
+    <td>Eve</td>
+    <td>Jackson</td>		
+    <td>94</td>
+  </tr>
+  <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>Jill</td>
+    <td>Smith</td>		
+    <td>50</td>
+  </tr>
+  <tr>
+    <td>Eve</td>
+    <td>Jackson</td>		
+    <td>94</td>
+  </tr>
+  <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+    <tr>
+    <td>John</td>
+    <td>Doe</td>		
+    <td>80</td>
+  </tr>
+</table>
+			  </div> <!-- table -->
+			  <div class="group-box-bar">
+				  <svg width="150" height="300" viewBox="0 0 3 2">
+					  <rect width="1" height="2" x="0.5" style="fill:rgb(0,255,0);stroke-width:.1;stroke:rgb(0,0,0)">
+				  </svg>
+				  <p>
+					  Chart showing group mismatch stats in either box or bar form
+				  </p>
+			  </div> <!-- group-box-bar -->
+			  <div class="stacked-bars">
+				  <svg width="100%" height="300" viewBox="0 0 2 2">
+					  <rect width="1" height="2" x="0.5" style="fill:rgb(255,0,0);stroke-width:.1;stroke:rgb(0,0,0)">
+				  </svg>
+          <svg width="100%" height="300" viewBox="0 0 3 2">
+					  <rect width="1" height="2" x="0.5" style="fill:rgb(255,0,0);stroke-width:.1;stroke:rgb(0,0,0)">
+				  </svg>
+          <svg width="100%" height="300" viewBox="0 0 3 2">
+					  <rect width="1" height="2" x="0.5" style="fill:rgb(255,0,0);stroke-width:.1;stroke:rgb(0,0,0)">
+				  </svg>
+          <svg width="100%" height="300" viewBox="0 0 3 2">
+					  <rect width="1" height="2" x="0.5" style="fill:rgb(255,0,0);stroke-width:.1;stroke:rgb(0,0,0)">
+				  </svg>
+				  <p>
+					  Stacked bar chart for vac/plac group for each site selected.
+				  </p>
+			  </div> <!-- stacked-bars -->
+		  </fieldset> <!-- drilldown-wrap -->
+      </main>
+      <footer>
+            <ul>
+               <a href="https://uw.edu"><li>Footer link 1 (UW)</li></a>
+               <a href="https://www.fredhutch.org/en.html"><li>Footer link 2 (Fred Hutch)</a>
+               <a href="http://escience.washington.edu/"><li>Footer link 3 (eScience)</li></a>
+            </ul>
+      </footer>
+      <script>
+            d3.select(".handle").on("click", function(){
+                  var navul = d3.select("nav ul");
+                  navul.classed("showing", !navul.classed("showing"));
+            })
+      </script>
+   </div> <!-- wrapper -->
+   
+</body></html>
