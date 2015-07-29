@@ -14,7 +14,7 @@ var pyramid_width = 400,
 var box_width = 300, box_height = 50;
 
 // CREATE SVG
-var pyramid_svg = d3.select('#group').append('svg')
+var pyramid_svg = d3.select('.group-box-bar').append('svg')
       .attr('width', pyramid_margin.left + pyramid_width + pyramid_margin.right)
       .attr('height', pyramid_margin.top + pyramid_height + pyramid_margin.bottom)
       // ADD A GROUP FOR THE SPACE WITHIN THE MARGINS
