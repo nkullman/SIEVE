@@ -1,12 +1,14 @@
 <!-- NEXT:
-  add clickable text above center of nav to clear selection (above HXB2 pos, but formatted sth like the tooltip)
+  add clickable text in lower right of nav to clear selection (formatted and positioned sth like tooltip, but beneath)
   get rid of bar-sorting option
   add t-statistic to y-encoding options
   eliminate selection by p-value
   eliminate color selection, just use d3 colors
   figure out how to make SVGs expand/shrink with container size
   add comments to js scripts
-  
+  redo table construction
+  move the option for pyramid/box-whisker onto the chart area as clickable text
+  add viewboxes to svg's (bar charts, group chart, siteselSVG) so they fill containing divs
 -->
 
 <!DOCTYPE html>
@@ -78,13 +80,9 @@
     					</span>
     				</td></tr>
     			</tbody></table>
-				  <!--Commenting while we try real content
-          Option 1 <br>
-				  Option 2 <br>
-				  Option 3 <br>-->
 			  </div><!--protein-nav-opts-->
 			  <div class="protein-nav">
-			  </div><!--protein-nav-->
+			  </div> <!-- protein-nav -->
 		  </fieldset> <!--protein-nav-wrap-->
       </div> <!--nav-fs-wrap-->
 		  <fieldset class="drilldown-wrap">
