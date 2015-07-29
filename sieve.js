@@ -118,12 +118,13 @@ function generateSiteSelector() {
 	var overviewfieldset = d3.select("#overview").append("fieldset")
 		.attr("class", "selectionfieldset");
 		
+	/* The protein nav area is already enclosed in a fieldset
 	overviewfieldset.append("legend")
 		.attr("border", "1px black solid")
 		.append("text")
-			.text("Vaccine sequence: " + vaccine.ID);
+			.text("Vaccine sequence: " + vaccine.ID);*/
 	
-	window.siteselSVGg = overviewfieldset.append("svg")
+	window.siteselSVGg = d3.select(".protein-nav").append("svg")
 	    .attr("width", width + margin.right + margin.left)
 	    .attr("height", height + margin.top + margin.bottom)
 		.attr("id", "siteselSVG")
