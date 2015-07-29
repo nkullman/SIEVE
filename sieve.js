@@ -115,10 +115,10 @@ function generateSiteSelector() {
 	
 	window.zoom = d3.behavior.zoom().x(xScale).scaleExtent([1,100]).on("zoom", refresh);
 	
+	/* The protein nav area is already enclosed in a fieldset
 	var overviewfieldset = d3.select("#overview").append("fieldset")
 		.attr("class", "selectionfieldset");
 		
-	/* The protein nav area is already enclosed in a fieldset
 	overviewfieldset.append("legend")
 		.attr("border", "1px black solid")
 		.append("text")
@@ -141,7 +141,8 @@ function generateSiteSelector() {
 		.attr("class", "overlay")
 		.attr("transform", "translate(" + (-margin.left) + ", " + (-margin.top) + ")")
 	    .attr("width", width + margin.left + margin.right)
-	    .attr("height", height + margin.top + margin.bottom);
+	    .attr("height", height + margin.top + margin.bottom)
+		.attr("fill", "none");
 		
 	window.sitebars = siteselSVGg.selectAll(".sitebars")
 	    .data(vaccine.sequence);
