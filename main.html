@@ -25,50 +25,50 @@
 		  <fieldset class="protein-nav-wrap">
 			  <legend>VaccineNameHere</legend>
 			  <div class="protein-nav-opts">
-			<table>
-				<tbody><tr><td></td><td><button id="clear_selection_button">Clear Selection</button></td><td></td></tr>
-				<tr><td></td><td><button id="export_button">Export SVG image</button></td><td class="help">?
-					<span>
-						Opens new window with the stacked bar charts for individual sites. Ctrl-S or similar to save in SVG format, which can be edited/converted in Inkscape or other editors or converted using an online tool such as CloudConvert.com.
-				</span></td></tr>
-				<tr><td>Distribution Chart</td><td><select id="mismatch_selector">
-					<option value="pyramid">Pyramid</option>
-					<option value="box">Box and Whisker</option>
-				</select></td></tr>
-				<tr><td>Overview Bar Height:</td><td><select id="yscale_selector">
- 					<option value="pvalue">p-value</option>
-					<option value="entropy">Entropy</option>
-					<option value="constant">Constant</option>
-				</select></td></tr>
-				<tr><td>Color scheme:</td><td><select id="color_selector">
-					<option value="taylor">Taylor</option>
-					<option value="hydrophobicity">Hydrophobicity</option>
-					<option value="chemistry">Chemistry</option>
-					<option value="d3">D3</option>
-				</select></td><td class="help">?
-					<span>
-						Choose amino acid color encoding. <br>
-						Taylor: W. Taylor, Protein Engineering, Vol 10 , 743-746 (1997) <br>
-						Hydrophobicity: blue = hydrophilic, green = neutral, black = hydrophobic (WebLogo 3 default)<br>
-						Chemistry: green = polar, purple = neutral, blue = basic, red = acidic, black = hydrophobic (Weblogo 1 and 2 and makelogo default)<br>
-						D3: D3's default 20 category color scheme
-						
-					</span>
-				</td></tr>
-				<tr><td>Bar Sorting:</td><td><select id="sort_selector">
-					<option value="joint_prev">Joint Prevalence</option>
-					<option value="alpha">Alphabetical</option>
-				</select></td><td></td></tr>
-				<tr><td>Select by HXB2:</td><td><input type="text" id="hxb2_select" size="13"></td><td class="help">?
-					<span>
-						Select and append sites by HXB2 position, in a comma-separted list with single sites or ranges; e.g., 2, 5, 7-13, 506d.
-					</span></td></tr>
-				<tr><td>Select by p-value</td><td><input type="text" id="pvalue_select" size="13"></td><td class="help">?
-					<span>
-						Select all sites with p-value less than the threshold given.
-					</span>
-				</td></tr>
-			</tbody></table>
+    			<table>
+    				<tbody><tr><td></td><td><button id="clear_selection_button">Clear Selection</button></td><td></td></tr>
+    				<tr><td></td><td><button id="export_button">Export SVG image</button></td><td class="help">?
+    					<span>
+    						Opens new window with the stacked bar charts for individual sites. Ctrl-S or similar to save in SVG format, which can be edited/converted in Inkscape or other editors or converted using an online tool such as CloudConvert.com.
+    				</span></td></tr>
+    				<tr><td>Distribution Chart</td><td><select id="mismatch_selector">
+    					<option value="pyramid">Pyramid</option>
+    					<option value="box">Box and Whisker</option>
+    				</select></td></tr>
+    				<tr><td>Overview Bar Height:</td><td><select id="yscale_selector">
+     					<option value="pvalue">p-value</option>
+    					<option value="entropy">Entropy</option>
+    					<option value="constant">Constant</option>
+    				</select></td></tr>
+    				<tr><td>Color scheme:</td><td><select id="color_selector">
+    					<option value="taylor">Taylor</option>
+    					<option value="hydrophobicity">Hydrophobicity</option>
+    					<option value="chemistry">Chemistry</option>
+    					<option value="d3">D3</option>
+    				</select></td><td class="help">?
+    					<span>
+    						Choose amino acid color encoding. <br>
+    						Taylor: W. Taylor, Protein Engineering, Vol 10 , 743-746 (1997) <br>
+    						Hydrophobicity: blue = hydrophilic, green = neutral, black = hydrophobic (WebLogo 3 default)<br>
+    						Chemistry: green = polar, purple = neutral, blue = basic, red = acidic, black = hydrophobic (Weblogo 1 and 2 and makelogo default)<br>
+    						D3: D3's default 20 category color scheme
+    						
+    					</span>
+    				</td></tr>
+    				<tr><td>Bar Sorting:</td><td><select id="sort_selector">
+    					<option value="joint_prev">Joint Prevalence</option>
+    					<option value="alpha">Alphabetical</option>
+    				</select></td><td></td></tr>
+    				<tr><td>Select by HXB2:</td><td><input type="text" id="hxb2_select" size="13"></td><td class="help">?
+    					<span>
+    						Select and append sites by HXB2 position, in a comma-separted list with single sites or ranges; e.g., 2, 5, 7-13, 506d.
+    					</span></td></tr>
+    				<tr><td>Select by p-value</td><td><input type="text" id="pvalue_select" size="13"></td><td class="help">?
+    					<span>
+    						Select all sites with p-value less than the threshold given.
+    					</span>
+    				</td></tr>
+    			</tbody></table>
 				  <!--Commenting while we try real content
           Option 1 <br>
 				  Option 2 <br>

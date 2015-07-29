@@ -87,6 +87,7 @@ main {
     border: 1px solid orange;
     padding: 0;
     margin: 0 auto;
+    border: 1px solid black;
 }
 .protein-nav{
     width: 84.5%;
