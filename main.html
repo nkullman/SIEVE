@@ -4,7 +4,6 @@
   add t-statistic to y-encoding options
   eliminate selection by p-value
   eliminate color selection, just use d3 colors
-  figure out how to make SVGs expand/shrink with container size
   add comments to js scripts
   redo table construction
   move the option for pyramid/box-whisker onto the chart area as clickable text
@@ -51,7 +50,7 @@
     					<option value="entropy">Entropy</option>
     					<option value="constant">Constant</option>
     				</select></td></tr>
-    				<tr><td>Color scheme:</td><td><select id="color_selector">
+    				<!--<tr><td>Color scheme:</td><td><select id="color_selector">
     					<option value="taylor">Taylor</option>
     					<option value="hydrophobicity">Hydrophobicity</option>
     					<option value="chemistry">Chemistry</option>
@@ -65,7 +64,7 @@
     						D3: D3's default 20 category color scheme
     						
     					</span>
-    				</td></tr>
+    				</td></tr>-->
     				<tr><td>Bar Sorting:</td><td><select id="sort_selector">
     					<option value="joint_prev">Joint Prevalence</option>
     					<option value="alpha">Alphabetical</option>
@@ -109,7 +108,7 @@
       </script>
    </div> <!-- wrapper -->
    <script src="entropy.js"></script>
-   <script src="colors.js"></script>
+   <!--<script src="colors.js"></script>-->
    <script src="summarystats.js"></script>
    <script src="parseinput_nested.js"></script>
    <script src="sieve.js"></script>

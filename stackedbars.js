@@ -174,7 +174,10 @@ function create_AAsite_chart(site)
 		acid_g.append("rect")
 			.attr("width", 10)
 			.attr("height", 10)
-			.style("fill", aacolor(d));
+			.style("fill", function (d) {
+				if (d == '-') return "#000000"
+				else return aacolor(d);
+			})
 		acid_g.append("text")
 			.attr("transform", "translate(12,9)")
 			.text(d);
@@ -259,7 +262,10 @@ function create_stacked_bar(svg, nest, scale, yloc)
 		.attr("x", function(d) {return scale(d.x0);})
 		.attr("height", barheight)
 		.attr("width", function(d) {return scale(d.x1) - scale(d.x0);})
-		.style("fill", function(d) {return aacolor(d.key);})
+		.style("fill", function (d) {
+			if (d.key == '-') return "#000000"
+			else return aacolor(d.key);
+		})
 		.style("stroke-width", 1)
 		.style("stroke", "white")
 		.on("mouseover", function(d, i) {
@@ -287,14 +293,14 @@ function create_stacked_bar(svg, nest, scale, yloc)
 			.text("Match: " + (scale.domain()[1] - sum) + " Patients");
 }
 
-function update_aasite_colors()
+/**function update_aasite_colors()
 {
-	/* Switches the color scheme by changing the range of the aacolor scale, then redrawing everything */
+	/* Switches the color scheme by changing the range of the aacolor scale, then redrawing everything
 	aacolor.range(aacolor.domain().map(function(d) { return aa_to_color(d3.event.target.value, d); }));
 	sites_svg.selectAll(".AAsite").remove();
 	update_AAsites(selected_sites);
 	d3.selectAll(".sitebars").attr("fill", function(d,i) { return aacolor(d); });
-}
+}*/
 
 function update_sorting()
 { //callback function for changing sorting method
