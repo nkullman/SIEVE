@@ -89,6 +89,27 @@ main {
     margin: 0 auto;
     border: 1px solid black;
 }
+
+table {
+  border-spacing: 5px 10px;
+}
+.help {
+  outline:none;
+  text-decoration: underline;
+  font-size: 10px;
+}
+.help:hover {
+  text-decoration:none;
+} 
+.help span {
+    z-index:10;display:none; padding:14px 20px;
+    margin-top:-30px; margin-left:28px;
+    width:300px; line-height:16px;
+}
+.help:hover span{
+    display:inline; position:absolute; color:#111;
+    border:1px solid #DCA; background:#fffAF0;}
+
 .protein-nav{
     width: 84.5%;
     float: left;
