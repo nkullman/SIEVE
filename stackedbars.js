@@ -16,7 +16,7 @@ var mismatch_axis = d3.svg.axis() //axis for stacked bar charts
 	.ticks(5)
 	.tickFormat(d3.format(".0%"));
 
-var sites_svg = d3.select("#sitessvg") //holds all the stacked bar charts
+var sites_svg = d3.select(".stacked-bars") //holds all the stacked bar charts
 	.append("svg")
 	.attr("width", barchartwidth + barchartmargin.left + barchartmargin.right)
 	.attr("height", 0)
