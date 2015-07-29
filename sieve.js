@@ -141,8 +141,7 @@ function generateSiteSelector() {
 		.attr("class", "overlay")
 		.attr("transform", "translate(" + (-margin.left) + ", " + (-margin.top) + ")")
 	    .attr("width", width + margin.left + margin.right)
-	    .attr("height", height + margin.top + margin.bottom)
-		.attr("fill", "none");
+	    .attr("height", height + margin.top + margin.bottom);
 		
 	window.sitebars = siteselSVGg.selectAll(".sitebars")
 	    .data(vaccine.sequence);

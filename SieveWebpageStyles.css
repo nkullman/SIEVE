@@ -10,14 +10,8 @@ html,body {
 body{
     margin: 0;
     padding: 0;
-    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
-
-/*nav{
-    height: 10%;
-    display: block;
-    clear: both;
-}*/
 
 nav ul {
     background-color: #492a7c;
@@ -89,7 +83,7 @@ main {
     margin: 0 auto;
     border: 1px solid black;
 }
-
+/* Begin d3 styling from sievestyles.css*/
 table {
   border-spacing: 5px 10px;
 }
@@ -111,10 +105,52 @@ table {
     border:1px solid #DCA; background:#fffAF0;
 }
 .overlay {
+    fill: none;
 	pointer-events: all;
-    cursor: pointer;
+}
+.brush .extent {
+  stroke: steelblue;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+.y.axis path {
+  display: none;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
 }
 
+.box .whisker {
+  stroke: #000;
+  stroke-width: 1px;
+}
+.box .median {
+  stroke: #000;
+  stroke-width: 2px;
+}
+
+.box .middle50 {
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 1px;
+}
+
+.box .outer25 {
+  stroke: #000;
+  stroke-width: 1px;
+  stroke-dasharray: 3,3;
+}
+
+.box .outlier {
+  fill: #fff;
+  stroke: #666;
+  stroke-width: 1px;
+}
+
+/* End d3 styling from sievestyles.css*/
 .protein-nav{
     width: 84.5%;
     float: left;
