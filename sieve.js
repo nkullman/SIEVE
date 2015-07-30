@@ -150,7 +150,7 @@ function generateSiteSelector() {
 		.attr("width", sitebarwidth)
 		.attr("height", function (d,i) {return height - overview_yscale(i);})
 		.attr("fill", function (d) {
-			if (d == '-') return "#000000"
+			if (d == '-') return "#000000";
 			else return aacolor(d);
 		})
 		.attr("opacity", 0.5);

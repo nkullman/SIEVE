@@ -137,6 +137,7 @@ function create_AAsite_chart(site)
 		.attr("transform", "translate(" + (barwidth + barmargin.right + barmargin.left) + ", -10)");
 	acids.forEach(function(d,i)
 	{ //build the legend from the list of acids
+		
 		var acid_g = legend.append("g")
 			.attr("transform", AAlegend_translate(i))
 			.on("mouseover", function() { //highlight on mouseover
@@ -174,17 +175,17 @@ function create_AAsite_chart(site)
 		acid_g.append("rect")
 			.attr("width", 10)
 			.attr("height", 10)
-			.style("fill", function (d) {
-				if (d == '-') return "#000000"
-				else return aacolor(d);
-			})
+			.style("fill", function() {
+				if (d == '-') {return "#000000";}
+				else {return aacolor(d);}
+			});
 		acid_g.append("text")
 			.attr("transform", "translate(12,9)")
 			.text(d);
 	});
 	var match_g = legend.append("g")
 		.attr("transform", AAlegend_translate(acids.length))
-		.on("mouseover", function() {
+		.on("mouseover", function () {
 			svg.selectAll(".matchbar")
 				.attr("opacity", 0.5);
 		})
@@ -263,7 +264,7 @@ function create_stacked_bar(svg, nest, scale, yloc)
 		.attr("height", barheight)
 		.attr("width", function(d) {return scale(d.x1) - scale(d.x0);})
 		.style("fill", function (d) {
-			if (d.key == '-') return "#000000"
+			if (d.key == '-') return "#000000";
 			else return aacolor(d.key);
 		})
 		.style("stroke-width", 1)
