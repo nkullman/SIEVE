@@ -44,10 +44,8 @@ d3.select(window).on("mouseup", function(){ last_updated = undefined; mouse_down
 	.on("keydown", function () {shift_down = d3.event.shiftKey || d3.event.metaKey; })
 	.on("keyup", function () {shift_down = d3.event.shiftKey || d3.event.metaKey; });
 
-/*d3.select(".clear-selection").on("click", clear_selection);*/
 
 d3.select("#hxb2_select").on("keypress", hxb2_selection);
-d3.select("#pvalue_select").on("keypress", pvalue_selection);
 d3.select("#yscale_selector").on("input", yscale_selection);
 
 function overview_yscale(site)
@@ -368,41 +366,6 @@ function hxb2_selection()
 						.attr("opacity", 1)
 						.attr("y", -height/5)
 						.attr("height",height/5);
-				}
-			});
-		this.value = "";
-		update_AAsites(selected_sites);
-		updatePyramid(selected_sites);
-		updateTable(selected_sites);
-	}
-}
-
-function pvalue_selection()
-{
-	/* Selects all sites with p-value < given value,
-		and removes sites with p-value >= given */
-	if (d3.event.which == 13)
-	{
-		var threshold = this.value;
-		d3.selectAll(".sitebars")
-			.each(function(d, i)
-			{
-				var bar = d3.select(this);
-				if (pvalues[i] < threshold && !bar.classed("selected"))
-				{
-					bar.classed("selected", true)
-						.attr("opacity", 1)
-						.attr("y", -height/5)
-						.attr("height", height/5);
-					selected_sites.splice(_.sortedIndex(selected_sites, i), 0, i);
-				} else if (pvalues[i] >= threshold && bar.classed("selected"))
-				{
-    				var yval = overview_yscale(i);
-					bar.classed("selected", false)
-						.attr("opacity", .5)
-						.attr("y", yval )
-						.attr("height", height - yval);
-					selected_sites.splice(_.sortedIndex(selected_sites, i), 1);
 				}
 			});
 		this.value = "";
