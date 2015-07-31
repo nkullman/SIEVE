@@ -44,7 +44,7 @@ d3.select(window).on("mouseup", function(){ last_updated = undefined; mouse_down
 	.on("keydown", function () {shift_down = d3.event.shiftKey || d3.event.metaKey; })
 	.on("keyup", function () {shift_down = d3.event.shiftKey || d3.event.metaKey; });
 
-d3.select("#clear_selection_button").on("click", clear_selection);
+/*d3.select(".clear-selection").on("click", clear_selection);*/
 
 d3.select("#hxb2_select").on("keypress", hxb2_selection);
 d3.select("#pvalue_select").on("keypress", pvalue_selection);
@@ -191,6 +191,16 @@ function generateSiteSelector() {
 		.attr("x", (width + margin.left + margin.right)/2)
 		.attr("y", (height + margin.top + .9*margin.bottom))
 		.text("HXB2 position");
+		
+	d3.select("#siteselSVG").append("text")
+		.attr("class", "clear-selection")
+		.attr("text-anchor", "end")
+		.attr("x", width + margin.left)
+		.attr("y", (height + margin.top + .9*margin.bottom))
+		.text("clear selection")
+		.on("click", clear_selection)
+		.style("text-decoration", "underline")
+		.style("cursor", "pointer");
 		
 	siteselSVGg.append("g")
 		.attr("class", "y axis l")
