@@ -1,9 +1,9 @@
-var mismatchmode = 0 //0 = pyramid, 1 = box plot
+var mismatchmode = 0; //0 = pyramid, 1 = box plot
 
 var pyramid_margin = {
       top: 50,
       right: 20,
-      bottom: 24,
+      bottom: 40,
       left: 25,
       middle: 20
 };
@@ -20,9 +20,6 @@ var pyramid_svg = d3.select('.group-box-bar').append('svg')
       // ADD A GROUP FOR THE SPACE WITHIN THE MARGINS
       .append('g')
         .attr('transform', translation(pyramid_margin.left, pyramid_margin.top));
-
-d3.select("#mismatch_selector")
-  .on("input", update_mismatchmode);
 
 function updatePyramid(sites){
   /*  Updates either the pyramid or the box plot, whichever mode is selected
@@ -411,6 +408,15 @@ function drawPyramid(sites){
       .attr("x",pyramid_width/2)
       .attr("y",-2)
       .style("text-anchor","middle");
+      
+    pyramid_svg.append("text")
+      .text("change chart type")
+      .attr("x",pyramid_width/2)
+      .attr("y", pyramid_height + pyramid_margin.bottom - 8)
+      .on("click", update_mismatchmode)
+      .style("text-anchor","middle")
+      .style("text-decoration", "underline")
+		  .style("cursor", "pointer");
 
     pyramid_svg.append('g')
       .attr('class', 'axis x left')
@@ -496,6 +502,15 @@ function drawBoxplot(sites)
       .style("text-anchor","middle")
       .style("font-size","15px")
       .text("Distribution of Mismatch Counts Across Selected Sites");
+      
+    pyramid_svg.append("text")
+      .text("change chart type")
+      .attr("x",pyramid_width/2)
+      .attr("y", pyramid_height + pyramid_margin.bottom - 8)
+      .on("click", update_mismatchmode)
+      .style("text-anchor","middle")
+      .style("text-decoration", "underline")
+		  .style("cursor", "pointer");
   
   pyramid_svg.selectAll(".box")
     .data(mmdata)
@@ -586,15 +601,14 @@ function update_mismatchmode()
   pyramid_svg.remove();
   pyramid_svg = parent.append('g')
         .attr('transform', translation(pyramid_margin.left, pyramid_margin.top));
-  switch (d3.event.target.value)
-  {
-  case "pyramid":
-    mismatchmode = 0;
-    drawPyramid(selected_sites);
-    return;
-  case "box":
+  
+  if (mismatchmode === 0) {
     mismatchmode = 1;
     drawBoxplot(selected_sites);
+    return;
+  } else {
+    mismatchmode = 0;
+    drawPyramid(selected_sites);
     return;
   }
 }
