@@ -31,14 +31,10 @@
       <main>
       <div class="nav-fs-wrap">
 		  <fieldset class="protein-nav-wrap">
-			  <legend>VaccineNameHere</legend>
+			  <legend id="fieldset-legend"></legend>
 			  <div class="protein-nav-opts">
     			<table>
     				<tbody>
-    				<tr><td></td><td><button id="export_button">Export SVG image</button></td><td class="help">?
-    					<span>
-    						Opens new window with the stacked bar charts for individual sites. Ctrl-S or similar to save in SVG format, which can be edited/converted in Inkscape or other editors or converted using an online tool such as CloudConvert.com.
-    				</span></td></tr>
     				<tr><td>Distribution Chart</td><td><select id="mismatch_selector">
     					<option value="pyramid">Pyramid</option>
     					<option value="box">Box and Whisker</option>
@@ -68,6 +64,11 @@
 			  <div class="group-box-bar">
 			  </div> <!-- group-box-bar -->
 			  <div class="stacked-bars">
+          <div class="stacked-bars-export-fn"></div>
+            <p id="export-charts">Export charts as SVG<a class="help"> ? <span>
+    						Opens new window with the stacked bar charts for individual sites. Ctrl-S or similar to save in SVG format, which can be edited/converted in Inkscape or other editors or converted using an online tool such as CloudConvert.com.
+    				</span></a></p>
+          <div class="stacked-bars-export-zone"></div>
 			  </div> <!-- stacked-bars -->
 		  </fieldset> <!-- drilldown-wrap -->
       </main>

@@ -16,7 +16,7 @@ var mismatch_axis = d3.svg.axis() //axis for stacked bar charts
 	.ticks(5)
 	.tickFormat(d3.format(".0%"));
 
-var sites_svg = d3.select(".stacked-bars") //holds all the stacked bar charts
+var sites_svg = d3.select(".stacked-bars-export-zone") //holds all the stacked bar charts
 	.append("svg")
 	.attr("width", barchartwidth + barchartmargin.left + barchartmargin.right)
 	.attr("height", 0)
@@ -33,10 +33,8 @@ sites_svg.append("style")
 // The styling goes here instead of the CSS file so that the SVG
 // will export with it.
 
-var export_button = d3.select("#export_button")
+var export_button = d3.select("#export-charts")
 	.on("click", export_AAsites);
-var color_selector = d3.select("#color_selector")
-	.on("input", update_aasite_colors);
 var sort_selector = d3.select("#sort_selector")
 	.on("input", update_sorting);
 
