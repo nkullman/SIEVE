@@ -35,10 +35,6 @@ sites_svg.append("style")
 
 var export_button = d3.select("#export-charts")
 	.on("click", export_AAsites);
-var sort_selector = d3.select("#sort_selector")
-	.on("input", update_sorting);
-
-var sortmode = 1; //0 = alphabetical, 1 = joint prevalence
 
 function update_AAsites(sites)
 {
@@ -86,8 +82,7 @@ function create_AAsite_chart(site)
 		.entries(sequences.placebo[site].filter(function(d) {
 			return d!= vaccine.sequence[site];
 		}));
-	if (sortmode == 1)
-	{
+	
 		//compute joint prevalence
 		vacnest.forEach(function(d)
 		{
@@ -102,7 +97,7 @@ function create_AAsite_chart(site)
 				prev[d.key] = d.values;
 			}
 		});
-	}
+	
 	vacnest.sort(sort_nest);
 	placnest.sort(sort_nest);
 	var svg = d3.select(this);
@@ -201,37 +196,21 @@ function create_AAsite_chart(site)
 	
 	function sort_nest(a, b)
 	{
-		//sorts amino acids based on selected method
-		switch (sortmode)
-		{
-		case 1: //joint prevalence
-			if (prev[a.key] < prev[b.key])
-			{
-				return 1;
-			} else if (prev[a.key] > prev[b.key])
-			{
-				return -1;
-			}
-			//fall through if equal
-		case 0: //alphabetical
-			return d3.ascending(a.key, b.key);
+		//sorts amino acids based on joint prevalence
+		if (prev[a.key] < prev[b.key]){
+			return 1;
+		} else if (prev[a.key] > prev[b.key]){
+			return -1;
 		}
+		//fall through if equal
 	}
 	function sort_keys(a, b)
 	{
-		switch (sortmode)
-		{
-			case 1:
-				if (prev[a] < prev[b])
-				{
-					return 1;
-				} else if (prev[a] > prev[b])
-				{
-					return -1;
-				} //fall through if equal
-			case 0:
-				return d3.ascending(a,b);
-		}
+		if (prev[a] < prev[b]){
+			return 1;
+		} else if (prev[a] > prev[b]) {
+			return -1;
+		} //fall through if equal
 	}
 }
 
@@ -290,31 +269,6 @@ function create_stacked_bar(svg, nest, scale, yloc)
 		.on("mouseout", function() { d3.select(this).attr("opacity", 1)})
 		.append("svg:title")
 			.text("Match: " + (scale.domain()[1] - sum) + " Patients");
-}
-
-/**function update_aasite_colors()
-{
-	/* Switches the color scheme by changing the range of the aacolor scale, then redrawing everything
-	aacolor.range(aacolor.domain().map(function(d) { return aa_to_color(d3.event.target.value, d); }));
-	sites_svg.selectAll(".AAsite").remove();
-	update_AAsites(selected_sites);
-	d3.selectAll(".sitebars").attr("fill", function(d,i) { return aacolor(d); });
-}*/
-
-function update_sorting()
-{ //callback function for changing sorting method
-	switch(d3.event.target.value)
-	{
-		case "joint_prev":
-			sortmode = 1;
-			break;
-		default:
-		case "alpha":
-			sortmode = 0;
-	}
-	//redo site charts
-	sites_svg.selectAll(".AAsite").remove();
-	update_AAsites(selected_sites);
 }
 
 function AAsite_translate(d, i)
