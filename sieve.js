@@ -17,8 +17,11 @@ var plac_scale = d3.scale.linear()
 var vac_scale = d3.scale.linear()
 	.range([0, barwidth]);
 var pval_scale = d3.scale.log()
-	.domain([.1,1.1])
+	.domain([.1, 1.1])
 	.range([0, .95*height]);
+var tval_scale = d3.scale.log()
+	.domain([.1, Math.abs(d3.max([d3.min(tvalues),d3.max(tvalues)]))])
+	.range([0,.95*height]);
 var entropy_scale = d3.scale.linear()
 	.range([.95*height, 0])
 	.domain([-1, 0]); //will compute domain when scale is selected the first time.
@@ -28,9 +31,14 @@ var selected_sites = [];
 var mouse_down = false;
 var shift_down = false;
 var last_updated;
-var yscale_mode = 0; //0 = pval, 1 = entropy, -1 = constant
+var yscale_mode = 0; //0 = pval, 1 = entropy, 2 = tstat, -1 = constant
 
 var pval_scale_ticks = [0.01 + 0.1, 0.05 + 0.1, 0.2 + 0.1, 1 + 0.1];
+function tval_scale_ticks(tval_scale){
+	var ticks = d3.range(0, tval_scale.domain[1]);
+	ticks.push(tval_scale.domain[1]);
+	return ticks;
+}
 function entropy_scale_ticks(entropy_scale_domain){
 	var ticks = d3.range(0, entropy_scale_domain[1]);
 	ticks.push(entropy_scale_domain[1]);
@@ -59,6 +67,8 @@ function overview_yscale(site)
 		return pval_scale(pvalues[site]+.1);
 	case 1:
 		return entropy_scale(entropies.full[site]);
+	case 2:
+		return tval_scale(tvalues[site]+.1);
 	default:
 		return 0;
 	}
@@ -256,6 +266,9 @@ function generateSiteSelector() {
 				} else if (yscale_mode === 1) {
 					return "HXB2 Pos: " + envmap[i].hxb2Pos +
 						" // entropy: " + entropies.full[i];
+				} else if (yscale_mode === 2) {
+					return "HXB2 Pos: " + envmap[i].hxb2Pos +
+						" // t-stat: " + tvalues[i].toPrecision(2);
 				} else {
 					return "HXB2 Pos: " + envmap[i].hxb2Pos;
 				}
@@ -401,6 +414,14 @@ function yscale_selection()
 		yAxisr.scale(entropy_scale).tickValues(entropy_scale_ticks(entropy_scale.domain()))
 			.tickFormat(function(d) {return Math.round(d*100)/100;});
 		selaxistitle = "entropy";
+		break;
+	case "tvalue":
+		yscale_mode = 2;
+		yAxisl.scale(tval_scale).tickValues(tval_scale_ticks(tval_scale))
+			.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;});
+		yAxisr.scale(tval_scale).tickValues(tval_scale_ticks(tval_scale))
+			.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;});
+		selaxistitle = "t-value";
 		break;
 	case "constant":
 		yscale_mode = -1;

@@ -25,11 +25,15 @@ var numvac = 0;
 var numplac = 0;
 /** Array of p-values */
 var pvalues =[];
+/** Array of t-stats */
+var tvalues =[];
 /** Array of Entropy Values */
 var entropies = {full:[],vaccine:[],placebo:[]};
 d3.text("data/env.aa.92TH023.fasta", function(vacdata) {
 	dovacparsing(vacdata);
   d3.csv("data/pvalues.csv").row(function(d) {pvalues.push(+d.pvalue);})
+    .get(function(error, rows) {;});
+  d3.csv("data/tvalues.csv").row(function(h) {tvalues.push(+h.tvalue);})
     .get(function(error, rows) {;});
 	d3.csv("data/rv144_trt_lookup.csv", function(trt_lookup_data) {
 		createdictionary(trt_lookup_data);
@@ -46,19 +50,6 @@ d3.text("data/env.aa.92TH023.fasta", function(vacdata) {
 					sequences_raw = transpose(sequences_raw);
 					sequences.vaccine = transpose(sequences.vaccine);
 					sequences.placebo = transpose(sequences.placebo);
-         /* var loadscreen = d3.select("#overview").append("rect")
-            .attr("class","loadbox")
-            .attr("height",300)
-            .attr("width",900)
-            .attr("fill","black");
-           
-          loadscreen.append("text")
-            .attr("class","loading")
-            .attr("x",450)
-            .attr("y",150)
-            .style("text-anchor","middle")
-            .style("font-size", "30px")
-            .text("Loading");*/
           for(var i=0; i < sequences_raw.length; i++){
             entropies.full.push(jointentropy([i],sequences_raw,numvac+numplac).toFixed(2));
           }
@@ -68,8 +59,7 @@ d3.text("data/env.aa.92TH023.fasta", function(vacdata) {
           for(var i=0; i < sequences.placebo.length; i++){
             entropies.placebo.push(jointentropy([i],sequences.placebo,numplac).toFixed(2));
           }
-         /* d3.select(".loadbox").remove();
-          d3.select(".loading").remove();*/
+
 					generateVis();
 					
 				});
