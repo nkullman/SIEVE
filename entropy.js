@@ -1,22 +1,23 @@
-var tmargin = {top: 20, right: 10, bottom: 20, left: 40},
-    twidth = 500 - tmargin.left - tmargin.right,
+var fieldHeight = 25;
+var fieldWidth = 75;
+var buttonWidth = 25
+
+var tmargin = {top: 20, right: 10, bottom: 20, left: 10},
+    twidth = 4*fieldWidth + buttonWidth,
     theight = 100 - tmargin.top - tmargin.bottom;
 
-var fieldHeight = 25;
-var fieldWidth = 100;
-var buttonWidth = 25
-var colnames = ['Site','Vaccine Group','Placebo Group','Combined Data'];
+var colnames = ['Site (HXB2)','Vaccine','Placebo','Combined'];
 
 var jointRow, averageRow, canvas, rowsGrp;
 var showEntropies = true;
 
 function generateTable(){
  
-  canvas = d3.select(".table")
+  canvas = d3.select(".table-zn")
       .append("svg")
       .attr("class","tablesvg")
       .attr("dy",500)
-      .attr("width", twidth + tmargin.left + tmargin.right+buttonWidth)
+      .attr("width", twidth + tmargin.left + tmargin.right)
       .attr("height", theight + tmargin.top + tmargin.bottom);
   canvas.append("g")
       .attr("transform", "translate(" + tmargin.left + "," + tmargin.top + ")");
@@ -44,7 +45,7 @@ function generateTable(){
     .attr("text-anchor","middle")
     .style("fill","white")
     .style("font-size","15px")
-    .text("Entropy Summary");
+    .text("Entropy");
     
   title.append("text")
     .attr("x",fieldWidth*3 + buttonWidth)
@@ -52,7 +53,7 @@ function generateTable(){
     .attr("text-anchor","middle")
     .style("fill","white")
     .style("font-size","15px")
-    .text("Mismatch Count Summary");
+    .text("Mismatches");
   
   title.append("rect")
     .attr("x",buttonWidth)
@@ -121,7 +122,7 @@ function updateTable(sites){
         }
       }
     }
-    return [["Env " + envmap[d].hxb2Pos,"Env " + envmap[d].hxb2Pos],
+    return [[envmap[d].hxb2Pos, envmap[d].hxb2Pos],
       [entropies.vaccine[d],mmcountvaccine],
       [entropies.placebo[d],mmcountplacebo],
       [entropies.full[d],mmcountfull]];

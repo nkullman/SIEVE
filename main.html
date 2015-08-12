@@ -32,16 +32,18 @@
 			  <div class="protein-nav-opts">
     			<table>
     				<tbody>
-    				<tr><td>Overview Bar Height:</td><td><select id="yscale_selector">
-     					<option value="pvalue">p-value</option>
-    					<option value="entropy">Entropy</option>
-              <option value="tvalue">t-stat</option>
-    					<option value="constant">Constant</option>
-    				</select></td></tr>
-    				<tr><td>Select by HXB2:</td><td><input type="text" id="hxb2_select" size="13"></td><td class="help">?
+              <tr><td>Select by HXB2:</td><td><input type="text" id="hxb2_select" size="13"></td><td class="help">?
     					<span>
     						Select and append sites by HXB2 position, in a comma-separted list with single sites or ranges; e.g., 2, 5, 7-13, 506d.
-    					</span></td></tr>
+    					</span></td>
+              <td>Overview Bar Height:</td><td>
+                <select id="yscale_selector">
+                  <option value="pvalue">p-value</option>
+                  <option value="entropy">Entropy</option>
+                  <option value="tvalue">t-stat</option>
+                  <option value="constant">Constant</option>
+                </select>
+              </td></tr>
     			</tbody></table>
 			  </div><!--protein-nav-opts-->
 			  <div class="protein-nav">
@@ -51,14 +53,21 @@
       </div> <!--nav-fs-wrap-->
 		  <fieldset class="drilldown-wrap">
 			  <div class="table">
+          <div class="table-header">
+            <p>
+              Summary statistics
+            </p>
+          </div>
+          <div class="table-zn"></div>
 			  </div> <!-- table -->
 			  <div class="group-box-bar">
 			  </div> <!-- group-box-bar -->
 			  <div class="stacked-bars">
-          <div class="stacked-bars-export-fn"></div>
+          <div class="stacked-bars-export-fn">
             <p id="export-charts" style="cursor:pointer;">Export charts as SVG<a class="help"> ? <span>
     						Opens new window with the stacked bar charts for individual sites. Ctrl-S or similar to save in SVG format, which can be edited/converted in Inkscape or other editors or converted using an online tool such as CloudConvert.com.
     				</span></a></p>
+          </div> <!-- stacked-bars-export-fn -->
           <div class="stacked-bars-export-zone"></div>
 			  </div> <!-- stacked-bars -->
 		  </fieldset> <!-- drilldown-wrap -->
