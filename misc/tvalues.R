@@ -19,12 +19,6 @@ for(i in 1:(ncol(thedata)-1)){
       tvalues = c(tvalues,mresult)
   }
 }
-for(i in 1:length(tvalues)){
-  if(is.na(tvalues[i])){
-    tvalues[i] = 0
-  }
-}
-
 
 temp = data.frame(tvalues)
 names(temp)[1] = "tvalue"

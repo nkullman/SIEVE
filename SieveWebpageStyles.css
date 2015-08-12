@@ -67,18 +67,18 @@ main {
     width: 100%;
     display: block;
    /* height: 25%;*/
-    border: 2px solid red;
+    /*border: 2px solid red;*/
 }
 .protein-nav-wrap{
     max-height: 100%;
-    border: 2px solid blue;
+    /*border: 2px solid blue;*/
 }
 
 .protein-nav-opts{
     max-height: 100%;
     float: left;
     width: 14.5%;
-    border: 1px solid orange;
+    /*border: 1px solid orange;*/
     padding: 0;
     margin: 0 auto;
     border: 1px solid black;
@@ -87,7 +87,7 @@ main {
 .protein-nav{
     width: 84.5%;
     float: left;
-    border: 1px solid orange;
+    /*border: 1px solid orange;*/
     padding: 0;
     margin: 0 auto;
     text-align: center;
@@ -168,7 +168,7 @@ main {
     border: 0;
 }
 .drilldown-wrap div{
-    border: 1px solid orange;
+    /*border: 1px solid orange;*/
 }
 .table{
     max-height: 400px;
