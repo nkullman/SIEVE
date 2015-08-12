@@ -10,14 +10,15 @@ tvalues = c()
 for(i in 1:(ncol(thedata)-1)){
   result = try(t.test(thedata[,i][(thedata[,ncol(thedata)] == "VACCINE")],
                       thedata[,i][(thedata[,ncol(thedata)] == "PLACEBO")],
-                      alternative = "two.sided",B=10000)$statistic, silent = TRUE)
-  if (is.na(result) || is.numeric(result)){
+                      alternative = "two.sided",B=10000, var.equal = TRUE)$statistic,
+               silent = TRUE)
+  if (is.numeric(result) && !is.na(result)){
     tvalues = c(tvalues,result)
   } else {
-    tvalues = c(tvalues, NA)
+      mresult = thedata[,i][(thedata[,ncol(thedata)] == "VACCINE")][1] - thedata[,i][(thedata[,ncol(thedata)] == "PLACEBO")][1]
+      tvalues = c(tvalues,mresult)
   }
 }
-
 for(i in 1:length(tvalues)){
   if(is.na(tvalues[i])){
     tvalues[i] = 0
@@ -27,4 +28,4 @@ for(i in 1:length(tvalues)){
 
 temp = data.frame(tvalues)
 names(temp)[1] = "tvalue"
-write.csv(temp,"tvalues.csv",row.names=F)
+write.csv(temp,"../data/tvalues.csv",row.names=F)

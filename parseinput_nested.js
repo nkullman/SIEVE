@@ -25,7 +25,7 @@ var numvac = 0;
 var numplac = 0;
 /** Array of p-values */
 var pvalues =[];
-/** Array of t-stats */
+/** Array of absolute value of t-stats */
 var tvalues =[];
 /** Array of Entropy Values */
 var entropies = {full:[],vaccine:[],placebo:[]};
@@ -33,7 +33,7 @@ d3.text("data/env.aa.92TH023.fasta", function(vacdata) {
 	dovacparsing(vacdata);
   d3.csv("data/pvalues.csv").row(function(d) {pvalues.push(+d.pvalue);})
     .get(function(error, rows) {;});
-  d3.csv("data/tvalues.csv").row(function(h) {tvalues.push(+h.tvalue);})
+  d3.csv("data/tvalues.csv").row(function(h) {tvalues.push(Math.abs(h.tvalue));})
     .get(function(error, rows) {;});
 	d3.csv("data/rv144_trt_lookup.csv", function(trt_lookup_data) {
 		createdictionary(trt_lookup_data);

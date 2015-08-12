@@ -410,7 +410,7 @@ function drawPyramid(sites){
       .style("text-anchor","middle");
       
     pyramid_svg.append("text")
-      .text("change chart type")
+      .text("switch chart type")
       .attr("x",pyramid_width/2)
       .attr("y", pyramid_height + pyramid_margin.bottom - 8)
       .on("click", update_mismatchmode)
@@ -504,7 +504,7 @@ function drawBoxplot(sites)
       .text("Distribution of Mismatch Counts Across Selected Sites");
       
     pyramid_svg.append("text")
-      .text("change chart type")
+      .text("switch chart type")
       .attr("x",pyramid_width/2)
       .attr("y", pyramid_height + pyramid_margin.bottom - 8)
       .on("click", update_mismatchmode)

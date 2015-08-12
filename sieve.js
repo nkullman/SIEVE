@@ -19,9 +19,9 @@ var vac_scale = d3.scale.linear()
 var pval_scale = d3.scale.log()
 	.domain([.1, 1.1])
 	.range([0, .95*height]);
-var tval_scale = d3.scale.log()
-	.domain([.1, Math.abs(d3.max([d3.min(tvalues),d3.max(tvalues)]))])
-	.range([0,.95*height]);
+var tval_scale = d3.scale.linear()
+	.domain([-1,0]) // will compute domain when scale is selected the first time
+	.range([.95*height, 0]);
 var entropy_scale = d3.scale.linear()
 	.range([.95*height, 0])
 	.domain([-1, 0]); //will compute domain when scale is selected the first time.
@@ -34,9 +34,9 @@ var last_updated;
 var yscale_mode = 0; //0 = pval, 1 = entropy, 2 = tstat, -1 = constant
 
 var pval_scale_ticks = [0.01 + 0.1, 0.05 + 0.1, 0.2 + 0.1, 1 + 0.1];
-function tval_scale_ticks(tval_scale){
-	var ticks = d3.range(0, tval_scale.domain[1]);
-	ticks.push(tval_scale.domain[1]);
+function tval_scale_ticks(tval_scale_domain){
+	var ticks = d3.range(0, tval_scale_domain[1]);
+	ticks.push(tval_scale_domain[1]);
 	return ticks;
 }
 function entropy_scale_ticks(entropy_scale_domain){
@@ -417,11 +417,14 @@ function yscale_selection()
 		break;
 	case "tvalue":
 		yscale_mode = 2;
-		yAxisl.scale(tval_scale).tickValues(tval_scale_ticks(tval_scale))
+		if (tval_scale.domain()[0] == -1){
+			tval_scale.domain([.1, Math.abs(d3.max([d3.min(tvalues),d3.max(tvalues)]))]);
+		}
+		yAxisl.scale(tval_scale).tickValues(tval_scale_ticks(tval_scale.domain()))
 			.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;});
-		yAxisr.scale(tval_scale).tickValues(tval_scale_ticks(tval_scale))
+		yAxisr.scale(tval_scale).tickValues(tval_scale_ticks(tval_scale.domain()))
 			.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;});
-		selaxistitle = "t-value";
+		selaxistitle = "t-stat";
 		break;
 	case "constant":
 		yscale_mode = -1;

@@ -1,5 +1,4 @@
 <!-- NEXT:
-  add t-statistic to y-encoding options
   add comments to js scripts
   redo table construction
   add viewboxes to svg's (bar charts, group chart, siteselSVG) so they fill containing divs
@@ -10,7 +9,8 @@
       <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
       <link rel="stylesheet" type="text/css" href="SieveWebpageStyles.css">
       <script src="lodash.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script><style type="text/css"></style>
+      <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script><style type="text/css"></style>-->
+      <script src="d3.v3.min.js" charset="utf-8"></script>
       <title>SIEVE</title>
    </head>
    <body class=" hasGoogleVoiceExt">
@@ -34,8 +34,8 @@
     				<tbody>
     				<tr><td>Overview Bar Height:</td><td><select id="yscale_selector">
      					<option value="pvalue">p-value</option>
-              <option value="tvalue">t-value</option>
     					<option value="entropy">Entropy</option>
+              <option value="tvalue">t-stat</option>
     					<option value="constant">Constant</option>
     				</select></td></tr>
     				<tr><td>Select by HXB2:</td><td><input type="text" id="hxb2_select" size="13"></td><td class="help">?
