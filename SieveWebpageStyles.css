@@ -76,17 +76,17 @@ main {
 
 .protein-nav-opts{
     max-height: 100%;
-    float: left;
-    width: 14.5%;
+    display:block;
+    max-width: 50%;
     /*border: 1px solid orange;*/
     padding: 0;
     margin: 0 auto;
-    border: 1px solid black;
+    border: none;
 }
 
 .protein-nav{
-    width: 84.5%;
-    float: left;
+    width: 90%;
+    display: block;
     /*border: 1px solid orange;*/
     padding: 0;
     margin: 0 auto;
