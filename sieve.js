@@ -7,6 +7,10 @@ var barmargin = {top: 5, right: 10, bottom: 0, left: 10},
 var barchartmargin = {top: 15, right: 80, bottom: 10, left: 50},
 	barchartwidth = 250,
 	barchartheight = 70;
+	
+// The below will be read from file at some point
+var studyname = "RV144",
+	protein = "env";
 
 var margin =  {top: 20, right: 50, bottom: 40, left: 50};
 var width = 800 - margin.left - margin.right;
@@ -94,7 +98,10 @@ function generateSiteSelector() {
 		how often the script attempts to process the selected sites when making
 		a sweep over the site selection chart.	*/
   
-  d3.select("#fieldset-legend").append("text").text("Vaccine sequence: " + vaccine.ID);
+  d3.select(".analysisID").append("html").html(
+	  "Study: " + studyname + "<br>" +
+	  "Immunogen: " + vaccine.ID + "<br>" +
+	  "Protein: " + "env");
   
   window.xScale = d3.scale.linear()
     .domain([0, vaccine.sequence.length-1])

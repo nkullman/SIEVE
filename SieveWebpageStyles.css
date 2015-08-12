@@ -58,7 +58,7 @@ main {
     padding: 10px;
     line-height: 1.5em;
     font-size: 0.9em;
-    width: 90%;
+    width: 95%;
     margin: 0 auto;
     padding-bottom: 40px;
 }
@@ -71,7 +71,7 @@ main {
 }
 .protein-nav-wrap{
     max-height: 100%;
-    /*border: 2px solid blue;*/
+    border: none;
 }
 
 .protein-nav-opts{
@@ -85,12 +85,18 @@ main {
 }
 
 .protein-nav{
-    width: 90%;
+    width: 100%;
     display: block;
     /*border: 1px solid orange;*/
     padding: 0;
     margin: 0 auto;
     text-align: center;
+}
+.protein-nav span{
+    float: left;
+    text-align: left;
+    font-size: 1.2em;
+    line-height: 1.5em;
 }
 /* Begin d3 styling from sievestyles.css*/
 
@@ -105,7 +111,7 @@ main {
 .help span {
     z-index:10;display:none; padding:14px 20px;
     margin-top:-30px; margin-left:28px;
-    width:300px; line-height:16px;
+    width:auto; line-height:16px;
 }
 .help:hover span{
     display:inline; position:absolute; color:#111;
