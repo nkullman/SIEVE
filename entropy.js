@@ -1,5 +1,5 @@
 var fieldHeight = 25;
-var fieldWidth = 75;
+var fieldWidth = 90;
 var buttonWidth = 25
 
 var tmargin = {top: 20, right: 10, bottom: 20, left: 10},
