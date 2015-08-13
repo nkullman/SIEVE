@@ -1,10 +1,8 @@
 <!-- NEXT:
-  move production to new repo (possible to keep all accumulated history?)
   add comments
   redo table construction
   make viewable w/o horiz scrolls on screensize 1280x1024
   make fonts larger all around
-  spread out and center nav options across pane
   add font styling to draw attention to analysis ID
   make height vert height on scrolling ideal for 1280x1024
 -->
@@ -14,8 +12,8 @@
       <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
       <link rel="stylesheet" type="text/css" href="SieveWebpageStyles.css">
       <script src="lodash.min.js"></script>
-      <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script><style type="text/css"></style>-->
-      <script src="d3.v3.min.js" charset="utf-8"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script><style type="text/css"></style>
+      <!--<script src="d3.v3.min.js" charset="utf-8"></script>-->
       <title>SIEVE</title>
    </head>
    <body class=" hasGoogleVoiceExt">
@@ -31,28 +29,29 @@
          </nav>
          
       <main>
+      <div class="analysisID"></div>
       <div class="nav-fs-wrap">
 		  <fieldset class="protein-nav-wrap">
-			  <legend id="fieldset-legend"></legend>
 			  <div class="protein-nav-opts">
-    			<table>
-    				<tbody>
-              <tr><td>Select by HXB2:</td><td><input type="text" id="hxb2_select" size="13"></td><td class="help">?
+          <div id="select-by-hxb2-area">
+            Select by HXB2: <input type="text" id="hxb2_select" size="13">
+            <a class="help">?
     					<span>
     						Select and append sites by HXB2 position, in a comma-separted list with single sites or ranges; e.g., 2, 5, 7-13, 506d.
-    					</span></td>
-              <td>Overview Bar Height:</td><td>
-                <select id="yscale_selector">
-                  <option value="pvalue">p-value</option>
-                  <option value="entropy">Entropy</option>
-                  <option value="tvalue">t-stat</option>
-                  <option value="constant">Constant</option>
-                </select>
-              </td></tr>
-    			</tbody></table>
+    					</span></a>
+          </div> <!-- select-by-hxb2-area -->
+          <div id="bar-height-encoding">
+            Bar height encoding:
+            <select id="yscale_selector">
+              <option value="pvalue">p-value</option>
+              <option value="entropy">Entropy</option>
+              <option value="tvalue">t-stat</option>
+              <option value="constant">Constant</option>
+            </select>
+          </div> <!-- bar-height-encoding -->
 			  </div><!--protein-nav-opts-->
 			  <div class="protein-nav">
-          <span class = "analysisID"></span>
+          
 			  </div> <!-- protein-nav -->
 		  </fieldset> <!--protein-nav-wrap-->
       </div> <!--nav-fs-wrap-->
@@ -80,8 +79,8 @@
       <footer>
             <ul>
                <li><a href="https://uw.edu"><img src="/images/UW_Block_W_logo.png" alt="University-of-Washington" height="22px"></a></li>
-               <li><a href="https://www.fredhutch.org/en.html"><img src="/images/cureStartsHere_logo.png" alt="Fred-Hutch" height="12px"></a></li>
-               <li><a href="http://escience.washington.edu/"><img src="/images/eScience_logo.png" alt="eScience-Institute" height="22px"></a></li>
+               <li><a href="https://www.fredhutch.org/en.html"><img src="./images/cureStartsHere_logo.png" alt="Fred-Hutch" height="12px"></a></li>
+               <li><a href="http://escience.washington.edu/"><img src="./images/eScience_logo.png" alt="eScience-Institute" height="22px"></a></li>
             </ul>
       </footer>
       <script>
