@@ -62,6 +62,11 @@ main {
     margin: 0 auto;
     padding-bottom: 40px;
 }
+
+.analysisID {
+    width: 60%;
+    text-align: center;
+}
 /* Protein navigation/selection area styling */
 .nav-fs-wrap{
     width: 100%;
@@ -75,13 +80,19 @@ main {
 }
 
 .protein-nav-opts{
+    min-height: 2em;
     max-height: 100%;
     display:block;
-    max-width: 50%;
+    width: 900px;
     /*border: 1px solid orange;*/
     padding: 0;
     margin: 0 auto;
     border: none;
+}
+.protein-nav-opts div {
+    float: left;
+    width: 449px;
+    text-align: center;
 }
 
 .protein-nav{

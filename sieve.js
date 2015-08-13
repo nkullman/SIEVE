@@ -12,7 +12,7 @@ var barchartmargin = {top: 15, right: 80, bottom: 10, left: 50},
 var studyname = "RV144",
 	protein = "env";
 
-var margin =  {top: 40, right: 50, bottom: 40, left: 50};
+var margin =  {top: 20, right: 50, bottom: 40, left: 50};
 var width = 800 - margin.left - margin.right;
 var height =  140 - margin.top - margin.bottom;
 		
@@ -99,9 +99,9 @@ function generateSiteSelector() {
 		a sweep over the site selection chart.	*/
   
   d3.select(".analysisID").append("html").html(
-	  "Study: " + studyname + "<br>" +
-	  "Immunogen: " + vaccine.ID + "<br>" +
-	  "Protein: " + "env");
+	  "<h2>Study: " + studyname + " > " +
+	  "Immunogen: " + vaccine.ID + " > " +
+	  "Protein: " + protein + "</h2>");
   
   window.xScale = d3.scale.linear()
     .domain([0, vaccine.sequence.length-1])
