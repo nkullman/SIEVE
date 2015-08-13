@@ -1,68 +1,100 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- NEXT:
+  move production to new repo (possible to keep all accumulated history?)
+  add comments
+  redo table construction
+  make viewable w/o horiz scrolls on screensize 1280x1024
+  make fonts larger all around
+  spread out and center nav options across pane
+  add font styling to draw attention to analysis ID
+  make height vert height on scrolling ideal for 1280x1024
+-->
 
-<head>
-  <title>SIEVE</title>
-  <meta name="robots" content="index,follow" />
-  <link rel="stylesheet" type="text/css" href="http://courses.cs.washington.edu/courses/cse512/15sp/style.css"/>
-
-</head>
-
-<body>
-  <div class='content wider'>
-
-    <div class='title'>
-      <a href="http://courses.cs.washington.edu/courses/cse512/15sp/"><strong>CSE512</strong></a>
-         Projects
-         <small>(Spring 2015)</small>
-    </div>
-    <br/>
-
-    <div class='pub' data-spy="scroll" data-target=".navbar">
-
-      <h1 class="title">SIEVE: Statistical Interactive Explorer of Vaccine Efficacy</h1>
-      <div class="authors">
-        <a href="https://github.com/nkullman">Nick Kullman</a>,
-        <a href="https://github.com/gclenaghan">Graham Clenaghan</a>
-        <a href="https://github.com/waynefanyang">Wayne Yang</a>
-      </div>
-
-      <div class="figure">
-        <img src="images/summary.png" width="100%"/>
-        <div class="caption">An overview of the interface to SIEVE</div>
-      </div>
-
-      <p>
-        SIEVE is an interactive visualization for exploring data from vaccine studies.
-        Specifically, we aim to aid the process of sieve analysis, which compares the genetic sequences of viruses found in infected patients between vaccine and placebo groups.
-        The visualization allows researchers in the field to study the affect of a vaccine at the level of the amino acids in the breakthrough viruses, and find statistically significant differences in the groups.
-        This work was done in collaboration with Andrew Gartland and Allan DeCamp at Fred Hutch.
-      </p>
-      
-      <h2>Software</h2>
-      <p>
-        Try it online <a href="https://cse512-15s.github.io/fp-nkullman-gclenagh-wfyang/main.html">here</a>. Use the help features to get started. The visualization uses data from the RV144 HIV study, specifically the Env protein.
-origin/gh-pages
-      </p>
-
-      <h2>Materials</h2>
-      <div class="links">
-        <a href="final/poster-nkullman-gclenagh-wfyang.pdf" >Poster</a>
-        <a href="final/paper-nkullman-gclenagh-wfyang.pdf" >Paper</a>
-        <a href="https://github.com/CSE512-15S/fp-nkullman-gclenagh-wfyang/">Code</a>
-      </div>
-
-
-      <div class='footer'>
-        <a href='http://cs.washington.edu'>Computer Science &amp; Engineering</a> -
-        <a href='http://www.washington.edu'>University of Washington</a>
-      </div>
-    </div>
-    <br/>
-    <br/>
-
-
-  </div>
-</body>
-
-</html>
+<!DOCTYPE html>
+<html><head>
+      <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" type="text/css" href="SieveWebpageStyles.css">
+      <script src="lodash.min.js"></script>
+      <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script><style type="text/css"></style>-->
+      <script src="d3.v3.min.js" charset="utf-8"></script>
+      <title>SIEVE</title>
+   </head>
+   <body class=" hasGoogleVoiceExt">
+   <div class="wrapper">
+         <nav>
+               <ul>
+                     <a id="headline-link" href="/"><li id="headline-li"><span id="headline-span">SIEVE</span><br>Statistical Interactive Explorer of Vaccine Efficacy</li></a>
+                     <a href="/datasets/"><li>Other sieve analysis datasets</li></a>
+                     <a href="/upload/"><li>Upload your own data</li></a>
+					 <a href="/about/"><li>About</li></a>
+               </ul>
+               <div class="handle">SIEVE <span>Menu ☰</span></div>
+         </nav>
+         
+      <main>
+      <div class="nav-fs-wrap">
+		  <fieldset class="protein-nav-wrap">
+			  <legend id="fieldset-legend"></legend>
+			  <div class="protein-nav-opts">
+    			<table>
+    				<tbody>
+              <tr><td>Select by HXB2:</td><td><input type="text" id="hxb2_select" size="13"></td><td class="help">?
+    					<span>
+    						Select and append sites by HXB2 position, in a comma-separted list with single sites or ranges; e.g., 2, 5, 7-13, 506d.
+    					</span></td>
+              <td>Overview Bar Height:</td><td>
+                <select id="yscale_selector">
+                  <option value="pvalue">p-value</option>
+                  <option value="entropy">Entropy</option>
+                  <option value="tvalue">t-stat</option>
+                  <option value="constant">Constant</option>
+                </select>
+              </td></tr>
+    			</tbody></table>
+			  </div><!--protein-nav-opts-->
+			  <div class="protein-nav">
+          <span class = "analysisID"></span>
+			  </div> <!-- protein-nav -->
+		  </fieldset> <!--protein-nav-wrap-->
+      </div> <!--nav-fs-wrap-->
+		  <fieldset class="drilldown-wrap">
+			  <div class="table">
+          <div class="table-header">
+            <p>
+              Summary statistics
+            </p>
+          </div>
+          <div class="table-zn"></div>
+			  </div> <!-- table -->
+			  <div class="group-box-bar">
+			  </div> <!-- group-box-bar -->
+			  <div class="stacked-bars">
+          <div class="stacked-bars-export-fn">
+            <p id="export-charts" style="cursor:pointer;">Export charts as SVG<a class="help"> ? <span>
+    						Opens new window with the stacked bar charts for individual sites. Ctrl-S or similar to save in SVG format, which can be edited/converted in Inkscape or other editors or converted using an online tool such as CloudConvert.com.
+    				</span></a></p>
+          </div> <!-- stacked-bars-export-fn -->
+          <div class="stacked-bars-export-zone"></div>
+			  </div> <!-- stacked-bars -->
+		  </fieldset> <!-- drilldown-wrap -->
+      </main>
+      <footer>
+            <ul>
+               <li><a href="https://uw.edu"><img src="/images/UW_Block_W_logo.png" alt="University-of-Washington" height="22px"></a></li>
+               <li><a href="https://www.fredhutch.org/en.html"><img src="/images/cureStartsHere_logo.png" alt="Fred-Hutch" height="12px"></a></li>
+               <li><a href="http://escience.washington.edu/"><img src="/images/eScience_logo.png" alt="eScience-Institute" height="22px"></a></li>
+            </ul>
+      </footer>
+      <script>
+            d3.select(".handle").on("click", function(){
+                  var navul = d3.select("nav ul");
+                  navul.classed("showing", !navul.classed("showing"));
+            })
+      </script>
+   </div> <!-- wrapper -->
+   <script src="entropy.js"></script>
+   <script src="summarystats.js"></script>
+   <script src="parseinput_nested.js"></script>
+   <script src="sieve.js"></script>
+   <script src="stackedbars.js"></script>
+   <script src="pyramid.js"></script>
+</body></html>

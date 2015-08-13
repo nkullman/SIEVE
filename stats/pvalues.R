@@ -14,14 +14,6 @@ for(i in 1:(ncol(thedata)-1)){
                                   ,alternative = "two.sided",B=10000)$p.value)
 }
 
-qvalues = p.adjust(pvalues,method = "fdr")
-for(i in 1:length(qvalues)){
-  if(is.na(qvalues[i])){
-    qvalues[i] = 1
-  }
-}
-
-
 for(i in 1:length(pvalues)){
   if(is.na(pvalues[i])){
     pvalues[i] = 1
@@ -30,8 +22,5 @@ for(i in 1:length(pvalues)){
 
 
 temp = data.frame(pvalues)
-temp2 = data.frame(qvalues)
 names(temp)[1] = "pvalue"
-names(temp2)[1] = "qvalue"
 write.csv(temp,"pvalues.csv",row.names=F)
-write.csv(temp2,"qvalues.csv",row.names=F)
