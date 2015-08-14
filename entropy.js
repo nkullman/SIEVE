@@ -1,8 +1,8 @@
 var fieldHeight = 25;
 var fieldWidth = 90;
-var buttonWidth = 25
+var buttonWidth = 15
 
-var tmargin = {top: 20, right: 3, bottom: 20, left: 3},
+var tmargin = {top: 20, right: 0, bottom: 20, left: 0},
     twidth = 4*fieldWidth + buttonWidth,
     theight = 100 - tmargin.top - tmargin.bottom;
 

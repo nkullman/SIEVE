@@ -13,8 +13,8 @@ var studyname = "RV144",
 	protein = "env";
 
 var margin =  {top: 20, right: 50, bottom: 40, left: 50};
-var width = 800 - margin.left - margin.right;
-var height =  140 - margin.top - margin.bottom;
+var width = 900 - margin.left - margin.right;
+var height =  200 - margin.top - margin.bottom;
 		
 var plac_scale = d3.scale.linear()
 	.range([0, barwidth]);
