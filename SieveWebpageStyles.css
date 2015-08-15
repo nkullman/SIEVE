@@ -178,8 +178,7 @@ main {
 }
 
 .axis,
-.x,
-.y {
+.tick > text {
     font-size: 1em;
 }
 

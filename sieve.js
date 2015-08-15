@@ -12,7 +12,7 @@ var barchartmargin = {top: 15, right: 80, bottom: 10, left: 50},
 var studyname = "RV144",
 	protein = "env";
 
-var margin =  {top: 20, right: 50, bottom: 40, left: 50};
+var margin =  {top: 20, right: 50, bottom: 50, left: 50};
 var width = 900 - margin.left - margin.right;
 var height =  200 - margin.top - margin.bottom;
 		
