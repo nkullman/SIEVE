@@ -109,7 +109,8 @@ main {
     font-size: 1.2em;
     line-height: 1.5em;
 }
-/* Begin d3 styling from final project work*/
+/* End of styling for navigation area */
+/* Styling for help tooltips */
 
 .help {
   outline:none;
@@ -128,6 +129,8 @@ main {
     display:inline; position:absolute; color:#111;
     border:1px solid #DCA; background:#fffAF0;
 }
+
+/* Begin d3 styling from final project work*/
 .overlay {
     fill: none;
 	pointer-events: all;
@@ -174,6 +177,11 @@ main {
   stroke-width: 1px;
 }
 
+.axis,
+.tick > text {
+    font-size: 1em;
+}
+
 /* End d3 styling from final project work*/
 
 /* Selection drilldown stats area styling */
@@ -188,25 +196,31 @@ main {
     /*border: 1px solid orange;*/
 }
 .table{
-    max-height: 400px;
+    max-height: 450px;
     float: left;
     width: 33%;
     text-align: center;
-    overflow: auto;
+    overflow: hidden;
+}
+.table:hover{
+    overflow-y:auto;
 }
 .group-box-bar{
-    max-height: 400px;
+    max-height: 450px;
     float: left;
     width: 33%;
     text-align: center;
     overflow: auto;
 }
 .stacked-bars{
-    max-height: 400px;
+    max-height: 450px;
     float: left;
     width: 33%;
     text-align: center;
-    overflow: auto;
+    overflow: hidden;
+}
+.stacked-bars:hover{
+    overflow:auto;
 }
 
 

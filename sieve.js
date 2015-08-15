@@ -12,9 +12,9 @@ var barchartmargin = {top: 15, right: 80, bottom: 10, left: 50},
 var studyname = "RV144",
 	protein = "env";
 
-var margin =  {top: 20, right: 50, bottom: 40, left: 50};
-var width = 800 - margin.left - margin.right;
-var height =  140 - margin.top - margin.bottom;
+var margin =  {top: 20, right: 50, bottom: 50, left: 50};
+var width = 900 - margin.left - margin.right;
+var height =  200 - margin.top - margin.bottom;
 		
 var plac_scale = d3.scale.linear()
 	.range([0, barwidth]);
@@ -41,6 +41,7 @@ var pval_scale_ticks = [0.01 + 0.1, 0.05 + 0.1, 0.2 + 0.1, 1 + 0.1];
 function tval_scale_ticks(tval_scale_domain){
 	var ticks = d3.range(0, tval_scale_domain[1]);
 	ticks.push(tval_scale_domain[1]);
+	if (ticks[0] < 0) ticks[0] = 0;
 	return ticks;
 }
 function entropy_scale_ticks(entropy_scale_domain){
@@ -72,7 +73,7 @@ function overview_yscale(site)
 	case 1:
 		return entropy_scale(entropies.full[site]);
 	case 2:
-		return tval_scale(tvalues[site]+.1);
+		return tval_scale(tvalues[site]);
 	default:
 		return 0;
 	}
@@ -225,8 +226,8 @@ function generateSiteSelector() {
 		.call(yAxisl);
 	siteselSVGg.append("text")
 		.attr("class", "y axis label")
-		.attr("text-anchor", "end")
-		.attr("x", -5)
+		.attr("text-anchor", "beginning")
+		.attr("x", -margin.right)
 		.attr("y", -margin.top/2)
 		.text(selaxistitle);
 	siteselSVGg.append("g")
@@ -425,12 +426,12 @@ function yscale_selection()
 	case "tvalue":
 		yscale_mode = 2;
 		if (tval_scale.domain()[0] == -1){
-			tval_scale.domain([.1, Math.abs(d3.max([d3.min(tvalues),d3.max(tvalues)]))]);
+			tval_scale.domain([0, Math.abs(d3.max([d3.min(tvalues),d3.max(tvalues)]))]);
 		}
 		yAxisl.scale(tval_scale).tickValues(tval_scale_ticks(tval_scale.domain()))
-			.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;});
+			.tickFormat(function(d) {return Math.round((d)*100)/100;});
 		yAxisr.scale(tval_scale).tickValues(tval_scale_ticks(tval_scale.domain()))
-			.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;});
+			.tickFormat(function(d) {return Math.round((d)*100)/100;});
 		selaxistitle = "t-stat";
 		break;
 	case "constant":

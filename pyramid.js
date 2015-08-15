@@ -1,20 +1,20 @@
 var mismatchmode = 0; //0 = pyramid, 1 = box plot
 
 var pyramid_margin = {
-      top: 50,
+      top: 30,
       right: 20,
       bottom: 40,
-      left: 25,
+      left: 20,
       middle: 20
 };
 
-var pyramid_width = 400,
+var pyramid_width = 300,
     pyramid_height = 150;
 
-var box_width = 300, box_height = 50;
+var box_width = 225, box_height = 50;
 
 // CREATE SVG
-var pyramid_svg = d3.select('.group-box-bar').append('svg')
+var pyramid_svg = d3.select('.group-box-bar-plot').append('svg')
       .attr('width', pyramid_margin.left + pyramid_width + pyramid_margin.right)
       .attr('height', pyramid_margin.top + pyramid_height + pyramid_margin.bottom)
       // ADD A GROUP FOR THE SPACE WITHIN THE MARGINS
@@ -386,13 +386,13 @@ function drawPyramid(sites){
       .attr('transform', translation(pointB, 0))
       .call(yAxisRight);
      
-     // draw title
-    pyramid_svg.append("text")
+     // draw title - move to index.html
+    /*pyramid_svg.append("text")
       .attr("x",pyramid_width/2)
       .attr("y",-30)
       .style("text-anchor","middle")
       .style("font-size","15px")
-      .text("Distribution of Mismatch Counts Across Selected Sites");
+      .text("Distribution of Mismatch Counts Across Selected Sites");*/
     // labels etc.  
     pyramid_svg.append('text')
       .text("Vaccine Group")
@@ -400,8 +400,9 @@ function drawPyramid(sites){
       .attr('y',0);
     pyramid_svg.append('text')
       .text("Placebo Group")
-      .attr('x',330)
-      .attr('y',0);
+      .attr('x',pyramid_width)
+      .attr('y',0)
+      .style('text-anchor', 'end');
       
     pyramid_svg.append("text")
       .text("Number of Mismatches")
