@@ -400,8 +400,9 @@ function drawPyramid(sites){
       .attr('y',0);
     pyramid_svg.append('text')
       .text("Placebo Group")
-      .attr('x',330)
-      .attr('y',0);
+      .attr('x',pyramid_width)
+      .attr('y',0)
+      .style('text-anchor', 'end');
       
     pyramid_svg.append("text")
       .text("Number of Mismatches")

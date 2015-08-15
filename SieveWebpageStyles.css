@@ -109,7 +109,8 @@ main {
     font-size: 1.2em;
     line-height: 1.5em;
 }
-/* Begin d3 styling from final project work*/
+/* End of styling for navigation area */
+/* Styling for help tooltips */
 
 .help {
   outline:none;
@@ -128,6 +129,8 @@ main {
     display:inline; position:absolute; color:#111;
     border:1px solid #DCA; background:#fffAF0;
 }
+
+/* Begin d3 styling from final project work*/
 .overlay {
     fill: none;
 	pointer-events: all;
@@ -172,6 +175,12 @@ main {
   fill: #fff;
   stroke: #666;
   stroke-width: 1px;
+}
+
+.axis,
+.x,
+.y {
+    font-size: 1em;
 }
 
 /* End d3 styling from final project work*/

@@ -225,8 +225,8 @@ function generateSiteSelector() {
 		.call(yAxisl);
 	siteselSVGg.append("text")
 		.attr("class", "y axis label")
-		.attr("text-anchor", "end")
-		.attr("x", -5)
+		.attr("text-anchor", "beginning")
+		.attr("x", -margin.right)
 		.attr("y", -margin.top/2)
 		.text(selaxistitle);
 	siteselSVGg.append("g")
