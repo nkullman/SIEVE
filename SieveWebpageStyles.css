@@ -192,7 +192,10 @@ main {
     float: left;
     width: 33%;
     text-align: center;
-    overflow: auto;
+    overflow: hidden;
+}
+.table:hover{
+    overflow-y:auto;
 }
 .group-box-bar{
     max-height: 400px;
@@ -206,7 +209,10 @@ main {
     float: left;
     width: 33%;
     text-align: center;
-    overflow: auto;
+    overflow: hidden;
+}
+.stacked-bars:hover{
+    overflow:auto;
 }
 
 
