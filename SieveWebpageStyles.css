@@ -188,7 +188,7 @@ main {
     /*border: 1px solid orange;*/
 }
 .table{
-    max-height: 400px;
+    max-height: 450px;
     float: left;
     width: 33%;
     text-align: center;
@@ -198,14 +198,14 @@ main {
     overflow-y:auto;
 }
 .group-box-bar{
-    max-height: 400px;
+    max-height: 450px;
     float: left;
     width: 33%;
     text-align: center;
     overflow: auto;
 }
 .stacked-bars{
-    max-height: 400px;
+    max-height: 450px;
     float: left;
     width: 33%;
     text-align: center;
