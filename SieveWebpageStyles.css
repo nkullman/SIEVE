@@ -212,6 +212,9 @@ footer a{
 .tick > text {
     font-size: .8em;
 }
+.tablesvg text {
+    font-size: .9em;
+}
 
 /* End d3 styling from final project work*/
 

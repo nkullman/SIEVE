@@ -41,18 +41,18 @@ function generateTable(){
 
   title.append("text")
     .attr("x",buttonWidth + fieldWidth)
-    .attr("y",fieldHeight/2+4)
+    .attr("y",.8*fieldHeight)
     .attr("text-anchor","middle")
     .style("fill","white")
-    .style("font-size","15px")
+    .style("font-size","18px")
     .text("Entropy");
     
   title.append("text")
     .attr("x",fieldWidth*3 + buttonWidth)
-    .attr("y",fieldHeight/2+4)
+    .attr("y",.8*fieldHeight)
     .attr("text-anchor","middle")
     .style("fill","white")
-    .style("font-size","15px")
+    .style("font-size","18px")
     .text("Mismatches");
   
   title.append("rect")
