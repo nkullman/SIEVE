@@ -100,9 +100,7 @@ function generateSiteSelector() {
 		a sweep over the site selection chart.	*/
   
   d3.select(".analysisID").append("html").html(
-	  "<h2>Study: " + studyname + " > " +
-	  "Immunogen: " + vaccine.ID + " > " +
-	  "Protein: " + protein + "</h2>");
+	  "<h2>" + studyname + ": " + protein + " (" + vaccine.ID.trim() + ")</h2>");
   
   window.xScale = d3.scale.linear()
     .domain([0, vaccine.sequence.length-1])
