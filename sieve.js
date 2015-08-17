@@ -29,6 +29,10 @@ var tval_scale = d3.scale.linear()
 var entropy_scale = d3.scale.linear()
 	.range([.95*height, 0])
 	.domain([-1, 0]); //will compute domain when scale is selected the first time.
+var opacity_scale = d3.scale.linear()
+	.domain([-1,0]) // will compute domain when navigation area is used the first time.
+	.range([0.5,0])
+	.clamp(true);
 
 var selected_sites = [];
 
@@ -236,7 +240,7 @@ function generateSiteSelector() {
 		.call(yAxisr);
 	
 	function refresh() {
-		if (!shift_down) {
+		if (!shift_down) {			
 			var t = d3.event.translate;
 			var s = d3.event.scale;
 			
@@ -248,6 +252,20 @@ function generateSiteSelector() {
 			sitebars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
 			foregroundbars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
 			siteselSVGg.select(".x.axis").call(xAxis.scale(xScale));
+			
+			var origSiteBarWidth = parseFloat(sitebars[0][0].getAttribute("width"));
+			var visWindowStart = (0-d3.event.translate[0])/d3.event.scale;
+			var visWindowEnd = visWindowStart + width/d3.event.scale; 
+			var visWindowSpan = (visWindowEnd-visWindowStart);
+			var visWindowMidpt = visWindowStart + visWindowSpan/2;
+			
+			opacity_scale.domain([visWindowSpan/2, visWindowSpan/2 + .01*visWindowSpan]);
+			
+			sitebars.attr("opacity", function(d,i){
+				var site_x_loc = parseFloat(sitebars[0][i].getAttribute("x")) + origSiteBarWidth/2;
+				return opacity_scale(Math.abs(visWindowMidpt - site_x_loc));
+			});
+			
 		}
 	}
 	
