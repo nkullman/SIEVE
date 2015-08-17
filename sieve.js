@@ -13,8 +13,8 @@ var studyname = "RV144",
 	protein = "env";
 
 var margin =  {top: 20, right: 50, bottom: 50, left: 50};
-var width = 900 - margin.left - margin.right;
-var height =  200 - margin.top - margin.bottom;
+var width = 800 - margin.left - margin.right;
+var height =  150 - margin.top - margin.bottom;
 		
 var plac_scale = d3.scale.linear()
 	.range([0, barwidth]);
@@ -139,8 +139,10 @@ function generateSiteSelector() {
 			.text("Vaccine sequence: " + vaccine.ID);*/
 	
 	window.siteselSVGg = d3.select(".protein-nav").append("svg")
-	    .attr("width", width + margin.right + margin.left)
-	    .attr("height", height + margin.top + margin.bottom)
+	    /*.attr("width", width + margin.right + margin.left)
+	    .attr("height", height + margin.top + margin.bottom)*/
+		.attr('viewBox', "0 0 " + (width + margin.right + margin.left) + " " + (height + margin.top + margin.bottom))
+      	.attr('preserveAspectRatio',"xMinYMin meet")
 		.attr("id", "siteselSVG")
 		.append("g")
 		.attr("id", "siteselSVGg")

@@ -96,12 +96,13 @@ main {
 }
 
 .protein-nav{
-    width: 100%;
+    width: 75%;
     display: block;
     /*border: 1px solid orange;*/
     padding: 0;
     margin: 0 auto;
     text-align: center;
+    padding-bottom: 20px;
 }
 .protein-nav span{
     float: left;
@@ -109,6 +110,36 @@ main {
     font-size: 1.2em;
     line-height: 1.5em;
 }
+
+footer{
+    background-color: #54308f;
+    width:100%;
+    height: 40px;
+	position:absolute;
+	bottom:0;
+	left:0;
+    line-height: 1.5em;
+    font-size: 0.9em;
+}
+
+footer ul{
+    color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+footer ul li {
+    display: inline-block;
+    padding: 10px;
+    padding-bottom: 0;
+}
+
+footer a{
+    text-decoration: none;
+    color: inherit;
+}
+
 /* End of styling for navigation area */
 /* Styling for help tooltips */
 
@@ -179,7 +210,10 @@ main {
 
 .axis,
 .tick > text {
-    font-size: 1em;
+    font-size: .8em;
+}
+.tablesvg text {
+    font-size: .9em;
 }
 
 /* End d3 styling from final project work*/
@@ -223,6 +257,7 @@ main {
     overflow:auto;
 }
 
+/* End styling for drilldown. Begin styling for banner handle */
 
 .handle{
     width: 100%;
@@ -238,35 +273,6 @@ main {
 
 .handle span {
     float:right;
-}
-
-footer{
-    background-color: #54308f;
-    width:100%;
-    height: 40px;
-	position:absolute;
-	bottom:0;
-	left:0;
-    line-height: 1.5em;
-    font-size: 0.9em;
-}
-
-footer ul{
-    color: #f7f7f7;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-}
-
-footer ul li {
-    display: inline-block;
-    padding: 10px;
-    padding-bottom: 0;
-}
-
-footer a{
-    text-decoration: none;
-    color: inherit;
 }
 
 @media screen and (max-width: 885px) {

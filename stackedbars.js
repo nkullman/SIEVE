@@ -18,8 +18,10 @@ var mismatch_axis = d3.svg.axis() //axis for stacked bar charts
 
 var sites_svg = d3.select(".stacked-bars-export-zone") //holds all the stacked bar charts
 	.append("svg")
-	.attr("width", barchartwidth + barchartmargin.left + barchartmargin.right)
-	.attr("height", 0)
+	/*.attr("width", barchartwidth + barchartmargin.left + barchartmargin.right)
+	.attr("height", 0)*/
+	.attr('viewBox', "0 0 " + (barchartwidth + barchartmargin.left + barchartmargin.right) + " 0")
+    .attr('preserveAspectRatio',"xMinYMin meet")
 	.attr("title", "Amino Acid Site Mismatches")
 	.attr("version", 1.1)
 	.attr("xmlns", "http://www.w3.org/2000/svg")
@@ -46,7 +48,8 @@ function update_AAsites(sites)
 	var AAsites = sites_svg.selectAll(".AAsite")
 		.data(sites, function(d) { return d; });
 	sites_svg.transition() //makes the svg resize to fit charts
-		.attr("height", AAsites[0].length*(barchartheight + barchartmargin.top + barchartmargin.bottom));
+		.attr("viewBox", "0 0 " + (barchartwidth + barchartmargin.left + barchartmargin.right) + " " + AAsites[0].length*(barchartheight + barchartmargin.top + barchartmargin.bottom));
+		/*.attr("height", AAsites[0].length*(barchartheight + barchartmargin.top + barchartmargin.bottom));*/
 	
 	AAsites.transition() //moves charts which are staying to accomadate new/removed charts
 		.attr("transform", AAsite_translate);
