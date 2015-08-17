@@ -17,8 +17,10 @@ function generateTable(){
       .append("svg")
       .attr("class","tablesvg")
       .attr("dy",500)
-      .attr("width", twidth + tmargin.left + tmargin.right)
-      .attr("height", theight + tmargin.top + tmargin.bottom);
+      /*.attr("width", twidth + tmargin.left + tmargin.right)
+      .attr("height", theight + tmargin.top + tmargin.bottom)*/
+      .attr("viewBox", "0 0 " + (twidth + tmargin.left + tmargin.right) + " " + (theight + tmargin.top + tmargin.bottom))
+      .attr('preserveAspectRatio',"xMinYMin meet");
   canvas.append("g")
       .attr("transform", "translate(" + tmargin.left + "," + tmargin.top + ")");
   
@@ -97,7 +99,8 @@ function generateTable(){
   averageRow = canvas.append("g").attr("class","averages");
 }
 function updateTable(sites){
-  canvas.attr("height",theight+(sites.length+4)*(fieldHeight+1)  );
+  /*canvas.attr("height",theight+(sites.length+4)*(fieldHeight+1));*/
+  canvas.attr("viewBox", "0 0 " + (twidth + tmargin.left + tmargin.right) + " " + (theight+(sites.length+4)*(fieldHeight+1)));
   
   // Data in this section is a list of length sites.length
   // each element is another list of length 4, corresponding to the rows
