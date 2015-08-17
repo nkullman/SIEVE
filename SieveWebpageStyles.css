@@ -96,12 +96,13 @@ main {
 }
 
 .protein-nav{
-    width: 100%;
+    width: 75%;
     display: block;
     /*border: 1px solid orange;*/
     padding: 0;
     margin: 0 auto;
     text-align: center;
+    padding-bottom: 20px;
 }
 .protein-nav span{
     float: left;
