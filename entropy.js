@@ -131,7 +131,7 @@ function updateTable(sites){
   var avg_data;
   if(sites.length > 0){
     var temp = d3.range(sites.length);
-    var avg_data = [["Average Entropy","Average Mismatches"], 
+    var avg_data = [["Average","Average"], 
                     [d3.mean(temp.map(function(d){return ent_data[d][1][0]})).toFixed(2),
                       d3.mean(temp.map(function(d){return ent_data[d][1][1]})).toFixed(2)],
                     [d3.mean(temp.map(function(d){return ent_data[d][2][0]})).toFixed(2),
@@ -139,7 +139,7 @@ function updateTable(sites){
                     [d3.mean(temp.map(function(d){return ent_data[d][3][0]})).toFixed(2),
                       d3.mean(temp.map(function(d){return ent_data[d][3][1]})).toFixed(2)]];
   } else {
-     var avg_data = [["Average Entropy","Average Mismatches"], 
+     var avg_data = [["Average","Average"], 
                      [0.00,0.00],
                      [0.00,0.00],       
                      [0.00,0.00]];
@@ -391,7 +391,7 @@ function updateTable(sites){
 	}
 
 function gen_joint_entropies(sites){
-  var joint_entropies = [["Joint Entropy","N/A"],
+  var joint_entropies = [["Joint","N/A"],
                          [jointentropy(sites,sequences.vaccine,numvac).toFixed(2),"N/A"],
                          [jointentropy(sites,sequences.placebo,numplac).toFixed(2),"N/A"],
                          [jointentropy(sites,sequences_raw,numvac+numplac).toFixed(2),"N/A"]];
