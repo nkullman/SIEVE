@@ -209,7 +209,7 @@ footer a{
 
 .axis,
 .tick > text {
-    font-size: 1em;
+    font-size: .8em;
 }
 
 /* End d3 styling from final project work*/
@@ -252,13 +252,6 @@ footer a{
 .stacked-bars:hover{
     overflow:auto;
 }
-
-/*.svg-content{
-    display: inline-block;
-    position: absolute;
-    top: 0;
-    left: 0;
-}*/
 
 /* End styling for drilldown. Begin styling for banner handle */
 
