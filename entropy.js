@@ -137,7 +137,10 @@ function updateTable(sites){
                     [d3.mean(temp.map(function(d){return ent_data[d][2][0]})).toFixed(2),
                       d3.mean(temp.map(function(d){return ent_data[d][2][1]})).toFixed(2)],
                     [d3.mean(temp.map(function(d){return ent_data[d][3][0]})).toFixed(2),
-                      d3.mean(temp.map(function(d){return ent_data[d][3][1]})).toFixed(2)]];
+                      // this was returning the sum of the two averages. Quick fix implemented below
+                      /*d3.mean(temp.map(function(d){return ent_data[d][3][1]})).toFixed(2)*/
+                      0]];
+                      avg_data[3][1] = ((numplac*avg_data[2][1]+numvac*avg_data[1][1])/(numvac+numplac)).toFixed(2);
   } else {
      var avg_data = [["Average","Average"], 
                      [0.00,0.00],
