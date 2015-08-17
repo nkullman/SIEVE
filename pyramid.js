@@ -17,6 +17,8 @@ var box_width = 225, box_height = 50;
 var pyramid_svg = d3.select('.group-box-bar-plot').append('svg')
       .attr('width', pyramid_margin.left + pyramid_width + pyramid_margin.right)
       .attr('height', pyramid_margin.top + pyramid_height + pyramid_margin.bottom)
+      .attr('viewBox', "0 0 " + (pyramid_margin.left + pyramid_width + pyramid_margin.right) + " " + (pyramid_margin.top + pyramid_height + pyramid_margin.bottom))
+      .attr('preserveAspectRatio',"xMinYMin meet")
       // ADD A GROUP FOR THE SPACE WITHIN THE MARGINS
       .append('g')
         .attr('transform', translation(pyramid_margin.left, pyramid_margin.top));
