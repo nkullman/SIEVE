@@ -253,14 +253,17 @@ function generateSiteSelector() {
 			foregroundbars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
 			siteselSVGg.select(".x.axis").call(xAxis.scale(xScale));
 			
+			/* Rectangles were being drawn outside chart region (into margins of chart).
+				The below corrects this by measuring a rectangle's distance from the current
+				drawing midpoint and adjusting opacity accordingly. */
 			var origSiteBarWidth = parseFloat(sitebars[0][0].getAttribute("width"));
 			var visWindowStart = (0-d3.event.translate[0])/d3.event.scale;
 			var visWindowEnd = visWindowStart + width/d3.event.scale; 
 			var visWindowSpan = (visWindowEnd-visWindowStart);
 			var visWindowMidpt = visWindowStart + visWindowSpan/2;
-			
+			// Change in viewing window of nav pane introduces new window span
 			opacity_scale.domain([visWindowSpan/2, visWindowSpan/2 + .01*visWindowSpan]);
-			
+			// update opacity of sitebars based on drawing window
 			sitebars.attr("opacity", function(d,i){
 				var site_x_loc = parseFloat(sitebars[0][i].getAttribute("x")) + origSiteBarWidth/2;
 				return opacity_scale(Math.abs(visWindowMidpt - site_x_loc));
