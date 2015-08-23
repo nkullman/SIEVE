@@ -177,6 +177,16 @@ function generateSiteSelector() {
 		})
 		.attr("opacity", 0.5);
 		
+	/*window.siteAALabels = siteselSVGg.selectAll(".siteAAlabel").data(vaccine.sequence);
+	siteAALabels.enter().append("text")
+		.attr("class", "siteAALabels")
+		.attr("id", function (d,i) { return "aaLabel" + i;})
+	  	.attr("x", function (d,i) { return xScale(i) - sitebarwidth/2; })
+		.attr("y", function (d,i) {return height;} )
+		.attr("text-anchor", "middle")
+		.attr("display", "none")
+		.text(function(d) { return "" + d; });
+		*/
 	window.foregroundbars = siteselSVGg.selectAll(".foregroundbars")
 		.data(vaccine.sequence);
 		
@@ -251,6 +261,7 @@ function generateSiteSelector() {
 			
 			sitebars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
 			foregroundbars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
+			/*siteAALabels.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");*/
 			siteselSVGg.select(".x.axis").call(xAxis.scale(xScale));
 			
 			/* Rectangles were being drawn outside chart region (into margins of chart).
@@ -268,6 +279,12 @@ function generateSiteSelector() {
 				var site_x_loc = parseFloat(sitebars[0][i].getAttribute("x")) + origSiteBarWidth/2;
 				return opacity_scale(Math.abs(visWindowMidpt - site_x_loc));
 			});
+			/*siteAALabels
+				.attr("display", function(d,i){
+				if (d3.event.scale > 30 && parseFloat(sitebars[0][i].getAttribute("opacity")) > 0) {
+					return "default";
+				} else {return "default";}})
+				.style("font-size", (12/d3.event.scale) + "px");*/
 			
 		}
 	}
