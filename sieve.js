@@ -4,8 +4,8 @@ var barmargin = {top: 5, right: 10, bottom: 0, left: 10},
 	barwidth = 200,
 	barheight = 20,
 	barpadding = .1;
-var barchartmargin = {top: 15, right: 80, bottom: 10, left: 50},
-	barchartwidth = 250,
+var barchartmargin = {top: 15, right: 80, bottom: 10, left: 20},
+	barchartwidth = 280,
 	barchartheight = 70;
 	
 // The below will be read from file at some point

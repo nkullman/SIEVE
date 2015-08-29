@@ -4,7 +4,7 @@ var selected_sites = [];
 
 var group_axis = d3.svg.axis()
 	.scale(d3.scale.ordinal()
-		.domain(["Vaccine", "Placebo"])
+		.domain(["V", "P"])
 		.rangeRoundPoints([15,40]))
 	.orient("left");
 
