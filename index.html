@@ -48,6 +48,23 @@
               <option value="constant">Constant</option>
             </select>
           </div> <!-- bar-height-encoding -->
+          <div id="color-encoding">
+            Color encoding:
+            <select id="color_selector">
+              <option value="d3">Default</option>
+              <option value="taylor">Taylor</option>
+              <option value="hydrophobicity">Hydrophobicity</option>
+              <option value="chemistry">Chemistry</option>
+            </select>
+            <a class="help">?
+    					<span>
+    						Default: D3's default 20-category color scheme <br>
+                Choose amino acid color encoding. <br>
+						    Taylor: W. Taylor, Protein Engineering, Vol 10 , 743-746 (1997) <br>
+                Hydrophobicity: blue = hydrophilic, green = neutral, black = hydrophobic (WebLogo 3 default)<br>
+                Chemistry: green = polar, purple = neutral, blue = basic, red = acidic, black = hydrophobic (Weblogo 1 and 2 and makelogo default)
+    					</span></a>
+          </div> <!-- color-encoding -->
 			  </div><!--protein-nav-opts-->
 			  <div class="protein-nav">
           
@@ -97,6 +114,7 @@
       </script>
    </div> <!-- wrapper -->
    <script src="entropy.js"></script>
+   <script src="colors.js"></script>
    <script src="summarystats.js"></script>
    <script src="parseinput_nested.js"></script>
    <script src="sieve.js"></script>
