@@ -37,6 +37,8 @@ sites_svg.append("style")
 
 var export_button = d3.select("#export-charts")
 	.on("click", export_AAsites);
+var color_selector = d3.select("#color_selector")
+	.on("input", update_aasite_colors);
 
 function update_AAsites(sites)
 {
