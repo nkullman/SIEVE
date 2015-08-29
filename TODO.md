@@ -4,7 +4,7 @@ Nick presented the visualization to Andrew's colleagues on Fri, Aug 21st. The de
  - [ ] Fix buttons for Entopy and Mismatch; confusing because they look like column headings
  - [ ] Fix color for a matched AA; currently its the same as the residue R (gray) and should be different
  - [ ] Add back the option to display AA frequencies colored by physico chemical properties
- - [ ] Display amino acid resiude in sequence map when the bars are zoomed wide enough so that it fits
+ - [x] Display amino acid resiude in sequence map when the bars are zoomed wide enough so that it fits
  - [ ] Fix data loading to match the new file specifciation (see `file_spec.md`)
  - [ ] Using new file specification, allow switching between different genetic distances. Also replace "Mismatch" with "Distance" in the table.
  - [ ] Add ability to display q-value or any other arbitrary column from the results file
