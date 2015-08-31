@@ -20,7 +20,8 @@ function generateEntropyTable(sites) {
     .data(colnames)
     .enter()
     .append("th")
-    .text(function(column) { return column; });
+      .attr("id", function (d,i) {return "entropyHeader" + i;})
+      .text(function(column) { return column; });
   // create average and joint rows.
   // text in data cells is empty, because there is no selection during table generation
   var avgRow = tbody.append("tr").attr("class", "entropy averageRow groupStatRow");
