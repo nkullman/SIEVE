@@ -91,7 +91,7 @@ function generateVis(){
 	
 	generateSiteSelector();
 	drawPyramid([]);
-  generateTable();
+  	generateTable([]);
 }
 
 function generateSiteSelector() {

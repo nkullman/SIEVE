@@ -6,6 +6,7 @@ function generateTable(sites){
  if (showEntropies) { generateEntropyTable(sites); }
  else { generateDistanceTable(sites); }
 }
+
 function generateEntropyTable(sites) {
   var table = d3.select(".table-zn")
       .append("table")
@@ -13,13 +14,87 @@ function generateEntropyTable(sites) {
       
   var thead = table.append("thead");
   var tbody = table.append("tbody");
-  
+  // create table header
   thead.append("tr")
-        .selectAll("th")
-        .data(colnames)
-        .enter()
-        .append("th")
-        .text(function(column) { return column; });
+    .selectAll("th")
+    .data(colnames)
+    .enter()
+    .append("th")
+    .text(function(column) { return column; });
+  // create average and joint rows.
+  // text in data cells is empty, because there is no selection during table generation
+  var avgRow = tbody.append("tr").attr("class", "entropy averageRow groupStatRow");
+  var jtRow = tbody.append("tr").attr("class", "entropy jointRow groupStatRow");
+  avgRow.append("td").attr("class", "rowHeader").text("Average");
+  jtRow.append("td").attr("class", "rowHeader").text("Joint");
+  var numCellsToMake = d3.range(3);
+  avgRow.selectAll("td:not(.rowHeader)").data(numCellsToMake).enter()
+    .append("td")
+      .attr("class", "entropy")
+      .attr("id", function (d){
+        if (d === 0) return "vaccineAverage";
+        else if (d === 1) return "placeboAverage";
+        else return "combinedAverage";
+      })
+      .text("-");
+  jtRow.selectAll("td:not(.rowHeader)").data(numCellsToMake).enter()
+    .append("td")
+      .attr("class", "entropy")
+      .attr("id", function (d){
+        if (d === 0) return "vaccineJoint";
+        else if (d === 1) return "placeboJoint";
+        else return "combinedJoint";
+      })
+      .text("-");
+      
+  // holder for table rows while selection emtpy
+  tbody.append("tr").attr("class","entropyTempRow")
+    .append("td")
+      .attr("colspan","4")
+      .style("text-align","right")
+      .text("Data will populate when a selection is made");
+}
+
+
+function updateEnropyTable(sites) {
+    // if selection not empty...
+  if (sites.length > 0){
+    // remove tempRow,
+    d3.select(".entropyTempRow").remove();
+    // populate table,
+    var entropyData = calculateEntropyData(sites);
+    console.log(entropyData);
+    var rows = d3.select("#entropyTable").select("tbody").selectAll("tr.siteRow").data(sites);
+    rows.enter()
+      .append("tr")
+        .attr("class","siteRow")
+        .attr("id", function(d) {
+          return "siteRow-" + d;
+        });
+    rows.exit().remove();
+    var cells = rows.selectAll("td")
+      .data(function(row, i){
+        return colnames.map(function(column, j) {
+          return {value: entropyData[i][j]};
+        })
+      })
+      .enter()
+      .append("td")
+        .text(function(d){
+          return d.value;
+        });
+    // and replace entropy/joint row filler with actual values
+    var avgEntropyData = calculateAverageEntropyData(sites, entropyData);
+    d3.select(".entropy#vaccineAverage").text(avgEntropyData[0]);
+    d3.select(".entropy#placeboAverage").text(avgEntropyData[1]);
+    d3.select(".entropy#combinedAverage").text(avgEntropyData[2]);
+    
+    var jointEntropyData = calculateJointEntropyData(sites);
+    d3.select("#vaccineJoint").text(jointEntropyData[0]);
+    d3.select("#placeboJoint").text(jointEntropyData[1]);
+    d3.select("#combinedJoint").text(jointEntropyData[2]);
+  }
+  // check what happens for transitioning rows, and do something for when the length returns to 0;
 }
 function generateDistanceTable(sites) {
   var table = d3.select(".table-zn")
@@ -28,13 +103,43 @@ function generateDistanceTable(sites) {
       
   var thead = table.append("thead");
   var tbody = table.append("tbody");
-  
+  // create table header
   thead.append("tr")
-      .selectAll("th")
-      .data(colnames)
-      .enter()
-      .append("th")
-      .text(function(column) { return column; });
+    .selectAll("th")
+    .data(colnames)
+    .enter()
+    .append("th")
+    .text(function(column) { return column; });
+  // create average and joint rows
+  var avgRow = tbody.append("tr").attr("class", "distance average-table-row");
+    
+}
+
+function calculateEntropyData(sites){
+    return sites.map(function(d) {
+      return [  envmap[d].hxb2Pos,
+                entropies.vaccine[d],
+                entropies.placebo[d],
+                entropies.full[d]
+              ];
+  });
+}
+
+function calculateAverageEntropyData(sites, entropyData){
+  var temp = d3.range(sites.length);
+  return [
+      d3.mean(temp.map(function(d){return entropyData[d][1]})).toFixed(2),
+      d3.mean(temp.map(function(d){return entropyData[d][2]})).toFixed(2),
+      d3.mean(temp.map(function(d){return entropyData[d][3]})).toFixed(2)
+    ];
+}
+
+function calculateJointEntropyData(sites){
+  return [
+      jointentropy(sites,sequences.vaccine,numvac).toFixed(2),
+      jointentropy(sites,sequences.placebo,numplac).toFixed(2),
+      jointentropy(sites,sequences_raw,numvac+numplac).toFixed(2)
+    ];
 }
    
   // the following commmented block creates the "tabs" for switching table type.
