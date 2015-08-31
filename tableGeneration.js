@@ -66,7 +66,7 @@ function updateEnropyTable(sites) {
     // populate table,
     var entropyData = calculateEntropyData(sites);
     console.log(entropyData);
-    var rows = tbody.selectAll("tr.siteRow").data(sites);
+    var rows = tbody.selectAll("tr.siteRow").data(sites, function(d) { return d;});
     rows.enter()
       .append("tr")
         .attr("class","siteRow")
