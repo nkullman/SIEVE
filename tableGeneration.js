@@ -57,6 +57,8 @@ function generateEntropyTable(sites) {
 
 
 function updateEnropyTable(sites) {
+  var table = d3.select("#entropyTable");
+  var tbody = table.select("tbody");
     // if selection not empty...
   if (sites.length > 0){
     // remove tempRow,
@@ -64,7 +66,7 @@ function updateEnropyTable(sites) {
     // populate table,
     var entropyData = calculateEntropyData(sites);
     console.log(entropyData);
-    var rows = d3.select("#entropyTable").select("tbody").selectAll("tr.siteRow").data(sites);
+    var rows = tbody.selectAll("tr.siteRow").data(sites);
     rows.enter()
       .append("tr")
         .attr("class","siteRow")
@@ -93,6 +95,20 @@ function updateEnropyTable(sites) {
     d3.select("#vaccineJoint").text(jointEntropyData[0]);
     d3.select("#placeboJoint").text(jointEntropyData[1]);
     d3.select("#combinedJoint").text(jointEntropyData[2]);
+  } else {
+    // selection is empty.
+    // remove all site rows
+    tbody.selectAll("tr.siteRow").transition().remove();
+    // add the placeholder row
+    tbody.append("tr")
+      .attr("class","entropyTempRow")
+      .append("td")
+        .attr("colspan","4")
+        .style("text-align","right")
+        .text("Data will populate when a selection is made");
+    // remove content from average and joint rows
+    tbody.selectAll(".groupStatRow").selectAll("td:not(.rowHeader)")
+      .text("-");
   }
   // check what happens for transitioning rows, and do something for when the length returns to 0;
 }
