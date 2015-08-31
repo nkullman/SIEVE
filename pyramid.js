@@ -276,9 +276,9 @@ function updatePyramid(sites){
       var boxplotpoint = box.selectAll(".boxplotpoint")
         .data(data);
       
-      boxplotpoint.transition()
+      boxplotpoint
         .attr("cx", xscale);
-      boxplotpoint.exit().transition()
+      boxplotpoint.exit()
         .attr("opacity", 0)
         .remove();
       boxplotpoint.enter().append("circle")
