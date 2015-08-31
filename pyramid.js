@@ -210,7 +210,7 @@ function updatePyramid(sites){
     var yaxis = d3.svg.axis()
       .scale(yscale)
       .orient("left")
-      .tickFormat(function(d) { return ["Vaccine Group", "Placebo Group"][d]; });
+      .tickFormat(function(d) { return ["Vaccine", "Placebo"][d]; });
     
     pyramid_svg.select(".xbox")
       .transition()
@@ -224,7 +224,7 @@ function updatePyramid(sites){
       .each(update_box);
     
     function update_box(d, i)
-    {
+    {  
       /*  Computes the necessary statistics and updates the
           box plot as necessary */
       var box = d3.select(this);
@@ -239,6 +239,7 @@ function updatePyramid(sites){
       var outliers = arr.splice(0, _.sortedIndex(arr, lower_cutoff-.25)) //remove and save lower outliers
       outliers = outliers.concat(arr.splice(_.sortedIndex(arr, upper_cutoff+.25), Infinity)) //remove upper outliers
     
+      var data = d.concat(outliers);
       var q0 = arr[0];
       var q4 = arr[arr.length-1];
     
@@ -271,17 +272,17 @@ function updatePyramid(sites){
       .attr("x2", xscale(q4))
       .attr("y1", -box_height/2)
       .attr("y2", box_height/2);
-    
-      var outlier_selection = box.selectAll(".outlier")
-        .data(outliers);
       
-      outlier_selection.transition()
+      var boxplotpoint = box.selectAll(".boxplotpoint")
+        .data(data);
+      
+      boxplotpoint.transition()
         .attr("cx", xscale);
-      outlier_selection.exit().transition()
+      boxplotpoint.exit().transition()
         .attr("opacity", 0)
         .remove();
-      outlier_selection.enter().append("circle")
-          .attr("class", "outlier")
+      boxplotpoint.enter().append("circle")
+          .attr("class", "boxplotpoint")
           .attr("cx", xscale)
           .attr("r", box_height/16);
     }
@@ -389,15 +390,7 @@ function drawPyramid(sites){
       .attr('class', 'axis y right')
       .attr('transform', translation(pointB, 0))
       .call(yAxisRight);
-     
-     // draw title - move to index.html
-    /*pyramid_svg.append("text")
-      .attr("x",pyramid_width/2)
-      .attr("y",-30)
-      .style("text-anchor","middle")
-      .style("font-size","15px")
-      .text("Distribution of Mismatch Counts Across Selected Sites");*/
-    // labels etc.  
+      
     pyramid_svg.append('text')
       .text("Vaccine Group")
       .attr('x',0)
@@ -537,6 +530,7 @@ function drawBoxplot(sites)
     var outliers = arr.splice(0, _.sortedIndex(arr, lower_cutoff-.25)) //remove and save lower outliers
     outliers = outliers.concat(arr.splice(_.sortedIndex(arr, upper_cutoff+.25), Infinity)) //remove upper outliers
     
+    var data = d.concat(outliers);
     var q0 = arr[0];
     var q4 = arr[arr.length-1];
     
@@ -575,10 +569,10 @@ function drawBoxplot(sites)
       .attr("y1", -box_height/2)
       .attr("y2", box_height/2);
       
-      box.selectAll(".outlier")
-        .data(outliers)
+      var boxplotpoint = box.selectAll(".boxplotpoint")
+        .data(data)
         .enter().append("circle")
-          .attr("class", "outlier")
+          .attr("class", "boxplotpoint")
           .attr("cx", xscale)
           .attr("r", box_height/16);
   }
