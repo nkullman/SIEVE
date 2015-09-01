@@ -4,7 +4,7 @@ var selected_sites = [];
 
 var group_axis = d3.svg.axis()
 	.scale(d3.scale.ordinal()
-		.domain(["Vaccine", "Placebo"])
+		.domain(["V", "P"])
 		.rangeRoundPoints([15,40]))
 	.orient("left");
 
@@ -174,7 +174,8 @@ function create_AAsite_chart(site)
 			.attr("width", 10)
 			.attr("height", 10)
 			.style("fill", function() {
-				return aacolor(d);
+				if (d == '-') return "#000000";
+				else return aacolor(d);
 			});
 		acid_g.append("text")
 			.attr("transform", "translate(12,9)")
@@ -193,7 +194,7 @@ function create_AAsite_chart(site)
 	match_g.append("rect")
 		.attr("width", 10)
 		.attr("height", 10)
-		.style("fill", "grey");
+		.style("fill", "#303030");
 	match_g.append("text")
 		.attr("transform", "translate(12,9)")
 		.text(vaccine.sequence[site]);
@@ -245,7 +246,8 @@ function create_stacked_bar(svg, nest, scale, yloc)
 		.attr("height", barheight)
 		.attr("width", function(d) {return scale(d.x1) - scale(d.x0);})
 		.style("fill", function (d) {
-			return aacolor(d.key);
+			if (d.key == '-') return "#000000";
+			else return aacolor(d.key);
 		})
 		.style("stroke-width", 1)
 		.style("stroke", "white")
@@ -265,7 +267,7 @@ function create_stacked_bar(svg, nest, scale, yloc)
 		.attr("height", barheight)
 		.attr("width", scale.range()[1] - scale(sum))
 		.attr("class", "matchbar")
-		.style("fill", "grey")
+		.style("fill", "#303030")
 		.style("stroke-width", 1)
 		.style("stroke", "white")
 		.on("mouseover", function() { d3.select(this).attr("opacity", .5)})

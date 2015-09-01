@@ -202,10 +202,11 @@ footer a{
   stroke-dasharray: 3,3;
 }
 
-.box .outlier {
-  fill: #fff;
+.box .boxplotpoint {
+  fill: #CCBADC;
   stroke: #666;
-  stroke-width: 1px;
+  stroke-opacity: .7;
+  fill-opacity: .7;
 }
 
 .axis,
