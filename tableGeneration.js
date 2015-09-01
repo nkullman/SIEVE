@@ -3,8 +3,14 @@ var colnames = ['Site (HXB2)','Vaccine','Placebo','Combined'];
 var showEntropies = true;
 
 function generateTable(sites){
+ d3.select(".table-zn table").remove();
  if (showEntropies) { generateEntropyTable(sites); }
  else { generateDistanceTable(sites); }
+}
+
+function updateTable(sites){
+  if (showEntropies) { updateEnropyTable(sites); }
+  else { updateDistanceTable(sites); }
 }
 
 function generateEntropyTable(sites) {
@@ -78,6 +84,19 @@ function updateEnropyTable(sites) {
     var rows = tbody.selectAll("tr.siteRow").data(entropyData, function(d) { return d[colnames[0]];});
     rows.enter()
       .append("tr")
+        /*.on("click", function(){
+          var popup = d3.select(".table-zn")
+            .append("div")
+              .attr("class", "popup")
+              .style("left", "8px")
+              .style("top", "8px");
+          popup.append("h2").text("Remove site").on("click",function(){
+            console.log("remove site has been clicked");
+          });
+          popup.append("h2").text("View in reference sequence").on("click",function(){
+            console.log("view in seq has been clicked");
+          });
+        })*/
         .attr("class","siteRow")
         .attr("id", function(d) {
           return "siteRow-" + d[colnames[0]];
@@ -94,7 +113,7 @@ function updateEnropyTable(sites) {
         .text(function(d){
           return d;
         });
-    // and replace entropy/joint row filler with actual values
+    // and replace average/joint row filler with actual values
     var avgEntropyData = calculateAverageEntropyData(entropyData);
     d3.select(".entropy#vaccineAverage").text(avgEntropyData[0]);
     d3.select(".entropy#placeboAverage").text(avgEntropyData[1]);
@@ -105,7 +124,7 @@ function updateEnropyTable(sites) {
     d3.select("#placeboJoint").text(jointEntropyData[1]);
     d3.select("#combinedJoint").text(jointEntropyData[2]);
     
-    // sort rows
+    // sort rows by site
     tbody.selectAll("tr.siteRow").sort(function(a,b) {
           if (a[colnames[0]] > b[colnames[0]]) return 1;
           if (a[colnames[0]] < b[colnames[0]]) return -1;
@@ -127,25 +146,6 @@ function updateEnropyTable(sites) {
     tbody.selectAll(".groupStatRow").selectAll("td:not(.rowHeader)")
       .text("-");
   }
-}
-
-function generateDistanceTable(sites) {
-  var table = d3.select(".table-zn")
-      .append("table")
-      .attr("id","distanceTable");
-      
-  var thead = table.append("thead");
-  var tbody = table.append("tbody");
-  // create table header
-  thead.append("tr")
-    .selectAll("th")
-    .data(colnames)
-    .enter()
-    .append("th")
-    .text(function(column) { return column; });
-  // create average and joint rows
-  var avgRow = tbody.append("tr").attr("class", "distance average-table-row");
-    
 }
 
 function calculateEntropyData(sites){
@@ -172,6 +172,148 @@ function calculateJointEntropyData(sites){
       jointentropy(sites,sequences.vaccine,numvac).toFixed(2),
       jointentropy(sites,sequences.placebo,numplac).toFixed(2),
       jointentropy(sites,sequences_raw,numvac+numplac).toFixed(2)
+    ];
+}
+
+function generateDistanceTable(sites) {
+  var table = d3.select(".table-zn")
+      .append("table")
+      .attr("id","distanceTable");
+      
+  var thead = table.append("thead");
+  var tbody = table.append("tbody");
+  // create table header
+  thead.append("tr")
+    .selectAll("th")
+    .data(colnames)
+    .enter()
+    .append("th")
+      .attr("id", function (d,i) {return "distanceHeader" + i;})
+      .style("cursor","pointer")
+      .on("click", function(k){
+        var rowsToSort = tbody.selectAll("tr.siteRow");
+        rowsToSort.sort(function(a,b) {
+          if (a[k] > b[k]) return 1;
+          if (a[k] < b[k]) return -1;
+          return 0;
+        })
+      })
+      .text(function(column) { return column; });
+  // create average and joint rows.
+  // text in data cells is empty, because there is no selection during table generation
+  var avgRow = tbody.append("tr").attr("class", "distance averageRow groupStatRow");
+  avgRow.append("td").attr("class", "rowHeader").text("Average");
+  var numCellsToMake = d3.range(3);
+  avgRow.selectAll("td:not(.rowHeader)").data(numCellsToMake).enter()
+    .append("td")
+      .attr("class", "distance")
+      .attr("id", function (d){
+        if (d === 0) return "vaccineAverage";
+        else if (d === 1) return "placeboAverage";
+        else return "combinedAverage";
+      })
+      .text("-");
+      
+  // holder for table rows while selection emtpy
+  tbody.append("tr").attr("class","distanceTempRow")
+    .append("td")
+      .attr("colspan","4")
+      .style("text-align","right")
+      .text("Data will populate when a selection is made");
+}
+
+function updateDistanceTable(sites) {
+  var table = d3.select("#distanceTable");
+  var tbody = table.select("tbody");
+    // if selection not empty...
+  if (sites.length > 0){
+    // remove tempRow,
+    d3.select(".distanceTempRow").remove();
+    // populate table,
+    var distanceData = calculateDistanceData(sites);
+    var rows = tbody.selectAll("tr.siteRow").data(distanceData, function(d) { return d[colnames[0]];});
+    rows.enter()
+      .append("tr")
+        .attr("class","siteRow")
+        .attr("id", function(d) {
+          return "siteRow-" + d[colnames[0]];
+        });
+    rows.exit().remove();
+    var cells = rows.selectAll("td")
+      .data(function(row){
+        return colnames.map(function(column) {
+          return row[column];
+        })
+      })
+      .enter()
+      .append("td")
+        .text(function(d){
+          return d;
+        });
+    // and replace average row filler with actual values
+    var avgDistanceData = calculateAverageDistanceData(distanceData);
+    d3.select(".distance#vaccineAverage").text(avgDistanceData[0]);
+    d3.select(".distance#placeboAverage").text(avgDistanceData[1]);
+    d3.select(".distance#combinedAverage").text(avgDistanceData[2]);
+    
+    // sort rows by site
+    tbody.selectAll("tr.siteRow").sort(function(a,b) {
+          if (a[colnames[0]] > b[colnames[0]]) return 1;
+          if (a[colnames[0]] < b[colnames[0]]) return -1;
+          return 0;
+    });
+    
+  } else {
+    // selection is empty.
+    // remove all site rows
+    tbody.selectAll("tr.siteRow").transition().remove();
+    // add the placeholder row
+    tbody.append("tr")
+      .attr("class","distanceTempRow")
+      .append("td")
+        .attr("colspan","4")
+        .style("text-align","right")
+        .text("Data will populate when a selection is made");
+    // remove content from average row
+    tbody.selectAll(".groupStatRow").selectAll("td:not(.rowHeader)")
+      .text("-");
+  }
+}
+
+function calculateDistanceData(sites){
+    return sites.map(function(d) {
+      
+      // obtaining mismatch counts
+      var mmcountfull = 0;
+      var mmcountvaccine = 0;
+      var mmcountplacebo = 0;
+      for(var patient in seqID_lookup){
+        if(seqID_lookup[patient].mismatch != undefined){
+          var is_mismatch = seqID_lookup[patient].mismatch[d];
+          mmcountfull +=is_mismatch;
+          if(seqID_lookup[patient].vaccine){
+            mmcountvaccine += is_mismatch;
+          } else {
+            mmcountplacebo += is_mismatch;
+          }
+        }
+      }
+      
+      // writing mismatch data
+      var result = {};
+      result[colnames[0]] = envmap[d].hxb2Pos;
+      result[colnames[1]] = mmcountvaccine;
+      result[colnames[2]] = mmcountplacebo;
+      result[colnames[3]] = mmcountfull;
+      return result;
+  });
+}
+
+function calculateAverageDistanceData(distanceData){
+  return [
+      d3.mean(distanceData.map(function(d){return +d.Vaccine;})).toFixed(2),
+      d3.mean(distanceData.map(function(d){return +d.Placebo;})).toFixed(2),
+      d3.mean(distanceData.map(function(d){return +d.Combined;})).toFixed(2)
     ];
 }
    
@@ -222,315 +364,6 @@ function calculateJointEntropyData(sites){
     .style("opacity",0)
     .on("click",displayMismatchCounts);*/
   
-  // define groups for header and rows for the individual sites  
-  var headerGrp = canvas.append("g").attr("class", "headerGrp");
-  rowsGrp = canvas.append("g").attr("class","rowsGrp");
-
-  var header = headerGrp.selectAll("g")
-    .data(colnames)
-    .enter().append("g")
-    .attr("class", "header")
-    .attr("transform", function (d, i){
-      return "translate(" +(i * fieldWidth + buttonWidth) + "," + (fieldHeight + 1) + ")";
-    });
-  header.append("rect")
-    .attr("width", fieldWidth-1)
-    .attr("height", fieldHeight)
-    .style("fill","grey")
-    .style("opacity",0.5);
-    
-  header.append("text")
-    .attr("y", fieldHeight / 2)
-    .attr("dy", ".35em")
-    .attr("text-anchor","middle")
-    .attr("x",fieldWidth/2)
-    .text(String);
-
-  jointRow = canvas.append("g").attr("class","joints");
-  averageRow = canvas.append("g").attr("class","averages");
-}
-function updateTable(sites){
-  canvas.attr("viewBox", "0 0 " + (twidth + tmargin.left + tmargin.right) + " " + (theight+(sites.length+4)*(fieldHeight+1)));
-  
-  // Data in this section is a list of length sites.length
-  // each element is another list of length 4, corresponding to the rows
-  // each element of that list is a length 2, corresponding to either
-  // entropy or mismatch count
-  
-  // generating entropy data for table
-  var ent_data = sites.map(function(d, i)
-  {
-    // obtaining mismatchcounts
-    var mmcountfull = 0;
-    var mmcountvaccine = 0;
-    var mmcountplacebo = 0;
-    for(var patient in seqID_lookup){
-      if(seqID_lookup[patient].mismatch != undefined){
-        var is_mismatch = seqID_lookup[patient].mismatch[d];
-        mmcountfull +=is_mismatch;
-        if(seqID_lookup[patient].vaccine){
-          mmcountvaccine += is_mismatch;
-        } else {
-          mmcountplacebo += is_mismatch;
-        }
-      }
-    }
-    return [[envmap[d].hxb2Pos, envmap[d].hxb2Pos],
-      [entropies.vaccine[d],mmcountvaccine],
-      [entropies.placebo[d],mmcountplacebo],
-      [entropies.full[d],mmcountfull]];
-  });
-  // average data
-  var avg_data;
-  if(sites.length > 0){
-    var temp = d3.range(sites.length);
-    var avg_data = [["Average","Average"], 
-                    [d3.mean(temp.map(function(d){return ent_data[d][1][0]})).toFixed(2),
-                      d3.mean(temp.map(function(d){return ent_data[d][1][1]})).toFixed(2)],
-                    [d3.mean(temp.map(function(d){return ent_data[d][2][0]})).toFixed(2),
-                      d3.mean(temp.map(function(d){return ent_data[d][2][1]})).toFixed(2)],
-                    [d3.mean(temp.map(function(d){return ent_data[d][3][0]})).toFixed(2),
-                      // this was returning the sum of the two averages. Quick fix implemented below
-                      /*d3.mean(temp.map(function(d){return ent_data[d][3][1]})).toFixed(2)*/
-                      0]];
-                      avg_data[3][1] = ((numplac*avg_data[2][1]+numvac*avg_data[1][1])/(numvac+numplac)).toFixed(2);
-  } else {
-     var avg_data = [["Average","Average"], 
-                     [0.00,0.00],
-                     [0.00,0.00],       
-                     [0.00,0.00]];
-  }
-  
-  // joint data
-  var jts_data = gen_joint_entropies(sites);
-  
-  // generating mismatch data for table
-  var mismatch_data = sites.map(function(d)
-  {
-    var mmcountfull = 0;
-    var mmcountvaccine = 0;
-    var mmcountplacebo = 0;
-    for(var patient in seqID_lookup){
-      if(seqID_lookup[patient].mismatch != undefined){
-        var is_mismatch = seqID_lookup[patient].mismatch[d];
-        mmcountfull +=is_mismatch;
-        if(seqID_lookup[patient].vaccine){
-          mmcountvaccine += is_mismatch;
-        } else {
-          mmcountplacebo += is_mismatch;
-        }
-      }
-    }
-    return ["Env " + envmap[d].hxb2Pos,mmcountvaccine,mmcountplacebo,mmcountfull];
-  })
-  
-  
-  // creates the aggregate rows
-  var avgEnter = averageRow.selectAll("g")
-    .data(avg_data)
-    .enter().append("g")
-    .attr("class","averageCell")
-    .attr("transform",function(d,i){
-      return "translate(" + (i * fieldWidth + buttonWidth) + "," + (fieldHeight + 1)*2 + ")";
-    });
-
-  avgEnter.append("rect")
-    .attr("width", fieldWidth-1)
-    .attr("height", fieldHeight)
-    .style("fill","grey")
-    .style("opacity",0.3);
-    
-/*   avgEnter.append("text")
-    .attr("class","average ent text")
-    .attr("y", fieldHeight / 2)
-    .attr("dy", ".35em")
-    .attr("text-anchor","middle")
-    .attr("x",fieldWidth/2)
-    .text(function(d){return d[0];});
-    
-  avgEnter.append("text")
-    .attr("class","average mm text")
-    .attr("y", fieldHeight / 2)
-    .attr("dy", ".35em")
-    .attr("text-anchor","middle")
-    .attr("x",fieldWidth/2)
-    .text(function(d){return d[1];}); */
-  
-  averageRow.selectAll("text").remove();
-  
-  averageRow.selectAll("g")
-    .data(avg_data)
-    .append("text")
-    .attr("class","entropy text")
-    .attr("y", fieldHeight / 2)
-    .attr("dy", ".35em")
-    .attr("text-anchor","middle")
-    .attr("x",fieldWidth/2)
-    .style("opacity",entropyTextOpacity())
-    .text(function(d){return d[0];});
-  
-  averageRow.selectAll("g")
-    .data(avg_data)
-    .append("text")
-    .attr("class","mismatch text")
-    .attr("x",fieldWidth/2)
-    .attr("y", fieldHeight / 2)
-    .attr("dy", ".35em")
-    .attr("text-anchor","middle")
-    .style("opacity",mismatchTextOpacity())
-    .text(function(d){return d[1];});
-
-
-  
-  var jtEnter = jointRow.selectAll("g")
-    .data(jts_data)
-    .enter().append("g")
-    .attr("class","jointCell")
-    .attr("transform",function(d,i){
-      return "translate(" + (i * fieldWidth + buttonWidth) + "," + (fieldHeight + 1)*3 + ")";
-    });
-
-  jtEnter.append("rect")
-    .attr("width", fieldWidth-1)
-    .attr("height", fieldHeight)
-    .style("fill","grey")
-    .style("opacity",0.3);
-  
-  jointRow.selectAll("text").remove();
-  
-  jointRow.selectAll("g")
-    .data(jts_data)
-    .append("text")
-    .attr("class","entropy text")
-    .attr("x",fieldWidth/2)
-    .attr("y", fieldHeight / 2)
-    .attr("dy", ".35em")
-    .attr("text-anchor","middle")
-    .style("opacity",entropyTextOpacity())
-    .text(function(d){return d[0];});
-  
-  jointRow.selectAll("g")
-    .data(jts_data)
-    .append("text")
-    .attr("class","mismatch text")
-    .attr("y", fieldHeight / 2)
-    .attr("dy", ".35em")
-    .attr("text-anchor","middle")
-    .attr("x",fieldWidth/2)
-    .style("opacity",mismatchTextOpacity())
-    .text(function(d){return d[1];});
-  
-  //creates all the site specific rows
-  var rows = rowsGrp.selectAll(".row")
-   .data(sites);
-  
-  rows.attr("class","row")
-    .attr("height",25)
-    .attr("width",500)
-    .attr("transform",function(d,i){
-      return "translate(0," + (i+4)*(fieldHeight+1) + ")";
-    });
-  
-  var rowsEnter = rows.enter().append("g")
-    .attr("class","row")
-    .attr("transform",function(d,i){
-      return "translate(0," + (i+4)*(fieldHeight+1) + ")";
-    });
-  
-  rows.exit()
-    .transition()
-    .style("opacity",0)
-    .remove();
-
-  // creates remove button for every row
-  rows.selectAll(".button").remove();
-  rows.append("rect")
-    .attr("class","button")
-    .attr("x",1)
-    .attr("y",1)
-    .attr("title","Remove this site from the selection.")
-    .attr("height",buttonWidth-2)
-    .attr("width",buttonWidth-2)
-    .style("fill","red")
-    .style("opacity",0.5)
-    .on("mouseover",function(){d3.select(this).style("opacity",1)})
-    .on("mouseout",function(){d3.select(this).style("opacity",0.5)})
-    .on("click",removeOnClick);
-    
-  // creates cells for every row
-  var cells = rows.selectAll(".cell")
-    .data(function(d,i){return ent_data[i];});
-  var cellsEnter = cells.enter().append("g")
-		.attr("class", "cell")
-		.attr("transform", function (d, i){
-			return "translate(" + (i * fieldWidth + buttonWidth) + ",0)";
-		});
-    
-  cellsEnter.append("rect")
-		.attr("width", fieldWidth-1)
-		.attr("height", fieldHeight)
-    .style("fill", "grey")
-    .style("opacity",0)
-    .transition()
-    .style("opacity",0.1);	
-		
-	cellsEnter.append("text")
-    .attr("class", "entropy text")
-		.attr("x", fieldWidth / 2)
-		.attr("y", fieldHeight / 2)
-		.attr("dy", ".35em")
-    .attr("text-anchor","middle")
-    .style("opacity",entropyTextOpacity())
-		.text(function(d){return d[0];});
-  
-  cellsEnter.append("text")
-    .attr("class","mismatch text")
-    .attr("x", fieldWidth / 2)
-		.attr("y", fieldHeight / 2)
-		.attr("dy", ".35em")
-    .attr("text-anchor","middle")
-    .style("opacity",mismatchTextOpacity())
-		.text(function(d,i){return d[1];});
-  
-  cells.exit().transition().remove();
-  
-  cells.selectAll("text")
-    .transition()
-    .style("opacity",0)
-    .remove();
-  
-  cells.append("text")
-    .attr("class","entropy text")
-		.attr("x", fieldWidth / 2)
-		.attr("y", fieldHeight / 2)
-		.attr("dy", ".35em")
-    .attr("text-anchor","middle")
-    .style("opacity",entropyTextOpacity())
-		.text(function(d){return d[0];});
-    
-  cells.append("text")
-    .attr("class","mismatch text")
-		.attr("x", fieldWidth / 2)
-		.attr("y", fieldHeight / 2)
-		.attr("dy", ".35em")
-    .attr("text-anchor","middle")
-    .style("opacity",mismatchTextOpacity())
-		.text(function(d){return d[1];});
-    
-  // Sets up rectangle which highlights the moused over row
-  // Clicking will shift the selection bar to that site
-  rows.append("rect")
-    .attr("class","select button")
-    .attr("x",26)
-    .attr("y",1)
-    .attr("height",fieldHeight-1)
-    .attr("width",fieldWidth*4)
-    .style("fill","green")
-    .style("opacity",0)
-    .on("mouseover",function(d){d3.select(this).style("opacity",0.1)})
-    .on("mouseout",function(d){d3.select(this).style("opacity",0)})
-    .on("click",onClickChangeView); 
-}
 
 	function removeOnClick(d, i) {
     var site = selected_sites[i];
@@ -546,56 +379,14 @@ function updateTable(sites){
     updateTable(selected_sites);
 	}
 
-function gen_joint_entropies(sites){
-  var joint_entropies = [["Joint","N/A"],
-                         [jointentropy(sites,sequences.vaccine,numvac).toFixed(2),"N/A"],
-                         [jointentropy(sites,sequences.placebo,numplac).toFixed(2),"N/A"],
-                         [jointentropy(sites,sequences_raw,numvac+numplac).toFixed(2),"N/A"]];
-  return joint_entropies;
-}
-
-function entropyTextOpacity(){
-  if(showEntropies){
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-function mismatchTextOpacity(){
-  if(showEntropies){
-    return 0;
-  } else {
-    return 1;
-  }
-}
-
-function displayEntropies(){
+function displayEntropyTable(){
   showEntropies = true;
-  canvas.select(".entropy.title.bar")
-    .style("fill","black");
-  canvas.select(".mismatch.title.bar")
-    .style("fill","grey");
-  canvas.selectAll(".mismatch.text")
-    .transition()
-    .style("opacity",0);
-  canvas.selectAll(".entropy.text")
-    .transition()
-    .style("opacity",1);
+  generateTable(selected_sites);
 }
 
-function displayMismatchCounts(){
+function displayDistanceTable(){
   showEntropies = false;
-  canvas.select(".mismatch.title.bar")
-    .style("fill","black");
-  canvas.select(".entropy.title.bar")
-    .style("fill","grey");
-  canvas.selectAll(".entropy.text")
-      .transition()
-      .style("opacity",0);
-  canvas.selectAll(".mismatch.text")
-    .transition()
-    .style("opacity",1);
+  generateTable(selected_sites);
 }
 
 function onClickChangeView(d,i){
