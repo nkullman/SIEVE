@@ -1,11 +1,13 @@
 var colnames = ['Site (HXB2)','Vaccine','Placebo','Combined'];
 
 var showEntropies = true;
+d3.select("#tableToggleText").on("click",toggleTableDisplay);
 
 function generateTable(sites){
  d3.select(".table-zn table").remove();
  if (showEntropies) { generateEntropyTable(sites); }
  else { generateDistanceTable(sites); }
+ if (sites.length > 0) updateTable(selected_sites);
 }
 
 function updateTable(sites){
@@ -16,7 +18,10 @@ function updateTable(sites){
 function generateEntropyTable(sites) {
   var table = d3.select(".table-zn")
       .append("table")
-      .attr("id","entropyTable");
+      .attr("id","entropyTable")
+      .style("width","100%")
+      .append("caption")
+        .text("Entropy Summary");
       
   var thead = table.append("thead");
   var tbody = table.append("tbody");
@@ -31,9 +36,7 @@ function generateEntropyTable(sites) {
       .on("click", function(k){
         var rowsToSort = tbody.selectAll("tr.siteRow");
         rowsToSort.sort(function(a,b) {
-          if (a[k] > b[k]) return 1;
-          if (a[k] < b[k]) return -1;
-          return 0;
+          return whichIsBigger(a[k],b[k]);
         })
       })
       .text(function(column) { return column; });
@@ -126,9 +129,7 @@ function updateEnropyTable(sites) {
     
     // sort rows by site
     tbody.selectAll("tr.siteRow").sort(function(a,b) {
-          if (a[colnames[0]] > b[colnames[0]]) return 1;
-          if (a[colnames[0]] < b[colnames[0]]) return -1;
-          return 0;
+      return whichIsBigger(a[colnames[0]], b[colnames[0]]);
     });
     
   } else {
@@ -178,7 +179,10 @@ function calculateJointEntropyData(sites){
 function generateDistanceTable(sites) {
   var table = d3.select(".table-zn")
       .append("table")
-      .attr("id","distanceTable");
+      .attr("id","distanceTable")
+      .style("width","100%")
+      .append("caption")
+        .text("Distance Summary");
       
   var thead = table.append("thead");
   var tbody = table.append("tbody");
@@ -193,13 +197,11 @@ function generateDistanceTable(sites) {
       .on("click", function(k){
         var rowsToSort = tbody.selectAll("tr.siteRow");
         rowsToSort.sort(function(a,b) {
-          if (a[k] > b[k]) return 1;
-          if (a[k] < b[k]) return -1;
-          return 0;
+          return whichIsBigger(a[k],b[k]);
         })
       })
       .text(function(column) { return column; });
-  // create average and joint rows.
+  // create average and joint rows
   // text in data cells is empty, because there is no selection during table generation
   var avgRow = tbody.append("tr").attr("class", "distance averageRow groupStatRow");
   avgRow.append("td").attr("class", "rowHeader").text("Average");
@@ -258,9 +260,7 @@ function updateDistanceTable(sites) {
     
     // sort rows by site
     tbody.selectAll("tr.siteRow").sort(function(a,b) {
-          if (a[colnames[0]] > b[colnames[0]]) return 1;
-          if (a[colnames[0]] < b[colnames[0]]) return -1;
-          return 0;
+      return whichIsBigger(a[colnames[0]],b[colnames[0]])
     });
     
   } else {
@@ -316,53 +316,39 @@ function calculateAverageDistanceData(distanceData){
       d3.mean(distanceData.map(function(d){return +d.Combined;})).toFixed(2)
     ];
 }
-   
-  // the following commmented block creates the "tabs" for switching table type.
-  // created differently in our case (jQuery tabs, or the like), still TBD 
-  // Draw Title
-  /*title.append("rect")
-    .attr("class","entropy title bar")
-    .attr("x",buttonWidth)
-    .attr("width", 2*fieldWidth-1)
-    .attr("height", fieldHeight)
-    .style("fill","black");
-  
-   title.append("rect")
-    .attr("class","mismatch title bar")
-    .attr("x",buttonWidth + 2*fieldWidth)
-    .attr("width", 2*fieldWidth)
-    .attr("height", fieldHeight)
-    .style("fill","grey");
 
-  title.append("text")
-    .attr("x",buttonWidth + fieldWidth)
-    .attr("y",.8*fieldHeight)
-    .attr("text-anchor","middle")
-    .style("fill","white")
-    .style("font-size","18px")
-    .text("Entropy");
-    
-  title.append("text")
-    .attr("x",fieldWidth*3 + buttonWidth)
-    .attr("y",.8*fieldHeight)
-    .attr("text-anchor","middle")
-    .style("fill","white")
-    .style("font-size","18px")
-    .text("Mismatches");
-  
-  title.append("rect")
-    .attr("x",buttonWidth)
-    .attr("width", 2*fieldWidth-1)
-    .attr("height", fieldHeight)
-    .style("opacity",0)
-    .on("click",displayEntropies);
-  
-  title.append("rect")
-    .attr("x",buttonWidth + 2*fieldWidth)
-    .attr("width", 2*fieldWidth-1)
-    .attr("height", fieldHeight)
-    .style("opacity",0)
-    .on("click",displayMismatchCounts);*/
+// HXB2 site names are strings, since they may include letters
+// this function does better than a string comparison for >, <, =
+// since it first computes the numeric values of the string 
+function whichIsBigger(a,b){
+  // determine the numerical value of the arguments
+  var firstNum, secondNum;
+  if (!isNaN(+a)){
+    firstNum = +a;
+  } else {
+    firstNum = +a.substring(0,a.length-1);
+  }
+  if (!isNaN(+b)){
+    secondNum = +b;
+  } else {
+    secondNum = +b.substring(0,b.length-1);
+  }
+  // arguments' numeric values stored
+  // return normal sort returns
+  if (firstNum === secondNum) {
+    // if numeric values are the same, there are three possible situations:
+    // -1: the second input is larger bc it has a later letter appended to it
+    //  1: the first input is larger bc it has a later letter appended to it
+    //  0: the inputs have the same exact value
+    if (a > b) return 1;
+    else if (a < b) return -1;
+    return 0;
+  } else {
+    // if numeric values are not the same, then we sort the larger of the numeric values
+    if (firstNum > secondNum) return 1;
+    else return -1; // (firstNum < secondNum). It is impossible to have equality here (would have been captured in outer if)
+  }
+}
   
 
 	function removeOnClick(d, i) {
@@ -379,13 +365,8 @@ function calculateAverageDistanceData(distanceData){
     updateTable(selected_sites);
 	}
 
-function displayEntropyTable(){
-  showEntropies = true;
-  generateTable(selected_sites);
-}
-
-function displayDistanceTable(){
-  showEntropies = false;
+function toggleTableDisplay(){
+  showEntropies = !showEntropies;
   generateTable(selected_sites);
 }
 
