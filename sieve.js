@@ -34,7 +34,21 @@ var opacity_scale = d3.scale.linear()
 	.range([0.5,0])
 	.clamp(true);
 
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
 var selected_sites = [];
+var urlSiteString = getParameterByName("sites");
+if (urlSiteString !== ""){
+	var urlSites = urlSiteString.split(",");
+	while(urlSites.length > 0){
+		selected_sites.push(urlSites.pop());
+	}
+}
 
 var mouse_down = false;
 var shift_down = false;
@@ -90,8 +104,18 @@ function generateVis(){
 	vac_scale.domain([0, numvac]);
 	
 	generateSiteSelector();
-	drawPyramid([]);
-  	generateTable([]);
+	drawPyramid(selected_sites);
+  	generateTable(selected_sites);
+	selected_sites.forEach(function(d) {
+		d3.select("#sitebar" + d).classed("selected",true)
+			.attr("opacity", 1)
+			.attr("y", -height/5)
+			.attr("height",height/5);
+	});
+	update_AAsites(selected_sites);
+}
+function copyToClipboard(text){
+	window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
 }
 
 function generateSiteSelector() {
@@ -103,8 +127,13 @@ function generateSiteSelector() {
 		how often the script attempts to process the selected sites when making
 		a sweep over the site selection chart.	*/
   
-  d3.select(".analysisID").append("html").html(
-	  "<h2>" + studyname + ": " + protein + " (" + vaccine.ID.trim() + ")</h2>");
+	d3.select(".analysisID").append("h2").text(
+	  studyname + ": " + protein + " (" + vaccine.ID.trim() + ")");
+	d3.select(".analysisID").append("button")
+		.attr("id","get-link-to-analysis")
+		.on("click", function(){
+			copyToClipboard(document.URL + "?sites=" + selected_sites.toString());})
+		.text("Get link to share this analysis");
   
   window.xScale = d3.scale.linear()
     .domain([0, vaccine.sequence.length-1])
