@@ -22,8 +22,8 @@
  
 #(4) Results file
  - A CSV file containing sieve analysis results (i.e. a statistic comparing the treatment groups, a p-value and optionally, a q-value)
- - Columns: start_position, stat_estimate, pvalue, qvalue
- - Rows: 1 row per site
+ - Columns: start_position, distance_method, stat_estimate, pvalue, qvalue
+ - Rows: 1 row per site per distance method
  - Filename: `STUDY.PROTEIN.REF.result.csv`
  - The stat_estimate is the magnitude of the treatment effect (e.g. t-statistic) at each site
  - Optionally, additional columns could specify additional statistics, as these could be displayed instead of the p-value in the top plot (`Long term TODO`)
