@@ -13,6 +13,8 @@ Nick presented the visualization to Andrew's colleagues on Fri, Aug 21st. The de
  - [x] Overlay dots on the box plot
  - [ ] Remove bar plot for non discrete distances
  - [ ] Generalize to k-mers (where a site is equivalent to a 1mer). This means changing the xlabel to HXB2 start position, when k>1. Also the sites that get displayed at the right would include a unique list of all sites included in the k-mer with the associated start positions (e.g. selecting one start position in a 9mer-based analysis would highlight 9 sites n the right, but only show a distance for 1)
+ - [ ] Server space at FHCRC
+ - [ ] Add visit counter
  
 #Long term TODO:
  - [ ] Live demo thats quickly show basic functionality
