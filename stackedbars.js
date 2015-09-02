@@ -1,7 +1,5 @@
 var legendspacing = {x: 25, y: 15};
 
-var selected_sites = [];
-
 var group_axis = d3.svg.axis()
 	.scale(d3.scale.ordinal()
 		.domain(["V", "P"])
