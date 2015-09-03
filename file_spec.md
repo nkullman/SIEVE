@@ -1,10 +1,11 @@
 #(1) Sequence alignment file
  - Alignment of breakthrough and vaccine immunogen sequences from the trial
- - Filename: `STUDY.PROTEIN.REF.dist.fasta`
- - Should contain all breakthrough sequences and at least one immunogen sequence (a.k.a reference sequence)
- - A trial with multiple immunogens for a single protein could have an alignment with >1 reference sequence. However, the correct one to use for each analysis would depend on the name of the reference specified in the `Treatment assignment` file
+ - Filename: `STUDY.PROTEIN.REF.fasta`
+ - Should contain all breakthrough sequences and at least one immunogen sequence (a.k.a. reference sequence)
+ - A trial with multiple immunogens for a single protein could have an alignment with >1 reference sequence (e.g. `>reference|MRK_GAG|gag`. However, the correct one to use for each analysis would depend on the name of the reference specified in the `Treatment assignment` file
  - There should only be one sequence per infected participant. Only sequences listed in the `Treatment assignment` file will be loaded for the analysis.
  - Each sequence has a sequence ID that is the string following `>` (for example `>AA3045`) and it should be the index in the `Treatment assignment file`
+ - File should also contain a reference sequence for reporting coordinates (e.g. `>HXB2`)
  
 #(2) Treatment assignment file
  - Contains seqIDs from the `Sequence alignment` and treatment assignments
@@ -22,8 +23,8 @@
  
 #(4) Results file
  - A CSV file containing sieve analysis results (i.e. a statistic comparing the treatment groups, a p-value and optionally, a q-value)
- - Columns: start_position, stat_estimate, pvalue, qvalue
- - Rows: 1 row per site
+ - Columns: start_position, distance_method, stat_estimate, pvalue, qvalue
+ - Rows: 1 row per site per distance method
  - Filename: `STUDY.PROTEIN.REF.result.csv`
  - The stat_estimate is the magnitude of the treatment effect (e.g. t-statistic) at each site
  - Optionally, additional columns could specify additional statistics, as these could be displayed instead of the p-value in the top plot (`Long term TODO`)
