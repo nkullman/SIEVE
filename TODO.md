@@ -13,10 +13,11 @@ Nick presented the visualization to Andrew's colleagues on Fri, Aug 21st. The de
  - [x] Overlay dots on the box plot
  - [ ] Remove bar plot for non discrete distances
  - [ ] Generalize to k-mers (where a site is equivalent to a 1mer). This means changing the xlabel to HXB2 start position, when k>1. Also the sites that get displayed at the right would include a unique list of all sites included in the k-mer with the associated start positions (e.g. selecting one start position in a 9mer-based analysis would highlight 9 sites n the right, but only show a distance for 1)
- - [ ] Server space at FHCRC
+ - [ ] Server space at FHCRC (address will most likely be http://sieve.fhcrc.org/viz)
  - [ ] Add visit counter
  - [ ] Selection through URL (?selsites=347...). Allows sharing of a viz (w/ a selection) via a link. [See this StackExchange](http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript)
- - 
+ - [ ] Change all references of "patients" to "participants"
+ 
 #Long term TODO:
  - [ ] Live demo thats quickly show basic functionality
  - [ ] Dynamic multiplicity adjustment: compute q-values for selected sites using a standard method (could be simply Bonferroni at first, but FDR would be nice)
