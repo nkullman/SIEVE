@@ -258,7 +258,7 @@ function create_stacked_bar(svg, nest, scale, yloc)
 		.append("svg:title")
 			.text(function(d, i)
 			{
-				return d.key + ": " + d.values + " Patients";
+				return d.key + ": " + d.values + " Participants";
 			});
 	bar.append("rect")
 		.attr("x", scale(sum))
@@ -271,7 +271,7 @@ function create_stacked_bar(svg, nest, scale, yloc)
 		.on("mouseover", function() { d3.select(this).attr("opacity", .5)})
 		.on("mouseout", function() { d3.select(this).attr("opacity", 1)})
 		.append("svg:title")
-			.text("Match: " + (scale.domain()[1] - sum) + " Patients");
+			.text("Match: " + (scale.domain()[1] - sum) + " Participants");
 }
 
 function update_aasite_colors()
