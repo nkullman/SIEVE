@@ -18,7 +18,7 @@ var vaccine;
 /** Array with conservation and hxb2 info for each position */
 var envmap;
 /* Lookup table with index for each hxb2 position*/
-var hxb2map = {};
+var refmap = {};
 /** Number of people in the vaccine group */
 var numvac = 0;
 /** Number of people in the placebo group */
@@ -45,11 +45,27 @@ d3.text("data/env.aa.92TH023.fasta", function(vacdata) {
 					envmap = mapdata;
 					envmap.forEach(function(d, i)
 						{
-							hxb2map[d.hxb2Pos] = i;
+							refmap[d.hxb2Pos] = i;
 						});
 					sequences_raw = transpose(sequences_raw);
 					sequences.vaccine = transpose(sequences.vaccine);
 					sequences.placebo = transpose(sequences.placebo);
+					// If loaded URL contains sites, add them to the current selection
+					var urlSiteString = getParameterByName("sites");
+					if (urlSiteString !== ""){
+						// get sites identified by reference strand
+						var urlSites = urlSiteString.split(",");
+						// convert sites back to 0-based index
+						urlSites.forEach(function(d,i){
+							urlSites[i] = refmap[urlSites[i]];
+						})
+						console.log(selected_sites);
+						while(urlSites.length > 0){
+							selected_sites.push(urlSites.pop());
+						}
+						console.log(selected_sites)
+					}
+					
           for(var i=0; i < sequences_raw.length; i++){
             entropies.full.push(jointentropy([i],sequences_raw,numvac+numplac).toFixed(2));
           }

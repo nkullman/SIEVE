@@ -42,13 +42,6 @@ function getParameterByName(name) {
 }
 
 var selected_sites = [];
-var urlSiteString = getParameterByName("sites");
-if (urlSiteString !== ""){
-	var urlSites = urlSiteString.split(",");
-	while(urlSites.length > 0){
-		selected_sites.push(urlSites.pop());
-	}
-}
 
 var mouse_down = false;
 var shift_down = false;
@@ -132,7 +125,17 @@ function generateSiteSelector() {
 	d3.select(".analysisID").append("button")
 		.attr("id","get-link-to-analysis")
 		.on("click", function(){
-			copyToClipboard(document.URL + "?sites=" + selected_sites.toString());})
+			// get URL and chop off currently added sites, if any
+			var currURL = document.URL;
+			if (currURL.indexOf("?") > -1){ currURL = currURL.substring(0,currURL.indexOf("?")); }
+			// get HXB2 (or other ref) for sites being appended to URL
+			var sitesInURL = [];
+			selected_sites.forEach(function(d){
+				sitesInURL.push(envmap[d].hxb2Pos);
+			});
+			// assemble the shareable URL and pass to copyToClipboard function
+			var shareableURL = currURL + "?sites=" + sitesInURL.toString();
+			copyToClipboard(shareableURL);})
 		.text("Get link to share this analysis");
   
   window.xScale = d3.scale.linear()
@@ -436,7 +439,7 @@ function hxb2_selection()
 				var arr = d.split("-")
 					.map(function(e)
 					{ //convert hxb2 pos to index
-						return hxb2map[e];
+						return refmap[e];
 					});
 				if (arr.length == 1)
 				{
