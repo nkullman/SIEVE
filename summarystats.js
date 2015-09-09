@@ -2,7 +2,7 @@
 /**Computes Entropy of the Empirical Joint Distribution of given sites
 *input: indices - list of sites in the sequence
 *output: float*/
-function jointentropy(indices,data,patientcount) {
+function jointentropy(indices,data,participantcount) {
     if (indices.length > 0){
       var entropy = 0.0;
       var counts = {};
@@ -19,9 +19,9 @@ function jointentropy(indices,data,patientcount) {
           }
       });
       for(var key in counts){
-          entropy -= counts[key]*Math.log(counts[key]/patientcount);
+          entropy -= counts[key]*Math.log(counts[key]/participantcount);
       }
-      return(d3.max([entropy/patientcount,0]));
+      return(d3.max([entropy/participantcount,0]));
     } else {
       return 0;
     }

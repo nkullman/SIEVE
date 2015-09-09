@@ -29,16 +29,16 @@ function updatePyramid(sites){
   /*  Updates either the pyramid or the box plot, whichever mode is selected
       using data from the selected sites. In each case, smoothly translate the chart
       as sites are selected or deselected (though the stats are recomputed entirely each time)
-      The relevant data in each case is the number of mismatches each patient has with the
+      The relevant data in each case is the number of mismatches each participant has with the
       vaccine sequence at the selected sites.*/
   if (mismatchmode == 0)
   {
     var possiblecounts = [];
-    for(var patient in seqID_lookup){
-      if(seqID_lookup[patient].mismatch != undefined){
+    for(var participant in seqID_lookup){
+      if(seqID_lookup[participant].mismatch != undefined){
         var mmcount = 0;
         for(var i = 0; i < sites.length; i++){
-            mmcount += seqID_lookup[patient].mismatch[sites[i]]; 
+            mmcount += seqID_lookup[participant].mismatch[sites[i]]; 
         }
       }
       possiblecounts.push(mmcount);
@@ -52,13 +52,13 @@ function updatePyramid(sites){
     for(var i = 0; i < d3.max(possiblecounts)+1; i++){
         mdata.push({mismatches:i.toString(), vaccine:0, placebo:0});
         }
-    for(var patient in seqID_lookup){
-        if(seqID_lookup[patient].mismatch != undefined){
+    for(var participant in seqID_lookup){
+        if(seqID_lookup[participant].mismatch != undefined){
           mmcount = 0;
           for(var i = 0; i < sites.length; i++){
-              mmcount += seqID_lookup[patient].mismatch[sites[i]]; 
+              mmcount += seqID_lookup[participant].mismatch[sites[i]]; 
           }
-          if(seqID_lookup[patient].vaccine){
+          if(seqID_lookup[participant].vaccine){
               mdata[mmcount].vaccine += 1;
           } else {
               mdata[mmcount].placebo += 1;
@@ -152,7 +152,7 @@ function updatePyramid(sites){
       .on("mouseover", function() {d3.select(this).attr("opacity", 0.5);})
       .on("mouseout", function() {d3.select(this).attr("opacity", 1);})
       .append("svg:title")
-        .text(function(d){return ((d.vaccine/numvac)*100).toPrecision(2) + "% of patients";});
+        .text(function(d){return ((d.vaccine/numvac)*100).toPrecision(2) + "% of participants";});
         
   rightBars.enter().append('rect')
         .attr('class','bar right')
@@ -166,7 +166,7 @@ function updatePyramid(sites){
       .on("mouseover", function() {d3.select(this).attr("opacity", 0.5);})
       .on("mouseout", function() {d3.select(this).attr("opacity", 1);})
       .append("svg:title")
-        .text(function(d) {return ((d.placebo/numplac)*100).toPrecision(2) + "% of patients";});
+        .text(function(d) {return ((d.placebo/numplac)*100).toPrecision(2) + "% of participants";});
   leftBars.transition()
           .attr('y', function(d) {return yScale(d.mismatches); })
           .attr('width', function(d) {return xScale(d.vaccine / numvac); })
@@ -181,14 +181,14 @@ function updatePyramid(sites){
   } else {
     //update box plot
     var mmdata = [[],[]]; 
-    //mmdata[0] = array of the count of mismatches for each vaccine-recieving patient in selected region
-    //mmdata[1] = same for placebo patients
-    for (var patient in seqID_lookup)
+    //mmdata[0] = array of the count of mismatches for each vaccine-recieving participant in selected region
+    //mmdata[1] = same for placebo participants
+    for (var participant in seqID_lookup)
     {
-      if (seqID_lookup[patient].mismatch != undefined)
+      if (seqID_lookup[participant].mismatch != undefined)
       {
-        var mmcount = d3.sum(sites.map(function(d) { return seqID_lookup[patient].mismatch[d]; }));
-        if (seqID_lookup[patient].vaccine)
+        var mmcount = d3.sum(sites.map(function(d) { return seqID_lookup[participant].mismatch[d]; }));
+        if (seqID_lookup[participant].vaccine)
         {
            mmdata[0].push(mmcount);
         } else {
@@ -291,11 +291,11 @@ function updatePyramid(sites){
 }
 function drawPyramid(sites){
     var possiblecounts = [];
-    for(var patient in seqID_lookup){
-      if(seqID_lookup[patient].mismatch != undefined){
+    for(var participant in seqID_lookup){
+      if(seqID_lookup[participant].mismatch != undefined){
         var mmcount = 0;
         for(var i = 0; i < sites.length; i++){
-            mmcount += seqID_lookup[patient].mismatch[sites[i]]; 
+            mmcount += seqID_lookup[participant].mismatch[sites[i]]; 
         }
       }
       possiblecounts.push(mmcount);
@@ -305,13 +305,13 @@ function drawPyramid(sites){
     for(var i = 0; i < sites.length+1; i++){
         mmdata.push({mismatches:i.toString(), vaccine:0, placebo:0});
         }
-    for(var patient in seqID_lookup){
-        if(seqID_lookup[patient].mismatch != undefined){
+    for(var participant in seqID_lookup){
+        if(seqID_lookup[participant].mismatch != undefined){
           mmcount = 0;
           for(var i = 0; i < sites.length; i++){
-              mmcount += seqID_lookup[patient].mismatch[sites[i]]; 
+              mmcount += seqID_lookup[participant].mismatch[sites[i]]; 
           }
-          if(seqID_lookup[patient].vaccine){
+          if(seqID_lookup[participant].vaccine){
               mmdata[mmcount].vaccine += 1;
           } else {
               mmdata[mmcount].placebo += 1;
@@ -462,12 +462,12 @@ function drawBoxplot(sites)
   //Create box plot for the first time (instead of updating as in updatePyramid())
   var leftmargin = 75;
   var mmdata = [[],[]];
-  for (var patient in seqID_lookup)
+  for (var participant in seqID_lookup)
   {
-    if (seqID_lookup[patient].mismatch != undefined)
+    if (seqID_lookup[participant].mismatch != undefined)
     {
-      var mmcount = d3.sum(sites.map(function(d) { return seqID_lookup[patient].mismatch[d]; }));
-      if (seqID_lookup[patient].vaccine)
+      var mmcount = d3.sum(sites.map(function(d) { return seqID_lookup[participant].mismatch[d]; }));
+      if (seqID_lookup[participant].vaccine)
       {
         mmdata[0].push(mmcount);
       } else {

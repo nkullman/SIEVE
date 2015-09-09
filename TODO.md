@@ -16,7 +16,7 @@ Nick presented the visualization to Andrew's colleagues on Fri, Aug 21st. The de
  - [ ] Server space at FHCRC (address will most likely be http://sieve.fhcrc.org/viz)
  - [ ] Add visit counter
  - [ ] Selection through URL (?sites=347...) using HXB2 site references. Allows sharing of a viz (w/ a selection) via a link.
- - [ ] Change all references of "patients" to "participants"
+ - [x] Change all references of "patients" to "participants"
  
 #Long term TODO:
  - [ ] Live demo thats quickly show basic functionality

@@ -114,11 +114,11 @@ function updateTable(sites){
     var mmcountfull = 0;
     var mmcountvaccine = 0;
     var mmcountplacebo = 0;
-    for(var patient in seqID_lookup){
-      if(seqID_lookup[patient].mismatch != undefined){
-        var is_mismatch = seqID_lookup[patient].mismatch[d];
+    for(var participant in seqID_lookup){
+      if(seqID_lookup[participant].mismatch != undefined){
+        var is_mismatch = seqID_lookup[participant].mismatch[d];
         mmcountfull +=is_mismatch;
-        if(seqID_lookup[patient].vaccine){
+        if(seqID_lookup[participant].vaccine){
           mmcountvaccine += is_mismatch;
         } else {
           mmcountplacebo += is_mismatch;
@@ -160,11 +160,11 @@ function updateTable(sites){
     var mmcountfull = 0;
     var mmcountvaccine = 0;
     var mmcountplacebo = 0;
-    for(var patient in seqID_lookup){
-      if(seqID_lookup[patient].mismatch != undefined){
-        var is_mismatch = seqID_lookup[patient].mismatch[d];
+    for(var participant in seqID_lookup){
+      if(seqID_lookup[participant].mismatch != undefined){
+        var is_mismatch = seqID_lookup[participant].mismatch[d];
         mmcountfull +=is_mismatch;
-        if(seqID_lookup[patient].vaccine){
+        if(seqID_lookup[participant].vaccine){
           mmcountvaccine += is_mismatch;
         } else {
           mmcountplacebo += is_mismatch;
