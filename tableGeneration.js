@@ -1,4 +1,5 @@
 var colnames = ['Site (HXB2)','Vaccine','Placebo','Combined'];
+var sortType = [1,1,1,1];
 
 var showEntropies = true;
 d3.select("#tableToggleText").on("click",toggleTableDisplay);
@@ -32,13 +33,16 @@ function generateEntropyTable(sites) {
     .append("th")
       .attr("id", function (d,i) {return "entropyHeader" + i;})
       .style("cursor","pointer")
-      .on("click", function(k){
+      .on("click", function(k,i){
+        var currSortType = sortType[i];
+        sortType[i] *= -1;
         var rowsToSort = tbody.selectAll("tr.siteRow");
         rowsToSort.sort(function(a,b) {
-          return whichIsBigger(a[k],b[k]);
+          if (currSortType > 0) {return whichIsBigger(a[k],b[k]);}
+          else{ return -whichIsBigger(a[k],b[k]);}
         })
       })
-      .text(function(column) { return column; });
+      .text(function(column) { return column + " ↕"; });
   // create average and joint rows.
   // text in data cells is empty, because there is no selection during table generation
   var avgRow = tbody.append("tr").attr("class", "entropy averageRow groupStatRow");
@@ -197,13 +201,16 @@ function generateDistanceTable(sites) {
     .append("th")
       .attr("id", function (d,i) {return "distanceHeader" + i;})
       .style("cursor","pointer")
-      .on("click", function(k){
+      .on("click", function(k,i){
+        var currSortType = sortType[i];
+        sortType[i] *= -1;
         var rowsToSort = tbody.selectAll("tr.siteRow");
         rowsToSort.sort(function(a,b) {
-          return whichIsBigger(a[k],b[k]);
+          if (currSortType > 0) {return whichIsBigger(a[k],b[k]);}
+          else{ return -whichIsBigger(a[k],b[k]);}
         })
       })
-      .text(function(column) { return column; });
+      .text(function(column) { return column + " ↕"; });
   // create average and joint rows
   // text in data cells is empty, because there is no selection during table generation
   var avgRow = tbody.append("tr").attr("class", "distance averageRow groupStatRow");
