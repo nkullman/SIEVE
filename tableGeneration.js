@@ -102,6 +102,7 @@ function updateEnropyTable(sites) {
           return "siteRow-" + d[colnames[0]];
         })
         .insert("th",":first-child")
+          .attr("class","deleteTableRowTrigger")
           .style("cursor","pointer")
           .on("click",function (d){
             if (typeof d != 'undefined'){ removeOnClick(d); }
@@ -124,6 +125,7 @@ function updateEnropyTable(sites) {
         });
     // add on-click-zoom to each site row
     tbody.selectAll(".siteRow").select("td")
+      .attr("class","siteRowSiteID")
       .style("cursor","pointer")
       .on("click", function(d){
         onClickChangeView(d);
@@ -253,6 +255,7 @@ function updateDistanceTable(sites) {
           return "siteRow-" + d[colnames[0]];
         })
         .insert("th",":first-child")
+          .attr("class","deleteTableRowTrigger")
           .style("cursor","pointer")
           .on("click",function (d){
             if (typeof d != 'undefined'){ removeOnClick(d); }
@@ -275,6 +278,7 @@ function updateDistanceTable(sites) {
         });
     // add on-click-zoom to each site row
     tbody.selectAll(".siteRow").select("td")
+      .attr("class","siteRowSiteID")
       .style("cursor","pointer")
       .on("click", function(d){
         onClickChangeView(d);

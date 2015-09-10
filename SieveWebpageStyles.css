@@ -240,6 +240,14 @@ footer a{
 .table:hover{
     overflow-y:auto;
 }
+.deleteTableRowTrigger:hover{
+    background: #ff7f7f;
+    opacity: 0.8;
+}
+.siteRowSiteID:hover{
+    background: #99cc99;
+    opacity: 0.8;
+}
 .group-box-bar{
     max-height: 450px;
     float: left;
