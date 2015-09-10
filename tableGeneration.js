@@ -180,9 +180,8 @@ function generateDistanceTable(sites) {
   var table = d3.select(".table-zn")
       .append("table")
       .attr("id","distanceTable")
-      .style("width","100%")
-      .append("caption")
-        .text("Distance Summary");
+      .style("width","100%");
+  table.append("caption").text("Distance Summary");
       
   var thead = table.append("thead");
   var tbody = table.append("tbody");
