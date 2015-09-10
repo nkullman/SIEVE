@@ -97,24 +97,12 @@ function updateEnropyTable(sites) {
     var rows = tbody.selectAll("tr.siteRow").data(entropyData, function(d) { return d[colnames[0]];});
     rows.enter()
       .append("tr")
-        /*.on("click", function(){
-          var popup = d3.select(".table-zn")
-            .append("div")
-              .attr("class", "popup")
-              .style("left", "8px")
-              .style("top", "8px");
-          popup.append("h2").text("Remove site").on("click",function(){
-            console.log("remove site has been clicked");
-          });
-          popup.append("h2").text("View in reference sequence").on("click",function(){
-            console.log("view in seq has been clicked");
-          });
-        })*/
         .attr("class","siteRow")
         .attr("id", function(d) {
           return "siteRow-" + d[colnames[0]];
         })
         .insert("th",":first-child")
+          .style("cursor","pointer")
           .on("click",function (d){
             if (typeof d != 'undefined'){ removeOnClick(d); }
           })
@@ -134,6 +122,12 @@ function updateEnropyTable(sites) {
         .text(function(d){
           return d;
         });
+    // add on-click-zoom to each site row
+    tbody.selectAll(".siteRow").select("td")
+      .style("cursor","pointer")
+      .on("click", function(d){
+        onClickChangeView(d);
+    });
     // and replace average/joint row filler with actual values
     var avgEntropyData = calculateAverageEntropyData(entropyData);
     d3.select(".entropy#vaccineAverage").text(avgEntropyData[0]);
@@ -259,6 +253,7 @@ function updateDistanceTable(sites) {
           return "siteRow-" + d[colnames[0]];
         })
         .insert("th",":first-child")
+          .style("cursor","pointer")
           .on("click",function (d){
             if (typeof d != 'undefined'){ removeOnClick(d); }
           })
@@ -278,6 +273,12 @@ function updateDistanceTable(sites) {
         .text(function(d){
           return d;
         });
+    // add on-click-zoom to each site row
+    tbody.selectAll(".siteRow").select("td")
+      .style("cursor","pointer")
+      .on("click", function(d){
+        onClickChangeView(d);
+      });
     // and replace average row filler with actual values
     var avgDistanceData = calculateAverageDistanceData(distanceData);
     d3.select(".distance#vaccineAverage").text(avgDistanceData[0]);
@@ -387,8 +388,8 @@ function toggleTableDisplay(){
   generateTable(selected_sites);
 }
 
-function onClickChangeView(d,i){
-  var site = selected_sites[i];
+function onClickChangeView(d){
+  var site = refmap[d["Site (HXB2)"]];
   // 37 is (arbitrary) magic number for a pretty zoom extent
   var s = 37;
   // the location of the translation is off
