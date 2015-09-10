@@ -19,9 +19,8 @@ function generateEntropyTable(sites) {
   var table = d3.select(".table-zn")
       .append("table")
       .attr("id","entropyTable")
-      .style("width","100%")
-      .append("caption")
-        .text("Entropy Summary");
+      .style("width","100%");
+  table.append("caption").text("Entropy Summary");
       
   var thead = table.append("thead");
   var tbody = table.append("tbody");
@@ -70,8 +69,19 @@ function generateEntropyTable(sites) {
   tbody.append("tr").attr("class","entropyTempRow")
     .append("td")
       .attr("colspan","4")
-      .style("text-align","right")
+      .style("text-align","center")
       .text("Data will populate when a selection is made");
+      
+  // prepend click-to-delete area
+  table.selectAll("tr").insert("th",":first-child")
+    .on("click",function (d,i){
+      if (typeof d != 'undefined'){ removeOnClick(d,i); }
+    })
+    .text(function(d){
+      if (typeof d != 'undefined'){ return "X"; }
+      else{ return ""; }
+    });
+ 
 }
 
 
@@ -133,19 +143,9 @@ function updateEnropyTable(sites) {
     });
     
   } else {
-    // selection is empty.
-    // remove all site rows
-    tbody.selectAll("tr.siteRow").transition().remove();
-    // add the placeholder row
-    tbody.append("tr")
-      .attr("class","entropyTempRow")
-      .append("td")
-        .attr("colspan","4")
-        .style("text-align","right")
-        .text("Data will populate when a selection is made");
-    // remove content from average and joint rows
-    tbody.selectAll(".groupStatRow").selectAll("td:not(.rowHeader)")
-      .text("-");
+    // new strategy for zero-length site selection
+    d3.select(".table-zn").html("");
+    generateTable(sites);
   }
 }
 
@@ -219,8 +219,19 @@ function generateDistanceTable(sites) {
   tbody.append("tr").attr("class","distanceTempRow")
     .append("td")
       .attr("colspan","4")
-      .style("text-align","right")
+      .style("text-align","center")
       .text("Data will populate when a selection is made");
+      
+  // prepend click-to-delete area
+  table.selectAll("tr").insert("th",":first-child")
+    .on("click",function (d,i){
+      if (typeof d != 'undefined'){ removeOnClick(d,i); }
+    })
+    .text(function(d){
+      if (typeof d != 'undefined'){ return "X"; }
+      else{ return ""; }
+    });
+ 
 }
 
 function updateDistanceTable(sites) {
@@ -256,26 +267,16 @@ function updateDistanceTable(sites) {
     d3.select(".distance#vaccineAverage").text(avgDistanceData[0]);
     d3.select(".distance#placeboAverage").text(avgDistanceData[1]);
     d3.select(".distance#combinedAverage").text(avgDistanceData[2]);
-    
+       
     // sort rows by site
     tbody.selectAll("tr.siteRow").sort(function(a,b) {
       return whichIsBigger(a[colnames[0]],b[colnames[0]])
     });
     
   } else {
-    // selection is empty.
-    // remove all site rows
-    tbody.selectAll("tr.siteRow").transition().remove();
-    // add the placeholder row
-    tbody.append("tr")
-      .attr("class","distanceTempRow")
-      .append("td")
-        .attr("colspan","4")
-        .style("text-align","right")
-        .text("Data will populate when a selection is made");
-    // remove content from average row
-    tbody.selectAll(".groupStatRow").selectAll("td:not(.rowHeader)")
-      .text("-");
+    // new strategy for zero-length site selection
+    d3.select(".table-zn").html("");
+    generateTable(sites);
   }
 }
 
@@ -351,10 +352,11 @@ function whichIsBigger(a,b){
   
 
 	function removeOnClick(d, i) {
-    var site = selected_sites[i];
-		selected_sites.splice(i, 1);
+    var site = refmap[d["Site (HXB2)"]];
+    var idx = selected_sites.indexOf(site);
+		selected_sites.splice(idx, 1);
     var bar = d3.select("#sitebar" + site);
-    var yval = overview_yscale(i);
+    var yval = overview_yscale(idx);
 			bar.classed("selected",false)
 				.attr('opacity', 0.5)
 				.attr("y", yval )
