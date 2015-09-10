@@ -113,7 +113,15 @@ function updateEnropyTable(sites) {
         .attr("class","siteRow")
         .attr("id", function(d) {
           return "siteRow-" + d[colnames[0]];
-        });
+        })
+        .insert("th",":first-child")
+          .on("click",function (d){
+            if (typeof d != 'undefined'){ removeOnClick(d); }
+          })
+          .text(function(d){
+            if (typeof d != 'undefined'){ return "X"; }
+            else{ return ""; }
+          });
     rows.exit().remove();
     var cells = rows.selectAll("td")
       .data(function(row){
@@ -249,7 +257,15 @@ function updateDistanceTable(sites) {
         .attr("class","siteRow")
         .attr("id", function(d) {
           return "siteRow-" + d[colnames[0]];
-        });
+        })
+        .insert("th",":first-child")
+          .on("click",function (d){
+            if (typeof d != 'undefined'){ removeOnClick(d); }
+          })
+          .text(function(d){
+            if (typeof d != 'undefined'){ return "X"; }
+            else{ return ""; }
+          });
     rows.exit().remove();
     var cells = rows.selectAll("td")
       .data(function(row){
@@ -351,7 +367,7 @@ function whichIsBigger(a,b){
 }
   
 
-	function removeOnClick(d, i) {
+	function removeOnClick(d) {
     var site = refmap[d["Site (HXB2)"]];
     var idx = selected_sites.indexOf(site);
 		selected_sites.splice(idx, 1);
