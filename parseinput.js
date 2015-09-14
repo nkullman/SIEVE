@@ -17,7 +17,7 @@ var seqID_lookup;
 var vaccine;
 /** Array with conservation and hxb2 info for each position */
 var envmap;
-/* Lookup table with index for each hxb2 position*/
+/** Lookup table with index for each hxb2 position*/
 var refmap = {};
 /** Number of people in the vaccine group */
 var numvac = 0;
@@ -31,6 +31,7 @@ var tvalues =[];
 var entropies = {full:[],vaccine:[],placebo:[]};
 d3.csv("data/VTN502.trt.csv", function(assigndata)
 {
+	parseTreatmentFile(assigndata);
 	d3.text("data/VTN502.gag.MRK.fasta", function(fastadata)
 	{
 		d3.csv("data/VTN502.gag.MRK.vxmatch_site.distance.csv", function(distdata)
@@ -42,6 +43,21 @@ d3.csv("data/VTN502.trt.csv", function(assigndata)
 		});
 	});	
 });
+
+function parseTreatmentFile(assigndata){
+	seqID_lookup = d3.nest()
+		.key(function(d) {return d.ptid;})
+		.rollup(function(d) {
+			if (d[0].treatment.toUpperCase().startsWith("P")){
+				numplac++;
+				return { "mismatch": [], "sequence": [], "vaccine": false };
+			} else if (d[0].treatment.toUpperCase().startsWith("V")){
+				numvac++;
+				return { "mismatch": [], "sequence": [], "vaccine": true };
+			}
+		})
+		.map(assigndata);
+}
 
 function doseqparsing(seqdata) {
 	var lines = seqdata.split('\n');
