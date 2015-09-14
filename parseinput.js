@@ -52,12 +52,12 @@ function parseTreatmentFile(assigndata){
 			if (d[0].treatment.toUpperCase().startsWith("P")){
 				numplac++;
 				return { "mismatch": [], "sequence": [], "vaccine": false };
-			} else if (d[0].treatment.toUpperCase().startsWith("V")){
+			} else {
 				numvac++;
 				return { "mismatch": [], "sequence": [], "vaccine": true };
 			}
 		})
-		.map(assigndata);
+		.map(assigndata.filter(function(d){return !d.treatment.toLowerCase().startsWith("ref");}));
 }
 
 function doseqparsing(seqdata) {
