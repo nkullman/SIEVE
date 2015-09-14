@@ -9,7 +9,7 @@
  * for the vaccine and each sequence ID */
 var sequences_raw = [];
 /** Object holding a 2D-array of sequences for both the vaccine and placebo groups */
-var sequences = {"vaccine":{}, "placebo":{}};
+var sequences = {"vaccine":[], "placebo":[]};
 /** Object (dictionary) of sequence IDs with AA sequence (char array),
  * vac/plac, and mismatch (boolean array) */
 var seqID_lookup = {};
@@ -41,7 +41,7 @@ d3.csv("data/VTN502.trt.csv", function(assigndata)
 		d3.csv("data/VTN502.gag.MRK.vxmatch_site.distance.csv", function(distdata)
 		{
 			dodistparsing(distdata);
-			d3.csv("data/TVN502.gag.MRK.vxmatch_site.results.csv", function(resultdata)
+			d3.csv("data/VTN502.gag.MRK.vxmatch_site.results.csv", function(resultdata)
 			{
 					
 			});
@@ -72,15 +72,16 @@ function doseqparsing(seqdata) {
 			var seqID = lines[i].substr(1).trim(/(\r\n|\n|\r)/gm);
 			var seq = lines[i+1].split("");
 			while (seq[seq.length-1].charCodeAt(0) < 32) { seq.pop(); }
-			seqID_lookup[seqID].sequence = seq;
 			sequences_raw.push(seq);
 			if (seqID.startsWith("reference"))
 			{
 				vaccine.sequence = seq;
-			} else if (seqID_lookup[seqID].vaccine) {
+			} else if ((seqID in seqID_lookup) && seqID_lookup[seqID].vaccine) {
+				seqID_lookup[seqID].sequence = seq;
 				sequences.vaccine.push(seq);
 				numvac++;
-			} else {
+			} else if (seqID in seqID_lookup) {
+				seqID_lookup[seqID].sequence = seq;
 				sequences.placebo.push(seq);
 				numplac++;
 			}
@@ -105,7 +106,7 @@ function dodistparsing(distdata)
 		{
 			return d.ptid == distdata[0].ptid && d.distance_method == distdata[0].distance_method;
 		}).map(function(d) {return d.display_position;});
-	display_idx_map.foreach(function(d, i) {refmap[d] = i;});
+	display_idx_map.forEach(function(d, i) {refmap[d] = i;});
 }
 
 /** Transpose 2D array */
