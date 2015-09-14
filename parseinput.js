@@ -62,18 +62,16 @@ function parseTreatmentFile(assigndata){
 		.key(function(d) {return d.ptid;})
 		.rollup(function(d) {
 			if (d[0].treatment.toUpperCase().startsWith("P")){
-				numplac++;
 				return { "distance": {}, "sequence": [], "vaccine": false };
 			} else {
-				numvac++;
 				return { "distance": {}, "sequence": [], "vaccine": true };
 			}
 		})
 		.map(assigndata.filter(function(d){return !d.treatment.toLowerCase().startsWith("ref");}));
 }
 
-function doseqparsing(seqdata) {
-	var lines = seqdata.split('\n');
+function doseqparsing(fastadata) {
+	var lines = fastadata.split('\n');
 	for (var i = 0; i < lines.length; ) {
 		if (!lines[i].startsWith(">") || lines[i].length === 0) { i++; }
 		else {
@@ -83,6 +81,7 @@ function doseqparsing(seqdata) {
 			sequences_raw.push(seq);
 			if (seqID.startsWith("reference"))
 			{
+				vaccine.ID = seqID.substring(seqID.lastIndexOf('|')+1, seqID.length);
 				vaccine.sequence = seq;
 			} else if ((seqID in seqID_lookup) && seqID_lookup[seqID].vaccine) {
 				seqID_lookup[seqID].sequence = seq;
