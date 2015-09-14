@@ -10,12 +10,14 @@
 var sequences_raw = [];
 /** Object holding a 2D-array of sequences for both the vaccine and placebo groups */
 var sequences = {"vaccine":{}, "placebo":{}};
-/** Object (dictionary) of sequence IDs with AA sequence (char array),
- * vac/plac, and mismatch (boolean array) */
+/** Dictionary with sequence IDs as keys and entries for:
+ * 		AA sequence (char array),
+ * 		distances (dictionary with array for each distance measure)
+ * 		vaccine/placebo status (boolean) */
 var seqID_lookup = {};
 /** Object with vaccine ID and AA sequence */
 var vaccine = {};
-/** Array with conservation and hxb2 info for each position */
+/** Array with conservation and reference info for each position */
 var display_idx_map;
 /* Lookup table with index for each hxb2 position*/
 var refmap = {};
@@ -23,6 +25,10 @@ var refmap = {};
 var numvac = 0;
 /** Number of people in the placebo group */
 var numplac = 0;
+/** Dictionary with wite-level statistics to display in navigation chart.
+ * 	Entries are dictionaries for each distance measurement, within which are
+ * 		entries that hold a site statistic and its array of values */
+var siteStats = {/*EX: vxmatch_site:{placDist: [], vacDist: [], sieve_statistic: [], pval: [], qval: []}*/};
 /** Array of p-values */
 var pvalues =[];
 /** Array of absolute value of t-stats */
@@ -38,8 +44,10 @@ d3.csv("data/VTN502.trt.csv", function(assigndata)
 		d3.csv("data/VTN502.gag.MRK.vxmatch_site.distance.csv", function(distdata)
 		{
 			dodistparsing(distdata);
-			d3.csv("data/TVN502.gag.MRK.vxmatch_site.results.csv", function(resultdata)
+			d3.csv("data/VTN502.gag.MRK.vxmatch_site.results.csv", function(resultdata)
 			{
+				parseResultsFile(resultdata);
+				generateVis();
 					
 			});
 		});
@@ -52,10 +60,10 @@ function parseTreatmentFile(assigndata){
 		.rollup(function(d) {
 			if (d[0].treatment.toUpperCase().startsWith("P")){
 				numplac++;
-				return { "mismatch": [], "sequence": [], "vaccine": false };
+				return { "distance": {}, "sequence": [], "vaccine": false };
 			} else {
 				numvac++;
-				return { "mismatch": [], "sequence": [], "vaccine": true };
+				return { "distance": {}, "sequence": [], "vaccine": true };
 			}
 		})
 		.map(assigndata.filter(function(d){return !d.treatment.toLowerCase().startsWith("ref");}));
@@ -100,6 +108,22 @@ function dodistparsing(distdata)
 			return d.ptid == distdata[0].ptid;
 		}).map(function(d) {return d.display_position;});
 		
+}
+
+function parseResultsFile(resultdata){
+	
+	var statsToDisplay = Object.keys(resultdata[0]).filter(function(d,i){ return i > 2; })
+	siteStats = d3.nest()
+		.key(function(d) {return d.distance_method;})
+		.rollup(function(d){
+			var result = {};
+			for (var statidx in statsToDisplay){
+				var stat = statsToDisplay[statidx];
+				result[stat] = d.map(function(a){return +a[stat];});
+			}
+			return result;
+		})
+		.map(resultdata);
 }
 
 /** Transpose 2D array */
