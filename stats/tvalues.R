@@ -1,7 +1,7 @@
 library(stats)
 
-mismatches = read.csv("../data/rv144.env.mismatch.distance.csv",sep=",",stringsAsFactors=FALSE)
-treatment = read.csv("../data/rv144_trt_lookup.csv",sep=",",stringsAsFactors=FALSE)
+mismatches = read.csv("../data/old/rv144.env.mismatch.distance.csv",sep=",",stringsAsFactors=FALSE)
+treatment = read.csv("../data/old/rv144_trt_lookup.csv",sep=",",stringsAsFactors=FALSE)
 
 names(mismatches)[1] = "sampleID"
 thedata = merge(mismatches,treatment,by="sampleID")[-1]
@@ -22,4 +22,4 @@ for(i in 1:(ncol(thedata)-1)){
 
 temp = data.frame(tvalues)
 names(temp)[1] = "tvalue"
-write.csv(temp,"../data/tvalues.csv",row.names=F)
+write.csv(temp,"../data/old/tvalues.csv",row.names=F)
