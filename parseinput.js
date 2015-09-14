@@ -29,6 +29,9 @@ var pvalues =[];
 var tvalues =[];
 /** Array of Entropy Values */
 var entropies = {full:[],vaccine:[],placebo:[]};
+/**  Object with nests of distances for each distance method */
+var dists;
+
 d3.csv("data/VTN502.trt.csv", function(assigndata)
 {
 	d3.text("data/VTN502.gag.MRK.fasta", function(fastadata)
@@ -72,18 +75,21 @@ function doseqparsing(seqdata) {
 
 function dodistparsing(distdata)
 {
-	d3.nest()
-		.key(function(d) {return d.ptid;})
-		.rollup(function(d)
+	dists = d3.nest()
+		.key(function(d) {return d.distance_method;})
+		.rollup(function(data)
 			{
-				return {dists:d.map(function(a) {return a.distance})};
+				return d3.nest()
+					.key(function(d) { return d.ptid; })
+					.rollup(function(d) { return d.map(function(a) {return a.distance;}); })
+					.entries(data);
 			})
 		.entries(distdata);
 	display_idx_map = distdata.filter(function (d)
 		{
-			return d.ptid == distdata[0].ptid;
+			return d.ptid == distdata[0].ptid && d.distance_method == distdata[0].distance_method;
 		}).map(function(d) {return d.display_position;});
-		
+	display_idx_map.foreach(function(d, i) {refmap[d] = i;});
 }
 
 /** Transpose 2D array */
