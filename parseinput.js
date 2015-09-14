@@ -34,6 +34,7 @@ var dists;
 
 d3.csv("data/VTN502.trt.csv", function(assigndata)
 {
+	parseTreatmentFile(assigndata);
 	d3.text("data/VTN502.gag.MRK.fasta", function(fastadata)
 	{
 		doseqparsing(fastadata);
@@ -47,6 +48,21 @@ d3.csv("data/VTN502.trt.csv", function(assigndata)
 		});
 	});	
 });
+
+function parseTreatmentFile(assigndata){
+	seqID_lookup = d3.nest()
+		.key(function(d) {return d.ptid;})
+		.rollup(function(d) {
+			if (d[0].treatment.toUpperCase().startsWith("P")){
+				numplac++;
+				return { "mismatch": [], "sequence": [], "vaccine": false };
+			} else if (d[0].treatment.toUpperCase().startsWith("V")){
+				numvac++;
+				return { "mismatch": [], "sequence": [], "vaccine": true };
+			}
+		})
+		.map(assigndata);
+}
 
 function doseqparsing(seqdata) {
 	var lines = seqdata.split('\n');
