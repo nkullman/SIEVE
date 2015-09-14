@@ -1,0 +1,4 @@
+study,protein,reference,distance_method
+VTN502,gag,MRK,vxmatch_site
+VTN502,pol,MRK,vxmatch_site
+VTN502,nef,MRK,vxmatch_site
