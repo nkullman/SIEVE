@@ -10,15 +10,16 @@ from pysieve import substbased
 from seqdistance.matrices import binarySubst, addGapScores, binGapScores
 from vtn_sieve import *
 
-nperms = 50
+nperms = 10000
 
 #studyClasses = [sieveVTN502, sieveVTN503, sieveVTN505, sieveRV144]
-studyClasses = [sieveVTN502, sieveVTN505]
+studyClasses = [sieveVTN502]
 analysisClasses = [substbased.vxmatch_siteAnalysis]
 
-analysisParams = dict(subst=addGapScores(binarySubst,binGapScores))
+analysisParams = dict(subst=addGapScores(binarySubst, binGapScores))
 
-toc = {k:[] for k in ['study','protein','reference','distance']}
+tocColumns =  ['study','protein','reference','distance_method']
+toc = {k:[] for k in tocColumns}
 for sc in studyClasses:
     """For each study, loop over all analyses and produce files for each."""
     s = sc()
@@ -29,18 +30,16 @@ for sc in studyClasses:
         for ac in analysisClasses:
             a = ac(sievedata=s.data)
             a.initialize(params=analysisParams)
-            a.computeDistance()
-            a.computeObserved(filter=None)
-            a.permutationTest(nperms, clusterClient = None)
+            a.computeDistance(params=analysisParams)
+            a.computeObserved(distFilter=None)
+            a.permutationTest(nperms, clusterClient=None)
             a.computePvalues()
             a.to_distance_csv()
             a.to_csv()
 
-            toc['study'].append(s.studyName)
-            toc['protein'].append(s.proteinName)
-            toc['reference'].append(s.insertName)
-            toc['distance_method'].append(a.analysisName)
-tocDf = pd.DataFrame(toc)
+            toc['study'].append(s.data.studyName)
+            toc['protein'].append(s.data.proteinName)
+            toc['reference'].append(s.data.insertName)
+            toc['distance_method'].append(a.results.analysisMethod)
+tocDf = pd.DataFrame(toc)[tocColumns]
 tocDf.to_csv('sieve_toc.csv', index = False)
-
-
