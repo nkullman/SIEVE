@@ -9,7 +9,7 @@
  * for the vaccine and each sequence ID */
 var sequences_raw = [];
 /** Object holding a 2D-array of sequences for both the vaccine and placebo groups */
-var sequences = {"vaccine":{}, "placebo":{}};
+var sequences = {"vaccine":[], "placebo":[]};
 /** Dictionary with sequence IDs as keys and entries for:
  * 		AA sequence (char array),
  * 		distances (dictionary with array for each distance measure)
@@ -35,6 +35,9 @@ var pvalues =[];
 var tvalues =[];
 /** Array of Entropy Values */
 var entropies = {full:[],vaccine:[],placebo:[]};
+/**  Object with nests of distances for each distance method */
+var dists;
+
 d3.csv("data/VTN502.trt.csv", function(assigndata)
 {
 	parseTreatmentFile(assigndata);
@@ -77,15 +80,16 @@ function doseqparsing(seqdata) {
 			var seqID = lines[i].substr(1).trim(/(\r\n|\n|\r)/gm);
 			var seq = lines[i+1].split("");
 			while (seq[seq.length-1].charCodeAt(0) < 32) { seq.pop(); }
-			seqID_lookup[seqID].sequence = seq;
 			sequences_raw.push(seq);
 			if (seqID.startsWith("reference"))
 			{
 				vaccine.sequence = seq;
-			} else if (seqID_lookup[seqID].vaccine) {
+			} else if ((seqID in seqID_lookup) && seqID_lookup[seqID].vaccine) {
+				seqID_lookup[seqID].sequence = seq;
 				sequences.vaccine.push(seq);
 				numvac++;
-			} else {
+			} else if (seqID in seqID_lookup) {
+				seqID_lookup[seqID].sequence = seq;
 				sequences.placebo.push(seq);
 				numplac++;
 			}
@@ -96,18 +100,21 @@ function doseqparsing(seqdata) {
 
 function dodistparsing(distdata)
 {
-	d3.nest()
-		.key(function(d) {return d.ptid;})
-		.rollup(function(d)
+	dists = d3.nest()
+		.key(function(d) {return d.distance_method;})
+		.rollup(function(data)
 			{
-				return {dists:d.map(function(a) {return a.distance})};
+				return d3.nest()
+					.key(function(d) { return d.ptid; })
+					.rollup(function(d) { return d.map(function(a) {return a.distance;}); })
+					.entries(data);
 			})
 		.entries(distdata);
 	display_idx_map = distdata.filter(function (d)
 		{
-			return d.ptid == distdata[0].ptid;
+			return d.ptid == distdata[0].ptid && d.distance_method == distdata[0].distance_method;
 		}).map(function(d) {return d.display_position;});
-		
+	display_idx_map.forEach(function(d, i) {refmap[d] = i;});
 }
 
 function parseResultsFile(resultdata){
