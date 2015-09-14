@@ -7,14 +7,14 @@
 
 /** 2D-array (of chars) representing AAs at each position in the sequence
  * for the vaccine and each sequence ID */
-var sequences_raw;
+var sequences_raw = [];
 /** Object holding a 2D-array of sequences for both the vaccine and placebo groups */
-var sequences;
+var sequences = {"vaccine":{}, "placebo":{}};
 /** Object (dictionary) of sequence IDs with AA sequence (char array),
  * vac/plac, and mismatch (boolean array) */
-var seqID_lookup;
+var seqID_lookup = {};
 /** Object with vaccine ID and AA sequence */
-var vaccine;
+var vaccine = {};
 /** Array with conservation and hxb2 info for each position */
 var envmap;
 /* Lookup table with index for each hxb2 position*/
@@ -33,6 +33,7 @@ d3.csv("data/VTN502.trt.csv", function(assigndata)
 {
 	d3.text("data/VTN502.gag.MRK.fasta", function(fastadata)
 	{
+		doseqparsing(fastadata)
 		d3.csv("data/VTN502.gag.MRK.vxmatch_site.distance.csv", function(distdata)
 		{
 			d3.csv("data/TVN502.gag.MRK.vxmatch_site.results.csv", function(resultdata)
@@ -53,7 +54,10 @@ function doseqparsing(seqdata) {
 			while (seq[seq.length-1].charCodeAt(0) < 32) { seq.pop(); }
 			seqID_lookup[seqID].sequence = seq;
 			sequences_raw.push(seq);
-			if (seqID_lookup[seqID].vaccine) {
+			if (seqID.startsWith("reference"))
+			{
+				vaccine.sequence = seq;
+			} else if (seqID_lookup[seqID].vaccine) {
 				sequences.vaccine.push(seq);
 				numvac++;
 			} else {
