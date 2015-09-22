@@ -462,47 +462,14 @@ function hxb2_selection()
 
 function yscale_selection()
 {
-	switch (d3.event.target.value)
-	{
-	case "pvalue":
-		yscale_mode = 0;
-		yAxisl.scale(pval_scale).tickValues(pval_scale_ticks)
-			.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;});
-		yAxisr.scale(pval_scale).tickValues(pval_scale_ticks)
-			.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;});
-		selaxistitle = "p-value";
-		break;
-	case "entropy":
-		yscale_mode = 1;
-		if (entropy_scale.domain()[0] == -1)
-		{ //first time selection
-			entropy_scale.domain([0, _.max(entropies.full)]);
-		}
-		
-		yAxisl.scale(entropy_scale).tickValues(entropy_scale_ticks(entropy_scale.domain()))
-			.tickFormat(function(d) {return Math.round(d*100)/100;});
-		yAxisr.scale(entropy_scale).tickValues(entropy_scale_ticks(entropy_scale.domain()))
-			.tickFormat(function(d) {return Math.round(d*100)/100;});
-		selaxistitle = "entropy";
-		break;
-	case "tvalue":
-		yscale_mode = 2;
-		if (tval_scale.domain()[0] == -1){
-			tval_scale.domain([0, Math.abs(d3.max([d3.min(tvalues),d3.max(tvalues)]))]);
-		}
-		yAxisl.scale(tval_scale).tickValues(tval_scale_ticks(tval_scale.domain()))
-			.tickFormat(function(d) {return Math.round((d)*100)/100;});
-		yAxisr.scale(tval_scale).tickValues(tval_scale_ticks(tval_scale.domain()))
-			.tickFormat(function(d) {return Math.round((d)*100)/100;});
-		selaxistitle = "t-stat";
-		break;
-	case "constant":
-		yscale_mode = -1;
-		yAxisl.scale(entropy_scale).tickValues(0);
-		yAxisr.scale(entropy_scale).tickValues(0);
-		selaxistitle = "";
-		break;
+	yscale_mode = d3.event.target.value;
+	var newYScale = statScales[dist_metric][yscale_mode];
+	if (newYScale.domain()[0] == -1){
+		newYScale.domain([d3.min(siteStats[dist_metric][yscale_mode]), d3.max(siteStats[dist_metric][yscale_mode])]);
 	}
+	yAxisl.scale(newYScale);
+	yAxisr.scale(newYScale);
+	selaxistitle = yscale_mode;
 	
 	d3.selectAll(".sitebars")
 		.filter(function(d, i) { return i != selected_sites[_.sortedIndex(selected_sites, i)]; })
