@@ -134,7 +134,6 @@ function parseResultsFile(resultdata){
 			return result;
 		})
 		.map(resultdata);
-<<<<<<< HEAD
 		
 	var yScaleSelector = d3.select("#yscale_selector");
 	statsToDisplay.forEach(function(d){
@@ -142,8 +141,6 @@ function parseResultsFile(resultdata){
 			.attr("value", d)
 			.text(d);
 	})
-=======
->>>>>>> 172a78ae02d32eae07f3f7f60ae7993358be5226
 		
 	for (var metric in siteStats)
 	{
@@ -157,16 +154,6 @@ function parseResultsFile(resultdata){
 				.range([0,.95*height]);
 		}
 	}
-<<<<<<< HEAD
-=======
-
-	var yScaleSelector = d3.select("#yscale_selector");
-	statsToDisplay.forEach(function(d){
-		yScaleSelector.append("option")
-			.attr("value", d)
-			.text(d);
-	})
->>>>>>> 172a78ae02d32eae07f3f7f60ae7993358be5226
 }
 
 /** Transpose 2D array */
