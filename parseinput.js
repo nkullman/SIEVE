@@ -130,6 +130,12 @@ function parseResultsFile(resultdata){
 			return result;
 		})
 		.map(resultdata);
+	var yScaleSelector = d3.select("#yscale_selector");
+	statsToDisplay.forEach(function(d){
+		yScaleSelector.append("option")
+			.attr("value", d)
+			.text(d);
+	})
 }
 
 /** Transpose 2D array */
