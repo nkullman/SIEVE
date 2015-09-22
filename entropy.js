@@ -125,7 +125,7 @@ function updateTable(sites){
         }
       }
     }
-    return [[envmap[d].hxb2Pos, envmap[d].hxb2Pos],
+    return [[display_idx_map[d], display_idx_map[d]],
       [entropies.vaccine[d],mmcountvaccine],
       [entropies.placebo[d],mmcountplacebo],
       [entropies.full[d],mmcountfull]];
@@ -171,7 +171,7 @@ function updateTable(sites){
         }
       }
     }
-    return ["Env " + envmap[d].hxb2Pos,mmcountvaccine,mmcountplacebo,mmcountfull];
+    return ["Env " + display_idx_map[d],mmcountvaccine,mmcountplacebo,mmcountfull];
   })
   
   

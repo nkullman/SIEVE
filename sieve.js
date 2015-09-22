@@ -131,7 +131,7 @@ function generateSiteSelector() {
 			// get HXB2 (or other ref) for sites being appended to URL
 			var sitesInURL = [];
 			selected_sites.forEach(function(d){
-				sitesInURL.push(envmap[d].hxb2Pos);
+				sitesInURL.push(display_idx_map[d]);
 			});
 			// assemble the shareable URL and pass to copyToClipboard function
 			var shareableURL = currURL + "?sites=" + sitesInURL.toString();
@@ -144,7 +144,7 @@ function generateSiteSelector() {
 	
 	window.xAxis = d3.svg.axis()
 			.scale(xScale)
-      .tickFormat(function(d,i){return envmap[d].hxb2Pos})
+      .tickFormat(function(d,i){return display_idx_map[d]})
 			.orient("bottom");
 			
 	window.yAxisl = d3.svg.axis()
@@ -341,16 +341,16 @@ function generateSiteSelector() {
 			.attr("text-anchor", "end")
 			.text(function () {
 				if (yscale_mode === 0){ 
-					return "HXB2 Pos: " + envmap[i].hxb2Pos +
+					return "HXB2 Pos: " + display_idx_map[i] +
 						" // p-value: " + pvalues[i].toPrecision(2);
 				} else if (yscale_mode === 1) {
-					return "HXB2 Pos: " + envmap[i].hxb2Pos +
+					return "HXB2 Pos: " + display_idx_map[i] +
 						" // entropy: " + entropies.full[i];
 				} else if (yscale_mode === 2) {
-					return "HXB2 Pos: " + envmap[i].hxb2Pos +
+					return "HXB2 Pos: " + display_idx_map[i] +
 						" // t-stat: " + tvalues[i].toPrecision(2);
 				} else {
-					return "HXB2 Pos: " + envmap[i].hxb2Pos;
+					return "HXB2 Pos: " + display_idx_map[i];
 				}
 			});
 		
