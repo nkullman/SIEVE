@@ -147,6 +147,13 @@ function parseResultsFile(resultdata){
 				.range([0,.95*height]);
 		}
 	}
+
+	var yScaleSelector = d3.select("#yscale_selector");
+	statsToDisplay.forEach(function(d){
+		yScaleSelector.append("option")
+			.attr("value", d)
+			.text(d);
+	})
 }
 
 /** Transpose 2D array */

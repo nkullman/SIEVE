@@ -160,7 +160,7 @@ function updateEnropyTable(sites) {
 function calculateEntropyData(sites){
     return sites.map(function(d) {
       var result = {};
-      result[colnames[0]] = envmap[d].hxb2Pos;
+      result[colnames[0]] = display_idx_map[d];
       result[colnames[1]] = entropies.vaccine[d];
       result[colnames[2]] = entropies.placebo[d];
       result[colnames[3]] = entropies.full[d];
@@ -329,7 +329,7 @@ function calculateDistanceData(sites){
       
       // writing mismatch data
       var result = {};
-      result[colnames[0]] = envmap[d].hxb2Pos;
+      result[colnames[0]] = display_idx_map[d];
       result[colnames[1]] = mmcountvaccine;
       result[colnames[2]] = mmcountplacebo;
       result[colnames[3]] = mmcountfull;
