@@ -46,7 +46,7 @@ var selected_sites = [];
 var mouse_down = false;
 var shift_down = false;
 var last_updated;
-var yscale_mode = 0; //0 = pval, 1 = entropy, 2 = tstat, -1 = constant
+var yscale_mode = "pvalue";
 
 var pval_scale_ticks = [0.01 + 0.1, 0.05 + 0.1, 0.2 + 0.1, 1 + 0.1];
 function tval_scale_ticks(tval_scale_domain){
@@ -77,17 +77,7 @@ function overview_yscale(site)
 	/*	returns the y of a site bar based on the currently selected
 		scale
 	*/
-	switch (yscale_mode)
-	{
-	case 0:
-		return pval_scale(pvalues[site]+.1);
-	case 1:
-		return entropy_scale(entropies.full[site]);
-	case 2:
-		return tval_scale(tvalues[site]);
-	default:
-		return 0;
-	}
+	return statScales[dist_metric][yscale_mode](siteStats[dist_metric][yscale_mode][site]);
 }
 		
 /** Generate visualization */

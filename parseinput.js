@@ -29,6 +29,10 @@ var numplac = 0;
  * 	Entries are dictionaries for each distance measurement, within which are
  * 		entries that hold a site statistic and its array of values */
 var siteStats = {/*EX: vxmatch_site:{placDist: [], vacDist: [], sieve_statistic: [], pval: [], qval: []}*/};
+/** Appropriate scale for each of  */
+var statScales = {};
+/** Current distance metric, should eventually be changable through UI */
+var dist_metric = "vxmatch_site"
 /** Array of p-values */
 var pvalues =[];
 /** Array of absolute value of t-stats */
@@ -130,6 +134,19 @@ function parseResultsFile(resultdata){
 			return result;
 		})
 		.map(resultdata);
+		
+	for (var metric in siteStats)
+	{
+		for (var stat in siteStats[metric])
+		{
+			if (!(metric in statScales))
+			{
+				statScales[metric] = {}
+			}
+			statScales[metric][stat] = d3.scale.linear()
+				.range([0,.95*height]);
+		}
+	}
 }
 
 /** Transpose 2D array */
