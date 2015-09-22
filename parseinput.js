@@ -75,13 +75,13 @@ function parseTreatmentFile(assigndata){
 }
 
 function doseqparsing(fastadata) {
-	var lines = fastadata.split('\n');
-	for (var i = 0; i < lines.length; ) {
-		if (!lines[i].startsWith(">") || lines[i].length === 0) { i++; }
-		else {
-			var seqID = lines[i].substr(1).trim(/(\r\n|\n|\r)/gm);
-			var seq = lines[i+1].split("");
-			while (seq[seq.length-1].charCodeAt(0) < 32) { seq.pop(); }
+	var fastaSequences = fastadata.split(/[;>]+/);
+	for (var i = 0; i < fastaSequences.length; i++) {
+		if (fastaSequences[i].length !== 0) {
+			var seqID = fastaSequences[i].substring(0,fastaSequences[i].indexOf("\n")).trim(/[\n\r]/g, '');
+			var seq = fastaSequences[i].substring(fastaSequences[i].indexOf("\n") + 1, fastaSequences[i].length);
+			seq = seq.replace(/[\n\r]/g, '');
+			seq = seq.split("");
 			sequences_raw.push(seq);
 			if (seqID.startsWith("reference"))
 			{
@@ -96,7 +96,6 @@ function doseqparsing(fastadata) {
 				sequences.placebo.push(seq);
 				numplac++;
 			}
-			i += 2;
 		}
 	}
 }
