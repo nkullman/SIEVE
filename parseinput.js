@@ -144,14 +144,24 @@ function parseResultsFile(resultdata){
 		
 	for (var metric in siteStats)
 	{
-		for (var stat in siteStats[metric])
+		
+		if (!(metric in statScales))
 		{
-			if (!(metric in statScales))
+			statScales[metric] = {}
+		}
+		for (var stat in siteStats[metric])
+		{			
+			//test if the stat name is some variant of
+			//p-value or q-value
+			if (/^[pq][\s-]?val/i.test(stat))
 			{
-				statScales[metric] = {}
+				statScales[metric][stat] = d3.scale.log()
+					.domain([.1, 1.1])
+					.range([0, .95*height]);
+			} else {
+				statScales[metric][stat] = d3.scale.linear()
+					.range([0,.95*height]);
 			}
-			statScales[metric][stat] = d3.scale.linear()
-				.range([0,.95*height]);
 		}
 	}
 }
