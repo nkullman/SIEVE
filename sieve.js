@@ -77,12 +77,7 @@ function overview_yscale(site)
 	/*	returns the y of a site bar based on the currently selected
 		scale
 	*/
-	if (/^[pq][\s-]?val/i.test(yscale_mode))
-	{
-		return statScales[dist_metric][yscale_mode](siteStats[dist_metric][yscale_mode][site]);
-	} else {
-		return statScales[dist_metric][yscale_mode](siteStats[dist_metric][yscale_mode][site] + .1);
-	}
+	return statScales[dist_metric][yscale_mode](siteStats[dist_metric][yscale_mode][site]);
 }
 		
 /** Generate visualization */

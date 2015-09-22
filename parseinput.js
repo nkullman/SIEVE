@@ -155,9 +155,9 @@ function parseResultsFile(resultdata){
 			//p-value or q-value
 			if (/^[pq][\s-]?val/i.test(stat))
 			{
-				statScales[metric][stat] = d3.scale.log()
-					.domain([.1, 1.1])
-					.range([0, .95*height]);
+				statScales[metric][stat] = d3.scale.linear()
+					.domain([0, 1])
+					.range([.95*height, 0]);
 			} else {
 				statScales[metric][stat] = d3.scale.linear()
 					.range([0,.95*height]);
