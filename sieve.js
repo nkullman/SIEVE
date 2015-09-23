@@ -47,6 +47,7 @@ var mouse_down = false;
 var shift_down = false;
 var last_updated;
 var yscale_mode = "pvalue";
+// also hard-coded: the default setting on the yscale-selector over in parseinput.js
 
 var pval_scale_ticks = [0.01 + 0.1, 0.05 + 0.1, 0.2 + 0.1, 1 + 0.1];
 function tval_scale_ticks(tval_scale_domain){
@@ -330,18 +331,8 @@ function generateSiteSelector() {
 			.attr("y", -margin.top/2)
 			.attr("text-anchor", "end")
 			.text(function () {
-				if (yscale_mode === 0){ 
-					return "HXB2 Pos: " + display_idx_map[i] +
-						" // p-value: " + pvalues[i].toPrecision(2);
-				} else if (yscale_mode === 1) {
-					return "HXB2 Pos: " + display_idx_map[i] +
-						" // entropy: " + entropies.full[i];
-				} else if (yscale_mode === 2) {
-					return "HXB2 Pos: " + display_idx_map[i] +
-						" // t-stat: " + tvalues[i].toPrecision(2);
-				} else {
-					return "HXB2 Pos: " + display_idx_map[i];
-				}
+				return "HXB2 Pos: " + display_idx_map[i] +
+						" // " + yscale_mode + ": " + siteStats[dist_metric][yscale_mode][i].toPrecision(2);
 			});
 		
 		if (!mouse_down || !shift_down) { return; }

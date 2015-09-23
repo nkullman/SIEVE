@@ -54,6 +54,37 @@ d3.csv("data/VTN502.trt.csv", function(assigndata)
 			d3.csv("data/VTN502.gag.MRK.vxmatch_site.results.csv", function(resultdata)
 			{
 				parseResultsFile(resultdata);
+				
+				// Transpose data for easier access
+				sequences_raw = transpose(sequences_raw);
+				sequences.vaccine = transpose(sequences.vaccine);
+				sequences.placebo = transpose(sequences.placebo);
+				// calculate entropies
+				for(var i=0; i < sequences_raw.length; i++){
+					entropies.full.push(jointentropy([i],sequences_raw,numvac+numplac).toFixed(2));
+				}
+				for(var i=0; i < sequences.vaccine.length; i++){
+					entropies.vaccine.push(jointentropy([i],sequences.vaccine,numvac).toFixed(2));
+				}
+				for(var i=0; i < sequences.placebo.length; i++){
+					entropies.placebo.push(jointentropy([i],sequences.placebo,numplac).toFixed(2));
+				}
+				// If loaded URL contains sites, add them to the current selection
+				var urlSiteString = getParameterByName("sites");
+				if (urlSiteString !== ""){
+					// get sites identified by reference strand
+					var urlSites = urlSiteString.split(",");
+					// convert sites back to 0-based index
+					//(our working index instead of the reference index)
+					urlSites.forEach(function(d,i){
+						urlSites[i] = refmap[urlSites[i]];
+					})
+					while(urlSites.length > 0){
+						selected_sites.push(urlSites.pop());
+					}
+				}
+				
+				// Build the visualization
 				generateVis();
 					
 			});
@@ -136,9 +167,13 @@ function parseResultsFile(resultdata){
 		
 	var yScaleSelector = d3.select("#yscale_selector");
 	statsToDisplay.forEach(function(d){
-		yScaleSelector.append("option")
+		var newOption = yScaleSelector.append("option")
 			.attr("value", d)
+			.attr("id","yscale-selection-option-" + d)
 			.text(d);
+		// hard coded for now. Will data always contain a pvalue?
+		// answer is yes if we decide to build in a simple pval generator
+		if (d === "pvalue"){ newOption.attr("selected","selected"); }
 	})
 		
 	for (var metric in siteStats)
