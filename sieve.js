@@ -20,15 +20,6 @@ var plac_scale = d3.scale.linear()
 	.range([0, barwidth]);
 var vac_scale = d3.scale.linear()
 	.range([0, barwidth]);
-var pval_scale = d3.scale.log()
-	.domain([.1, 1.1])
-	.range([0, .95*height]);
-var tval_scale = d3.scale.linear()
-	.domain([-1,0]) // will compute domain when scale is selected the first time
-	.range([.95*height, 0]);
-var entropy_scale = d3.scale.linear()
-	.range([.95*height, 0])
-	.domain([-1, 0]); //will compute domain when scale is selected the first time.
 var opacity_scale = d3.scale.linear()
 	.domain([-1,0]) // will compute domain when navigation area is used the first time.
 	.range([0.5,0])
@@ -46,8 +37,7 @@ var selected_sites = [];
 var mouse_down = false;
 var shift_down = false;
 var last_updated;
-var yscale_mode = "pvalue";
-// also hard-coded: the default setting on the yscale-selector over in parseinput.js
+var yscale_mode;
 
 var pval_scale_ticks = [0.01 + 0.1, 0.05 + 0.1, 0.2 + 0.1, 1 + 0.1];
 function tval_scale_ticks(tval_scale_domain){
@@ -61,7 +51,7 @@ function entropy_scale_ticks(entropy_scale_domain){
 	ticks.push(entropy_scale_domain[1]);
 	return ticks;
 }
-var selaxistitle = "p-value";
+
 
 // clear selecting mode even if you release your mouse elsewhere.
 d3.select(window).on("mouseup", function(){ last_updated = undefined; mouse_down = false; })
@@ -137,17 +127,6 @@ function generateSiteSelector() {
 			.scale(xScale)
       .tickFormat(function(d,i){return display_idx_map[d]})
 			.orient("bottom");
-			
-	window.yAxisl = d3.svg.axis()
-		.scale(pval_scale)
-		.tickValues(pval_scale_ticks)
-		.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;})
-		.orient("left");
-	window.yAxisr = d3.svg.axis()
-		.scale(pval_scale)
-		.tickValues(pval_scale_ticks)
-		.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;})
-		.orient("right");
 			
 	window.sitebarwidth = xScale.range()[1] / d3.max(xScale.domain());
 			// = totalwidth/numbars
@@ -260,17 +239,17 @@ function generateSiteSelector() {
 	siteselSVGg.append("g")
 		.attr("class", "y axis l")
 		.attr("transform", "translate(-5,0)")
-		.call(yAxisl);
+		.call(statAxes[dist_metric][yscale_mode].left);
 	siteselSVGg.append("text")
 		.attr("class", "y axis label")
 		.attr("text-anchor", "beginning")
 		.attr("x", -margin.right)
 		.attr("y", -margin.top/2)
-		.text(selaxistitle);
+		.text(yscale_mode);
 	siteselSVGg.append("g")
 		.attr("class", "y axis r")
 		.attr("transform", "translate(" + (width+5) + ",0)")
-		.call(yAxisr);
+		.call(statAxes[dist_metric][yscale_mode].right);
 	
 	function refresh() {
 		if (!shift_down) {			
@@ -458,9 +437,6 @@ function yscale_selection()
 	if (newYScale.domain()[0] == -1){
 		newYScale.domain([d3.min(siteStats[dist_metric][yscale_mode]), d3.max(siteStats[dist_metric][yscale_mode])]);
 	}
-	yAxisl.scale(newYScale);
-	yAxisr.scale(newYScale);
-	selaxistitle = yscale_mode;
 	
 	d3.selectAll(".sitebars")
 		.filter(function(d, i) { return i != selected_sites[_.sortedIndex(selected_sites, i)]; })
@@ -468,7 +444,7 @@ function yscale_selection()
 		.attr("y", function(d, i) { return overview_yscale(i); })
 		.attr("height", function(d, i) {return height - overview_yscale(i);});
 		
-	siteselSVGg.select(".y.axis.l").transition().call(yAxisl);
-	siteselSVGg.select(".y.axis.r").transition().call(yAxisr);
-	d3.select(".y.axis.label").text(selaxistitle);
+	siteselSVGg.select(".y.axis.l").transition().call(statAxes[dist_metric][yscale_mode].left);
+	siteselSVGg.select(".y.axis.r").transition().call(statAxes[dist_metric][yscale_mode].right);
+	d3.select(".y.axis.label").text(yscale_mode);
 }

@@ -29,10 +29,12 @@ var numplac = 0;
  * 	Entries are dictionaries for each distance measurement, within which are
  * 		entries that hold a site statistic and its array of values */
 var siteStats = {/*EX: vxmatch_site:{placDist: [], vacDist: [], sieve_statistic: [], pval: [], qval: []}*/};
-/** Appropriate scale for each of  */
+/** Appropriate scale for each of the stats above */
 var statScales = {};
+/** Associated axes to above */
+var statAxes = {};
 /** Current distance metric, should eventually be changable through UI */
-var dist_metric = "vxmatch_site"
+var dist_metric = "vxmatch_site";
 /** Array of p-values */
 var pvalues =[];
 /** Array of absolute value of t-stats */
@@ -178,11 +180,9 @@ function parseResultsFile(resultdata){
 		
 	for (var metric in siteStats)
 	{
+		statScales[metric] = {};
+		statAxes[metric] = {};
 		
-		if (!(metric in statScales))
-		{
-			statScales[metric] = {}
-		}
 		for (var stat in siteStats[metric])
 		{			
 			//test if the stat name is some variant of
@@ -191,10 +191,37 @@ function parseResultsFile(resultdata){
 			{
 				statScales[metric][stat] = d3.scale.linear()
 					.domain([0, 1])
-					.range([.95*height, 0]);
+					.range([0, .95*height]);
+				statAxes[metric][stat] =
+					{"left":d3.svg.axis()
+						.scale(statScales[metric][stat])
+						.orient("left")
+						.tickValues([0.05, 0.2, 1]),
+					"right":d3.svg.axis()
+						.scale(statScales[metric][stat])
+						.orient("right")
+						.tickValues([0.05, 0.2, 1])};
+				if (/^p/i.test(stat))
+				{ //Try to set the default stat to pvalue
+					yscale_mode = stat;
+				}
 			} else {
 				statScales[metric][stat] = d3.scale.linear()
-					.range([0,.95*height]);
+					.range([.95*height, 0]);
+				statAxes[metric][stat] =
+					{"left":d3.svg.axis()
+						.scale(statScales[metric][stat])
+						.orient("left")
+						.ticks(5),
+					"right":d3.svg.axis()
+						.scale(statScales[metric][stat])
+						.orient("right")
+						.ticks(5)};
+			}
+			if (yscale_mode === undefined)
+			{ //No pvalue, set stat to arbitrary value
+				for (var key in statScales[metric]) break;
+				yscale_mode = key;
 			}
 		}
 	}
