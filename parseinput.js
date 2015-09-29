@@ -46,9 +46,13 @@ var dists;
 
 d3.csv("data/VTN502.trt.csv", function(assigndata)
 {
+	// eventually, get this from the filename
+	studyname = "VTN502";
 	parseTreatmentFile(assigndata);
 	d3.text("data/VTN502.gag.MRK.fasta", function(fastadata)
 	{
+		// eventually, get this from the filename
+		protein = "gag";
 		doseqparsing(fastadata);
 		d3.csv("data/VTN502.gag.MRK.vxmatch_site.distance.csv", function(distdata)
 		{
