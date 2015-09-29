@@ -3,6 +3,7 @@
       <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
       <meta name="description" content="SIEVE is an interactive visualization for exploring breakthrough sequence data from vaccine efficacy trials, allowing analysis at the level of amino acids.">
       <link rel="stylesheet" type="text/css" href="SieveWebpageStyles.css">
+      <link rel="stylesheet" type="text/css" href="introjs.css">
       <script src="lodash.min.js"></script>
       <script src="d3.v3.min.js" charset="utf-8"></script><style type="text/css"></style>
       <script>
@@ -116,4 +117,27 @@
    <script src="sieve.js"></script>
    <script src="stackedbars.js"></script>
    <script src="pyramid.js"></script>
+   <script src="intro.js"></script>
+   <script type="text/javascript">
+      function startIntro(){
+        var intro = introJs();
+          intro.setOptions({
+            steps: [
+              { 
+                intro: "<h3>Welcome to SIEVE</h3> This is a short tour to get you started visualizing your sieve analysis data"
+              },
+              {
+                element: document.querySelector('.protein-nav'),
+                intro: "This is the navigation area. Here you can see the entire study protein with a colored rectangle for each amino acid."
+              },
+              {
+                intro: "More steps to come..."
+              }
+            ]
+          });
+
+          intro.start();
+      }
+      startIntro();
+    </script>
 </body></html>
