@@ -1,4 +1,4 @@
-var mismatchmode = 0; //0 = pyramid, 1 = box plot
+var mismatchmode = 1; //0 = pyramid, 1 = box plot
 
 var pyramid_margin = {
       top: 30,
@@ -16,8 +16,6 @@ var box_width = 225, box_height = 50;
 // CREATE SVG
 var pyramid_svg = d3.select('.group-box-bar-plot').append('svg')
       .attr("version", "1.1")
-      /*.attr('width', pyramid_margin.left + pyramid_width + pyramid_margin.right)
-      .attr('height', pyramid_margin.top + pyramid_height + pyramid_margin.bottom)*/
       .attr('viewBox', "0 0 " + (pyramid_margin.left + pyramid_width + pyramid_margin.right) + " " + (pyramid_margin.top + pyramid_height + pyramid_margin.bottom))
       .attr('preserveAspectRatio',"xMinYMin meet")
       .attr("class", "svg-content")
@@ -33,16 +31,22 @@ function updatePyramid(sites){
       vaccine sequence at the selected sites.*/
   if (mismatchmode == 0)
   {
+    // switch pyramid to histogram, temporarily (maybe permanently)
+    
     var possiblecounts = [];
-    for(var participant in seqID_lookup){
-      if(seqID_lookup[participant].mismatch != undefined){
-        var mmcount = 0;
-        for(var i = 0; i < sites.length; i++){
-            mmcount += seqID_lookup[participant].mismatch[sites[i]]; 
-        }
-      }
-      possiblecounts.push(mmcount);
+    
+    var participantDistances;
+    for (var i = 0; i < dists.length; i++){
+      if (dists[i].key === dist_metric){ participantDistances = dists[i].values; break;}
     }
+    
+    for(var participantIdx = 0; participantIdx < participantDistances.length; participantIdx++){
+      if (seqID_lookup[participantDistances[participantIdx].key] !== undefined){
+        var distTot = d3.sum(sites.map(function(d) { return +participantDistances[participantIdx].values[d]; }));
+        possiblecounts.push(distTot);
+      }
+    }
+    console.log(possiblecounts);
     var mincounts = d3.min(possiblecounts);
     var maxcounts = d3.max(possiblecounts);
     var skipcount = Math.ceil((maxcounts-mincounts)/16);
@@ -293,6 +297,7 @@ function updatePyramid(sites){
   if (selected_sites.length === 0) {d3.selectAll(".bar.left,.bar.right").remove();}        
 }
 function drawPyramid(sites){
+  if (mismatchmode === 0) {
     var possiblecounts = [];
     for(var participant in seqID_lookup){
       if(seqID_lookup[participant].mismatch != undefined){
@@ -450,6 +455,9 @@ function drawPyramid(sites){
         .attr('height', yScale.rangeBand()).style("fill","steelblue");
         
     if (selected_sites.length === 0) {d3.selectAll(".bar.right,.bar.left").remove();}
+  } else {
+    drawBoxplot(sites);
+  }
 }
 
 function translation(x,y) {
@@ -505,7 +513,7 @@ function drawBoxplot(sites)
       .attr("y",-30)
       .style("text-anchor","middle")
       .style("font-size","15px")
-      .text("Distribution of Mismatch Counts Across Selected Sites");
+      .text("Distribution of Distances for selected sites");
       
     pyramid_svg.append("text")
       .text("switch chart type")
@@ -599,7 +607,7 @@ function drawBoxplot(sites)
 }
 
 function update_mismatchmode()
-{
+{ return; // temporary - until histogram drawing is fixed.
   /*  Callback function for the selection of which chart to draw
       In each case, change mismatchmode and redraw everything.  */
   var parent = d3.select(pyramid_svg.node().parentNode);

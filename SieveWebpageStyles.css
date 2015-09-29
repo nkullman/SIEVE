@@ -237,6 +237,15 @@ footer a{
     text-align: center;
     overflow: hidden;
 }
+.tableHeader{
+    font-weight: bold;
+    font-size: 1.2em;
+}
+#tableToggleText{
+    font-size: 0.75em;
+    text-decoration: underline;
+    cursor: pointer;
+}
 .table:hover{
     overflow-y:auto;
 }

@@ -2,7 +2,7 @@ var colnames = ['Site (HXB2)','Vaccine','Placebo','Combined'];
 var sortType = [1,1,1,1];
 
 var showEntropies = true;
-d3.select("#tableToggleText").on("click",toggleTableDisplay);
+//d3.select("#tableToggleText").on("click",toggleTableDisplay);
 
 function generateTable(sites){
  d3.select(".table-zn table").remove();
@@ -21,7 +21,10 @@ function generateEntropyTable(sites) {
       .append("table")
       .attr("id","entropyTable")
       .style("width","100%");
-  table.append("caption").text("Entropy Summary");
+  var caption = table.append("caption");
+  caption.html("<span class='tableHeader'>Entropy Summary</span><br>" + 
+  "<span id='tableToggleText'>change table type</span>");
+  d3.select("#tableToggleText").on("click",toggleTableDisplay);
       
   var thead = table.append("thead");
   var tbody = table.append("tbody");
@@ -189,7 +192,10 @@ function generateDistanceTable(sites) {
       .append("table")
       .attr("id","distanceTable")
       .style("width","100%");
-  table.append("caption").text("Distance Summary");
+  var caption = table.append("caption");
+  caption.html("<span class='tableHeader'>Distance Summary</span><br>" + 
+  "<span id='tableToggleText'>change table type</span>");
+  d3.select("#tableToggleText").on("click",toggleTableDisplay);
       
   var thead = table.append("thead");
   var tbody = table.append("tbody");
