@@ -33,8 +33,6 @@ var siteStats = {/*EX: vxmatch_site:{placDist: [], vacDist: [], sieve_statistic:
 var statScales = {};
 /** Associated axes to above */
 var statAxes = {};
-/** Current distance metric, should eventually be changable through UI */
-var dist_metric = "vxmatch_site";
 /** Array of p-values */
 var pvalues =[];
 /** Array of absolute value of t-stats */
@@ -43,21 +41,39 @@ var tvalues =[];
 var entropies = {full:[],vaccine:[],placebo:[]};
 /**  Object with nests of distances for each distance method */
 var dists;
+/** Datasets available for analysis */
+var availableDatasets;
+/** Initial values for study name, protein, immunogen, and distance measure */
+var studyname,
+	protein,
+	immunogen,
+	dist_metric;
+d3.csv("data/sieve_toc.csv", function (toc){
+	// get initial dataset for building the visualization
+	var initialDataset = toc[0];
+	studyname = initialDataset.study;
+	protein = initialDataset.protein;
+	immunogen = initialDataset.immunogen;
+	dist_metric = initialDataset.distance_method;
+	
+	// define object containing all required files' names
+	var inputFiles = getInputFilenames(studyname, protein, immunogen, dist_metric);
+	parseInput(inputFiles);
+});
 
-d3.csv("data/VTN502.trt.csv", function(assigndata)
+
+function parseInput(inputFiles){
+
+d3.csv(inputFiles.treatmentFile, function(assigndata)
 {
-	// eventually, get this from the filename
-	studyname = "VTN502";
 	parseTreatmentFile(assigndata);
-	d3.text("data/VTN502.gag.MRK.fasta", function(fastadata)
+	d3.text(inputFiles.sequenceFastaFile, function(fastadata)
 	{
-		// eventually, get this from the filename
-		protein = "gag";
 		doseqparsing(fastadata);
-		d3.csv("data/VTN502.gag.MRK.vxmatch_site.distance.csv", function(distdata)
+		d3.csv(inputFiles.distanceFile, function(distdata)
 		{
 			dodistparsing(distdata);
-			d3.csv("data/VTN502.gag.MRK.vxmatch_site.results.csv", function(resultdata)
+			d3.csv(inputFiles.resultsFile, function(resultdata)
 			{
 				parseResultsFile(resultdata);
 				
@@ -97,6 +113,7 @@ d3.csv("data/VTN502.trt.csv", function(assigndata)
 		});
 	});	
 });
+}
 
 function parseTreatmentFile(assigndata){
 	seqID_lookup = d3.nest()
@@ -234,4 +251,14 @@ function parseResultsFile(resultdata){
 /** Transpose 2D array */
 function transpose(array) {
   return array[0].map(function (_, c) { return array.map(function (r) { return r[c]; }); });
+}
+
+/**  */
+function getInputFilenames(studyname, protein, immunogen, dist_metric){
+	var result = {};
+	result.treatmentFile = "data/" + studyname + ".trt.csv";
+	result.sequenceFastaFile = "data/" + studyname + "." + protein + "." + immunogen + ".fasta";
+	result.distanceFile = "data/" + studyname + "." + protein + "." + immunogen + "." + dist_metric + ".distance.csv";
+	result.resultsFile = "data/" + studyname + "." + protein + "." + immunogen + "." + dist_metric + ".results.csv";
+	return result;
 }

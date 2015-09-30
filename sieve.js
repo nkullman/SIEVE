@@ -7,10 +7,6 @@ var barmargin = {top: 5, right: 10, bottom: 0, left: 10},
 var barchartmargin = {top: 15, right: 80, bottom: 10, left: 20},
 	barchartwidth = 280,
 	barchartheight = 70;
-	
-// The below will be read from file at some point
-var studyname = "RV144",
-	protein = "env";
 
 var margin =  {top: 20, right: 50, bottom: 50, left: 50};
 var width = 800 - margin.left - margin.right;
@@ -102,7 +98,7 @@ function generateSiteSelector() {
 		a sweep over the site selection chart.	*/
   
 	d3.select(".analysisID").append("h2").text(
-	  studyname + ": " + protein + " (" + vaccine.ID.trim() + ")");
+	  studyname + ": " + protein + " (" + immunogen + ")");
 	d3.select(".analysisID").append("button")
 		.attr("id","get-link-to-analysis")
 		.on("click", function(){

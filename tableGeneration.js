@@ -2,7 +2,6 @@ var colnames = ['Site (HXB2)','Vaccine','Placebo','Combined'];
 var sortType = [1,1,1,1];
 
 var showEntropies = true;
-//d3.select("#tableToggleText").on("click",toggleTableDisplay);
 
 function generateTable(sites){
  d3.select(".table-zn table").remove();

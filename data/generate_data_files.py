@@ -18,7 +18,7 @@ analysisClasses = [substbased.vxmatch_siteAnalysis]
 
 analysisParams = dict(subst=addGapScores(binarySubst, binGapScores))
 
-tocColumns =  ['study','protein','reference','distance_method']
+tocColumns =  ['study','protein','immunogen','distance_method']
 toc = {k:[] for k in tocColumns}
 for sc in studyClasses:
     """For each study, loop over all analyses and produce files for each."""
@@ -39,7 +39,7 @@ for sc in studyClasses:
 
             toc['study'].append(s.data.studyName)
             toc['protein'].append(s.data.proteinName)
-            toc['reference'].append(s.data.insertName)
+            toc['immunogen'].append(s.data.insertName)
             toc['distance_method'].append(a.results.analysisMethod)
 tocDf = pd.DataFrame(toc)[tocColumns]
 tocDf.to_csv('sieve_toc.csv', index = False)
