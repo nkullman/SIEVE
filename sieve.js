@@ -21,13 +21,6 @@ var opacity_scale = d3.scale.linear()
 	.range([0.5,0])
 	.clamp(true);
 
-function getParameterByName(name) {
-    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(location.search);
-    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-}
-
 var selected_sites = [];
 
 var mouse_down = false;
@@ -111,8 +104,10 @@ function generateSiteSelector() {
 				sitesInURL.push(display_idx_map[d]);
 			});
 			// assemble the shareable URL and pass to copyToClipboard function
-			var shareableURL = currURL + "?sites=" + sitesInURL.toString();
-			copyToClipboard(shareableURL);})
+			var shareableURL = currURL + "?sites=" + sitesInURL.toString() + 
+								"&study=" + studyname + "&protein=" + protein + "&immunogen=" + immunogen + "&dist=" + dist_metric;
+			copyToClipboard(shareableURL);
+		})
 		.text("Get link to share this analysis");
   
   window.xScale = d3.scale.linear()
