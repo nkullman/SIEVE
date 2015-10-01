@@ -338,18 +338,17 @@ function parseResultsFile(resultdata){
 			{
 				statScales[metric][stat] = d3.scale.log()
 					.domain([d3.min(siteStats[dist_metric][stat]), 1])
-					.range([0, .95*height]);
+					.range([0, .95*height])
+					.nice();
 				statAxes[metric][stat] =
 					{"left":d3.svg.axis()
 						.scale(statScales[metric][stat])
 						.orient("left")
-						.tickValues([0.01, 0.05, 0.2, 1])
-						.tickFormat(d3.format(".2f")),
+						.ticks(5, "g"),
 					"right":d3.svg.axis()
 						.scale(statScales[metric][stat])
 						.orient("right")
-						.tickValues([0.01, 0.05, 0.2, 1])
-						.tickFormat(d3.format(".2f"))};
+						.ticks(5, "g")};
 				if (/^p/i.test(stat))
 				{ //Try to set the default stat to pvalue
 					yscale_mode = stat;
