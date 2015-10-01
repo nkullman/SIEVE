@@ -336,25 +336,28 @@ function parseResultsFile(resultdata){
 			//p-value or q-value
 			if (/^[pq][\s-]?val/i.test(stat))
 			{
-				statScales[metric][stat] = d3.scale.linear()
-					.domain([0, 1])
+				statScales[metric][stat] = d3.scale.log()
+					.domain([d3.min(siteStats[dist_metric][stat]), 1])
 					.range([0, .95*height]);
 				statAxes[metric][stat] =
 					{"left":d3.svg.axis()
 						.scale(statScales[metric][stat])
 						.orient("left")
-						.tickValues([0.05, 0.2, 1]),
+						.tickValues([0.01, 0.05, 0.2, 1])
+						.tickFormat(d3.format(".2f")),
 					"right":d3.svg.axis()
 						.scale(statScales[metric][stat])
 						.orient("right")
-						.tickValues([0.05, 0.2, 1])};
+						.tickValues([0.01, 0.05, 0.2, 1])
+						.tickFormat(d3.format(".2f"))};
 				if (/^p/i.test(stat))
 				{ //Try to set the default stat to pvalue
 					yscale_mode = stat;
 				}
 			} else {
 				statScales[metric][stat] = d3.scale.linear()
-					.range([.95*height, 0]);
+					.range([.95*height, 0])
+					.domain([-1,0]);
 				statAxes[metric][stat] =
 					{"left":d3.svg.axis()
 						.scale(statScales[metric][stat])
