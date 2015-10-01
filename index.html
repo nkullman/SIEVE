@@ -1,12 +1,27 @@
 <!DOCTYPE html>
 <html><head>
       <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="description" content="SIEVE is an interactive visualization for exploring breakthrough sequence data from vaccine efficacy trials, allowing analysis at the level of amino acids.">
+      <!-- CSS for visualization -->
       <link rel="stylesheet" type="text/css" href="SieveWebpageStyles.css">
+      <!-- D3 -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+      <!-- lodash -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
+      <!-- Intro.js for initial site tour -->
       <link rel="stylesheet" type="text/css" href="introjs.css">
+      <!-- jQuery -->
+      <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+      <!-- bootstrap -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+      <!-- end of bootstrap -->
+      
       <!-- When SIEVE is living in its final location, source the D3 and lodash scripts from CDNs rather than locally -->
-      <script src="lodash.min.js"></script>
-      <script src="d3.v3.min.js" charset="utf-8"></script><style type="text/css"></style>
+      <!-- <script src="lodash.min.js"></script>
+      <script src="d3.v3.min.js" charset="utf-8"></script><style type="text/css"></style> -->
       <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -19,7 +34,7 @@
    </head>
    <body class=" hasGoogleVoiceExt">
    <div class="wrapper">
-         <nav>
+         <!--<nav>
                <ul>
                      <a id="headline-link" href="/"><li id="headline-li"><span id="headline-span">SIEVE</span><br>Statistical Interactive Explorer of Vaccine Efficacy</li></a>
                      <a href="/examples/"><li>Other sieve analysis datasets</li></a>
@@ -27,7 +42,28 @@
 					 <a href="/about/"><li>About</li></a>
                </ul>
                <div class="handle">SIEVE <span>Menu ☰</span></div>
-         </nav>
+         </nav> -->
+         <nav class="navbar navbar-default navbar-fixed-top">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <a class="navbar-brand" href="index.html">SIEVE</a>
+            </div>
+            <div>
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="index.html">Home</a></li>
+                <li><a href="#">Other datasets</a></li>
+                <li><a href="#" id="startSiteTour">Help</a></li>
+                <li><a href="about.html">About</a></li>
+              </ul>
+              <button type="button" class="btn btn-default navbar-btn" id="shareAnalysisButton">Share this analysis</button>
+              <ul class="nav navbar-nav navbar-right">
+                <li><a href="https://uw.edu"><img src="images/UW_Block_W_logo.png" alt="University-of-Washington" height="20px"></a></li>
+                <li><a href="https://www.fredhutch.org/en.html"><img src="images/fhcrc_logo.png" alt="Fred-Hutch" height="20px"></a></li>
+                <li><a href="http://escience.washington.edu/"><img src="images/eScience_logo.png" alt="eScience-Institute" height="20px"></a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
          
       <main>
       <div class="analysisID"></div>
@@ -70,11 +106,11 @@
 		  </fieldset> <!--protein-nav-wrap-->
       </div> <!--nav-fs-wrap-->
 		  <fieldset class="drilldown-wrap">
-			  <div class="table">
+			  <div class="table-container">
           <div class="table-header">
           </div>
           <div class="table-zn"></div>
-			  </div> <!-- table -->
+			  </div> <!-- table-container -->
 			  <div class="group-box-bar">
           <div class="group-box-bar-header">
             <p class="tableHeader">
@@ -94,19 +130,6 @@
 			  </div> <!-- stacked-bars -->
 		  </fieldset> <!-- drilldown-wrap -->
       </main>
-      <footer>
-            <ul>
-               <li><a href="https://www.fredhutch.org/en.html"><img src="images/fhcrc_logo.png" alt="Fred-Hutch" height="37px"></a></li>
-               <li><a href="https://uw.edu"><img src="images/UW_Block_W_logo.png" alt="University-of-Washington" height="37px"></a></li>
-               <li><a href="http://escience.washington.edu/"><img src="images/eScience_logo.png" alt="eScience-Institute" height="37px"></a></li>
-            </ul>
-      </footer>
-      <script>
-            d3.select(".handle").on("click", function(){
-                  var navul = d3.select("nav ul");
-                  navul.classed("showing", !navul.classed("showing"));
-            })
-      </script>
    </div> <!-- wrapper -->
    <script src="tableGeneration.js"></script>
    <script src="colors.js"></script>
@@ -129,6 +152,18 @@
                 intro: "<h4>Navigation area</h4> Here you can see the entire study protein with a colored element for each amino acid."
               },
               {
+                element: document.querySelector('#analysisID-studyname'),
+                intro: "<h4>Study name</h4> This is the study being visualized..."
+              },
+              {
+                element: document.querySelector('#analysisID-protein'),
+                intro: "the protein..."
+              },
+              {
+                element: document.querySelector('#analysisID-immunogen'),
+                intro: "and the immunogen."
+              },
+              {
                 intro: "More steps to come..."
               }
             ]
@@ -136,6 +171,5 @@
 
           intro.start();
       }
-      startIntro();
     </script>
 </body></html>

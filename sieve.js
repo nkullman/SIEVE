@@ -90,10 +90,11 @@ function generateSiteSelector() {
 		how often the script attempts to process the selected sites when making
 		a sweep over the site selection chart.	*/
   
-	d3.select(".analysisID").append("h2").text(
-	  studyname + ": " + protein + " (" + immunogen + ")");
-	d3.select(".analysisID").append("button")
-		.attr("id","get-link-to-analysis")
+	d3.select(".analysisID").html(
+		"<h2><span id='analysisID-studyname'>" + studyname +
+		"</span>: <span id='analysisID-protein'>" + protein +
+		"</span> (<span id='analysisID-immunogen'>" + immunogen + "</span>)</h2>");
+	d3.select("#shareAnalysisButton")
 		.on("click", function(){
 			// get URL and chop off currently added sites, if any
 			var currURL = document.URL;
@@ -107,8 +108,11 @@ function generateSiteSelector() {
 			var shareableURL = currURL + "?sites=" + sitesInURL.toString() + 
 								"&study=" + studyname + "&protein=" + protein + "&immunogen=" + immunogen + "&dist=" + dist_metric;
 			copyToClipboard(shareableURL);
-		})
-		.text("Get link to share this analysis");
+		});
+	d3.select("#startSiteTour")
+		.on("click", function(){
+			startIntro();
+		});
   
   window.xScale = d3.scale.linear()
     .domain([0, vaccine.sequence.length-1])

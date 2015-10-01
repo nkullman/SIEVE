@@ -9,10 +9,10 @@ html,body {
 
 body{
     margin: 0;
-    padding: 0;
+    padding-top: 50px;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
-
+/*
 nav ul {
     background-color: #492a7c;
     overflow: hidden;
@@ -53,9 +53,10 @@ nav a {
     text-decoration: none;
     color: inherit;
 }
-
+*/
 main {
     padding: 10px;
+    padding-top: 0px;
     line-height: 1.5em;
     font-size: 0.9em;
     width: 95%;
@@ -230,7 +231,7 @@ footer a{
 .drilldown-wrap div{
     /*border: 1px solid orange;*/
 }
-.table{
+.table-container{
     max-height: 450px;
     float: left;
     width: 33%;
@@ -291,22 +292,4 @@ footer a{
 
 .handle span {
     float:right;
-}
-
-@media screen and (max-width: 885px) {
-    nav ul{
-        max-height: 0;
-    }
-    .showing{
-        max-height: 20em;
-    }
-    nav ul li{
-        box-sizing: border-box;
-        width: 100%;
-        padding: 15px;
-        text-align: left;
-    }
-    .handle{
-        display: block;
-    }
 }
