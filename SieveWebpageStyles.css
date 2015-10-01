@@ -9,51 +9,9 @@ html,body {
 
 body{
     margin: 0;
-    padding-top: 50px;
+    padding-top: 45px;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
-/*
-nav ul {
-    background-color: #492a7c;
-    overflow: hidden;
-    color: #f7f7f7;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-    -webkit-transition: max-height 0.4s;
-    -ms-transition: max-height 0.4s;
-    -moz-transition: max-height 0.4s;
-    -o-transition: max-height 0.4s;
-    transition: max-height 0.4s;
-}
-
-#headline-li{
-    text-align: left;
-    font-weight: bold;
-}
-
-#headline-span{
-    font-size: 2em;
-}
-
-#headline-li:hover{
-    background-color: #492a7c;
-}
-
-nav ul li {
-    display: inline-block;
-    padding: 20px;
-}
-
-nav ul li:hover{
-    background-color: #331d56;
-}
-
-nav a {
-    text-decoration: none;
-    color: inherit;
-}
-*/
 main {
     padding: 10px;
     padding-top: 0px;
@@ -72,8 +30,6 @@ main {
 .nav-fs-wrap{
     width: 100%;
     display: block;
-   /* height: 25%;*/
-    /*border: 2px solid red;*/
 }
 .protein-nav-wrap{
     max-height: 100%;
@@ -85,7 +41,6 @@ main {
     max-height: 100%;
     display:block;
     width: 900px;
-    /*border: 1px solid orange;*/
     padding: 0;
     margin: 0 auto;
     border: none;
@@ -97,9 +52,8 @@ main {
 }
 
 .protein-nav{
-    width: 75%;
+    width: 100%;
     display: block;
-    /*border: 1px solid orange;*/
     padding: 0;
     margin: 0 auto;
     text-align: center;
@@ -228,9 +182,7 @@ footer a{
     width: 100%;
     border: 0;
 }
-.drilldown-wrap div{
-    /*border: 1px solid orange;*/
-}
+
 .table-container{
     max-height: 450px;
     float: left;
@@ -274,22 +226,4 @@ footer a{
 }
 .stacked-bars:hover{
     overflow:auto;
-}
-
-/* End styling for drilldown. Begin styling for banner handle */
-
-.handle{
-    width: 100%;
-    background: #54308f;
-    text-align: left;
-    box-sizing: border-box;
-    padding: 15px 10px;
-    cursor: pointer;
-    color: white;
-    display: none;
-    font-weight: bolder;
-}
-
-.handle span {
-    float:right;
 }
