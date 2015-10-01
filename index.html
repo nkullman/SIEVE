@@ -43,12 +43,12 @@
               <ul class="nav navbar-nav">
                 <li class="active"><a href="index.html">Home</a></li>
                 <li class="dropdown">
-                  <a href="#" class ="dropdown-toggle" data-toggle="dropdown">Other datasets<span class="caret"></span></a>
+                  <a href="#" id="otherDatasetsDropdownToggle" class ="dropdown-toggle" data-toggle="dropdown">Other datasets<span class="caret"></span></a>
                   <ul class="dropdown-menu" id="otherDatasetsDropdownList">
                   </ul>
                 </li>
                 <li><a href="#" id="startSiteTour">Help</a></li>
-                <li><a href="about.html">About</a></li>
+                <li><a href="about.html" id="aboutLink">About</a></li>
               </ul>
               <button type="button" class="btn btn-default navbar-btn" id="shareAnalysisButton">Share this analysis</button>
               <ul class="nav navbar-nav navbar-right">
@@ -147,6 +147,26 @@
                 intro: "<h4>Navigation area</h4> Here you can see the entire study protein with a colored element for each amino acid."
               },
               {
+                element: document.querySelector('.protein-nav'),
+                intro: "You can select a site by holding shift and clicking + dragging."
+              },
+              {
+                element: document.querySelector('.protein-nav'),
+                intro: "Pan and zoom like you would on a map: click and drag, scroll, double-click"
+              },
+              {
+                element: document.querySelector('#select-by-hxb2-area'),
+                intro: "Select and append sites by HXB2 position, in a comma-separted list with single sites or ranges; e.g., 2, 5, 7-13, 506d."
+              },
+              {
+                element: document.querySelector("#bar-height-encoding"),
+                intro: "Be default, the height of the element for each site shows its p-value. Here, you can change it to any of the other attributes provided in the results CSV"
+              },
+              {
+                element: document.querySelector("#color-encoding"),
+                intro: "Different color encodings are available for the sites. Hover over the question mark here to learn more about the options."
+              },
+              {
                 element: document.querySelector('#analysisID-studyname'),
                 intro: "<h4>Study name</h4> This is the study being visualized..."
               },
@@ -159,7 +179,29 @@
                 intro: "and the immunogen."
               },
               {
-                intro: "More steps to come..."
+                element: document.querySelector(".table-container"),
+                intro: "The table let's you view summaries of the selected sites' entropies and distances. " + 
+                "Hit the X to the left of each row to unselect a site. Click the site's ID (first column) to zoom to it in the navigation area. (Note: the table will be empty when no sites are selected)"
+              },
+              {
+                element: document.querySelector(".group-box-bar"),
+                intro: "A box plot showing the distribution of distances over all sites for both the vaccine and placebo groups."
+              },
+              {
+                element: document.querySelector(".stacked-bars"),
+                intro: "For each site selected, there is a chart with two bars. The bars show the distribution of the amino acids that occur at that site for participants in the vaccine (top bar) and placebo (bottom bar)."
+              },
+              {
+                element: document.querySelector("#shareAnalysisButton"),
+                intro: "If you would like to share your current view, click here to get a link you can send to others."
+              },
+              {
+                element: document.querySelector("#otherDatasetsDropdownToggle"),
+                intro: "If you want to check out a different analysis, click here to see the other datasets available."
+              },
+              {
+                element: document.querySelector("#aboutLink"),
+                intro: "Want to learn more about this tool? Check out our about page."
               }
             ]
           });
