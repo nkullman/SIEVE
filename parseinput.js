@@ -53,6 +53,9 @@ var studyname,
 d3.csv("data/sieve_toc.csv", function (toc){
 	// store available data in the table of contents
 	availableDatasets = toc;
+	// use this data to populate the dropdown list in the 
+	populateOtherDatasetsDropdown();
+	
 	var initialDataset;
 	// see if a dataset was specified in URL
 	var urlStudyString = getParameterByName("study"),
@@ -390,4 +393,8 @@ function getParameterByName(name) {
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
         results = regex.exec(location.search);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+function populateOtherDatasetsDropdown (){
+	
 }
