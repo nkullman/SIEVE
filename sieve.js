@@ -281,7 +281,7 @@ function generateSiteSelector() {
 					var origLabelLocation = parseFloat(sitebars[0][i].getAttribute("x")) + origSiteBarWidth/2;
 					return (origLabelLocation + d3.event.translate[0]/d3.event.scale)*d3.event.scale;})
 				.attr("display", function(d,i){
-					if (d3.event.scale > 25 && parseFloat(sitebars[0][i].getAttribute("opacity")) > 0) {
+					if (d3.event.scale > 15 && parseFloat(sitebars[0][i].getAttribute("opacity")) > 0) {
 						return "default";
 					} else {
 						return "none";}});
