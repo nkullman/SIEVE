@@ -34,15 +34,6 @@
    </head>
    <body class=" hasGoogleVoiceExt">
    <div class="wrapper">
-         <!--<nav>
-               <ul>
-                     <a id="headline-link" href="/"><li id="headline-li"><span id="headline-span">SIEVE</span><br>Statistical Interactive Explorer of Vaccine Efficacy</li></a>
-                     <a href="/examples/"><li>Other sieve analysis datasets</li></a>
-                     <a href="/custom/"><li>Upload your own data</li></a>
-					 <a href="/about/"><li>About</li></a>
-               </ul>
-               <div class="handle">SIEVE <span>Menu ☰</span></div>
-         </nav> -->
          <nav class="navbar navbar-default navbar-fixed-top">
           <div class="container-fluid">
             <div class="navbar-header">
@@ -51,7 +42,11 @@
             <div>
               <ul class="nav navbar-nav">
                 <li class="active"><a href="index.html">Home</a></li>
-                <li><a href="#">Other datasets</a></li>
+                <li class="dropdown">
+                  <a href="#" class ="dropdown-toggle" data-toggle="dropdown">Other datasets<span class="caret"></span></a>
+                  <ul class="dropdown-menu" id="otherDatasetsDropdownList">
+                  </ul>
+                </li>
                 <li><a href="#" id="startSiteTour">Help</a></li>
                 <li><a href="about.html">About</a></li>
               </ul>

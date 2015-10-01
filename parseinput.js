@@ -396,5 +396,19 @@ function getParameterByName(name) {
 }
 
 function populateOtherDatasetsDropdown (){
-	
+	var dataDropdown = d3.select("#otherDatasetsDropdownList")
+	// for each element in availableDatasets
+	availableDatasets.forEach(function(elm, idx){
+		// get the URL we want to jump to
+		var currURL = document.URL;
+		if (currURL.indexOf("?") > -1){ currURL = currURL.substring(0,currURL.indexOf("?")); }
+		var newStudyURL = currURL + "?" + 
+					"study=" + elm.study + "&protein=" + elm.protein + "&immunogen=" + elm.immunogen + "&dist=" + elm.distance_method;
+		// add it to the dropdown list
+		dataDropdown.append("li")
+		  .append("a")
+		    .attr("href", newStudyURL)
+			.text(elm.study + ", " + elm.protein + ", " + elm.immunogen + ", " + elm.distance_method);
+		return;
+	});
 }
