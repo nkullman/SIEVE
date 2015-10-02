@@ -168,6 +168,9 @@ footer a{
 .tick > text {
     font-size: .8em;
 }
+.tick > line {
+    stroke-width: 0.5px;
+}
 .tablesvg text {
     font-size: .9em;
 }
