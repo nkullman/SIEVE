@@ -9,9 +9,10 @@
  
 #(2) Treatment assignment file
  - Contains seqIDs from the `Sequence alignment` and treatment assignments
- - Filename: `STUDY.trt.csv`
+ - Filename: `STUDY.PROTEIN.REF.trt.csv`
  - File is a CSV with two columns: seqID and treatment
  - Treatment should be `vaccine` or `placebo` or `reference` to indicate the reference sequence for the analysis
+ - Though treatment assignments are shared between analyses of different proteins and references, there is one file per analysis due to the identification of the reference sequence in this file.
 
 #(3) Distance file
  - A CSV file containing distances to the reference for each sequence
