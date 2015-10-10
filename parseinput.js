@@ -384,7 +384,7 @@ function transpose(array) {
 /**  */
 function getInputFilenames(studyname, protein, immunogen, dist_metric){
 	var result = {};
-	result.treatmentFile = "data/" + studyname + ".trt.csv";
+	result.treatmentFile = "data/" + studyname + "." + protein + "." + immunogen + ".trt.csv";
 	result.sequenceFastaFile = "data/" + studyname + "." + protein + "." + immunogen + ".fasta";
 	result.distanceFile = "data/" + studyname + "." + protein + "." + immunogen + "." + dist_metric + ".distance.csv";
 	result.resultsFile = "data/" + studyname + "." + protein + "." + immunogen + "." + dist_metric + ".results.csv";
