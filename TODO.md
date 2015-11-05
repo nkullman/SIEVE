@@ -18,7 +18,9 @@ Nick presented the visualization to Andrew's colleagues on Fri, Aug 21st. The de
  - [ ] Implementation and server space at FHCRC (address is http://sieve.fhcrc.org/viz)
  - [ ] Download link for a zip file of all the data in the visualization
  - [ ] Link and citation of the primary sieve analysis as well as the primary study manuscripts
- - [ ] Check and recheck (and recheck... that only pubIDs and publicly available data is shared
+ - [ ] Check and recheck (and recheck...) that only pubIDs and publicly available data is shared
+ - [ ] Add jitter to the boxplot
+ - [ ] Fix BUG with table sorting
  
 #Long term TODO:
  - [ ] Use database instead of files to hold all sieve analysis results. This will also help with generalizing to kmers and other distances. (will also help with staging data prior to publication)
