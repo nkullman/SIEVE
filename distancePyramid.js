@@ -284,13 +284,13 @@ function updatePyramid(sites){
         .data(data);
       
       boxplotpoint
-        .attr("cx", xscale);
+        .attr("cx",  function(d) {return xscale(d) + Math.random()*(box_height/16);});
       boxplotpoint.exit()
         .attr("opacity", 0)
         .remove();
       boxplotpoint.enter().append("circle")
           .attr("class", "boxplotpoint")
-          .attr("cx", xscale)
+          .attr("cx",  function(d) {return xscale(d) + Math.random()*(box_height/16);})
           .attr("r", box_height/16);
     }
   }
@@ -587,7 +587,7 @@ function drawBoxplot(sites)
         .data(data)
         .enter().append("circle")
           .attr("class", "boxplotpoint")
-          .attr("cx", xscale)
+          .attr("cx", function(d) {return xscale(d) + Math.random()*(box_height/16);})
           .attr("r", box_height/16);
   }
   
