@@ -121,7 +121,7 @@ function create_AAsite_chart(site)
 		.attr("text-anchor", "middle")
 		.attr("x", barchartwidth/2)
 		.attr("y", 0)
-		.text(protein + " " + display_idx_map[site] + " (" + vaccine.sequence[site]+ ") Mismatches (p=" + siteStats[dist_metric]["pvalue"][site].toPrecision(2) + ")");
+		.text(protein + " " + display_idx_map[site] + " (" + vaccine.sequence[site]+ ") Mismatches");
 	
 	//Create legend
 	var acids = d3.set(); //assemble list of amino acids present in chart
