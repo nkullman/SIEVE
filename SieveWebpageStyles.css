@@ -225,8 +225,5 @@ footer a{
     float: left;
     width: 33%;
     text-align: center;
-    overflow: hidden;
-}
-.stacked-bars:hover{
-    overflow:auto;
+    overflow-y: scroll;
 }
