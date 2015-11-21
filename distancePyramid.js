@@ -89,7 +89,7 @@ function updatePyramid(sites){
    
   var yScale = d3.scale.ordinal()
       .domain(d3.range(mincounts,maxcounts+1))
-      .rangeRoundBands([pyramid_height,0],0.1);
+      .rangeBands([pyramid_height,0],0.1);
 
   var yAxisLeft = d3.svg.axis()
       .scale(yScale)
@@ -210,7 +210,7 @@ function updatePyramid(sites){
       .nice(); 
     var yscale = d3.scale.ordinal()
       .domain([0, 1])
-      .rangeRoundPoints([20, 100]);
+      .rangePoints([20, 100]);
     var xaxis = d3.svg.axis()
       .scale(xscale)
       .orient("bottom");
@@ -284,13 +284,14 @@ function updatePyramid(sites){
         .data(data);
       
       boxplotpoint
-        .attr("cx",  function(d) {return xscale(d) + Math.random()*(box_height/16);});
+        .attr("cx",  function(d) {return xscale(d) + Math.random()*(box_height/8)-(box_height/16);})
       boxplotpoint.exit()
         .attr("opacity", 0)
         .remove();
       boxplotpoint.enter().append("circle")
           .attr("class", "boxplotpoint")
-          .attr("cx",  function(d) {return xscale(d) + Math.random()*(box_height/16);})
+          .attr("cx",  function(d) {return xscale(d) + Math.random()*(box_height/8)-(box_height/16);})
+          .attr("cy", function(d) {return yscale(d) - box_height/2 + Math.random()*(box_height/8);})
           .attr("r", box_height/16);
     }
   }
@@ -352,7 +353,7 @@ function drawPyramid(sites){
 
     var yScale = d3.scale.ordinal()
       .domain(d3.range(mincounts,maxcounts+1))
-      .rangeRoundBands([pyramid_height,0], 0.1);
+      .rangeBands([pyramid_height,0], 0.1);
 
     var yAxisLeft = d3.svg.axis()
       .scale(yScale)
@@ -587,7 +588,8 @@ function drawBoxplot(sites)
         .data(data)
         .enter().append("circle")
           .attr("class", "boxplotpoint")
-          .attr("cx", function(d) {return xscale(d) + Math.random()*(box_height/16);})
+          .attr("cx", function(d) {return xscale(d) + Math.random()*(box_height/8)-(box_height/16);})
+          .attr("cy", function(d) {return yscale(d) - box_height/2 + Math.random()*(box_height/8);})
           .attr("r", box_height/16);
   }
   
