@@ -297,6 +297,15 @@ function dodistparsing(distdata)
 			return d.ptid == distdata[0].ptid && d.distance_method == distdata[0].distance_method;
 		}).map(function(d) {return d.display_position;});
 	display_idx_map.forEach(function(d, i) {refmap[d] = i;});
+	
+	var distMethodSelector = d3.select("#distMethod_selector");
+	dists.forEach(function(d,i){
+		var newOption = distMethodSelector.append("option")
+			.attr("value", d["key"])
+			.attr("id","yscale-selection-option-" + d["key"])
+			.text(d["key"]);
+		if (i === 0){ newOption.attr("selected","selected"); }
+	})
 }
 
 function parseResultsFile(resultdata){
