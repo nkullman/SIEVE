@@ -18,7 +18,7 @@ var vac_scale = d3.scale.linear()
 	.range([0, barwidth]);
 var opacity_scale = d3.scale.linear()
 	.domain([-1,0]) // will compute domain when navigation area is used the first time.
-	.range([0.5,0])
+	.range([0.3,0])
 	.clamp(true);
 
 var selected_sites = [];
@@ -71,7 +71,6 @@ function generateVis(){
   	generateTable(selected_sites);
 	selected_sites.forEach(function(d) {
 		d3.select("#sitebar" + d).classed("selected",true)
-			.attr("opacity", 1)
 			.attr("y", -height/5)
 			.attr("height",height/5);
 	});
@@ -171,8 +170,7 @@ function generateSiteSelector() {
 		.attr("fill", function (d) {
 			if (d == '-') return "#000000";
 			else return aacolor(d);
-		})
-		.attr("opacity", 0.5);
+		});
 		
 	window.siteAALabels = siteselSVGg.selectAll(".siteAAlabel").data(vaccine.sequence);
 	siteAALabels.enter().append("text")
@@ -271,7 +269,7 @@ function generateSiteSelector() {
 			// Change in viewing window of nav pane introduces new window span
 			opacity_scale.domain([visWindowSpan/2, visWindowSpan/2 + .01*visWindowSpan]);
 			// update opacity of sitebars based on drawing window
-			sitebars.attr("opacity", function(d,i){
+			sitebars.style("opacity", function(d,i){
 				var site_x_loc = parseFloat(sitebars[0][i].getAttribute("x")) + origSiteBarWidth/2;
 				return opacity_scale(Math.abs(visWindowMidpt - site_x_loc));
 			});
@@ -331,10 +329,7 @@ function generateSiteSelector() {
 			selected_sites.splice(_.sortedIndex(selected_sites, j), 0, j);
 			
 			// up it and set selected to true
-			bar.classed("selected",true)
-				.attr("opacity", 1)
-				.attr("y", -height/5)
-				.attr("height", height/5);
+			bar.classed("selected",true);
 				
 		} else { // if already selected
 			// remove from array
@@ -342,10 +337,7 @@ function generateSiteSelector() {
 			selected_sites.splice(index, 1);
 			// reset formatting, set selected to false
 			var yval = overview_yscale(j);
-			bar.classed("selected",false)
-				.attr('opacity', 0.5)
-				.attr("y", function (d) { return yval;} )
-				.attr("height", function (d) {return height - yval;});
+			bar.classed("selected",false);
 		}
 		});
 		
@@ -370,7 +362,6 @@ function clear_selection()
     	var bar = d3.select("#sitebar" + site);
     	var yval = overview_yscale(site);
 		bar.classed("selected",false)
-			.attr('opacity', 0.5)
 			.attr("y", yval )
 			.attr("height", height - yval);
 	}
@@ -413,7 +404,6 @@ function hxb2_selection()
 					selected_sites.splice(index, 0, d);
 					
 					d3.select("#sitebar" + d).classed("selected",true)
-						.attr("opacity", 1)
 						.attr("y", -height/5)
 						.attr("height",height/5);
 				}

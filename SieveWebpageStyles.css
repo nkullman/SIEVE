@@ -135,6 +135,12 @@ footer a{
   stroke: #000;
   shape-rendering: crispEdges;
 }
+.sitebars.selected {
+    opacity: 1;
+}
+.sitebars:not(.selected){
+    opacity: 0.3;
+}
 
 .box .whisker {
   stroke: #000;
