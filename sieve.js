@@ -68,7 +68,7 @@ function generateVis(){
 	
 	generateSiteSelector();
 	drawPyramid(selected_sites);
-  	generateTable(selected_sites);
+  	generateTables(selected_sites);
 	selected_sites.forEach(function(d) {
 		d3.select("#sitebar" + d).classed("selected",true);
 		d3.select("#selMarker" + d).classed("selected",true);
@@ -365,7 +365,7 @@ function generateSiteSelector() {
 	{
 		update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
-		updateTable(selected_sites);
+		updateTables(selected_sites);
 	}
 }
 
@@ -385,7 +385,7 @@ function clear_selection()
 	selected_sites = [];	
 	update_AAsites([]);
 	updatePyramid([]);
-	updateTable([]);
+	updateTables([]);
 }
 
 function hxb2_selection()
@@ -426,7 +426,7 @@ function hxb2_selection()
 		this.value = "";
 		update_AAsites(selected_sites);
 		updatePyramid(selected_sites);
-		updateTable(selected_sites);
+		updateTables(selected_sites);
 	}
 }
 
