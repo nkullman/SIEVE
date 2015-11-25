@@ -19,10 +19,54 @@ function updateTables(sites){
 }
 
 function generateEntropyTable(sites) {
+  var summtable = d3.select("#entropyTableDiv")
+      .append("table")
+      .attr("id","entropySummTable")
+      .attr("class","table")
+      .style("width","100%");
+  var summthead = summtable.append("thead");
+  var summtbody = summtable.append("tbody");
+  // create table header
+  summthead.append("tr")
+    .selectAll("th")
+    .data(colnames)
+    .enter()
+    .append("th")
+      .attr("id", function (d,i) {return "summEntropyHeader" + i;})
+      .text(function(column,i) {
+        if (i===0) {return "Summary";}
+        else {return column;}
+      });
+  // create average and joint rows.
+  // text in data cells is empty, because there is no selection during table generation
+  var summavgRow = summtbody.append("tr").attr("class", "entropy averageRow groupStatRow");
+  var summjtRow = summtbody.append("tr").attr("class", "entropy jointRow groupStatRow");
+  summavgRow.append("td").attr("class", "rowHeader").text("Average");
+  summjtRow.append("td").attr("class", "rowHeader").text("Joint");
+  var numCellsToMake = d3.range(3);
+  summavgRow.selectAll("td:not(.rowHeader)").data(numCellsToMake).enter()
+    .append("td")
+      .attr("class", "entropy")
+      .attr("id", function (d){
+        if (d === 0) return "vaccineAverage";
+        else if (d === 1) return "placeboAverage";
+        else return "combinedAverage";
+      })
+      .text("-");
+  summjtRow.selectAll("td:not(.rowHeader)").data(numCellsToMake).enter()
+    .append("td")
+      .attr("class", "entropy")
+      .attr("id", function (d){
+        if (d === 0) return "vaccineJoint";
+        else if (d === 1) return "placeboJoint";
+        else return "combinedJoint";
+      })
+      .text("-");
+  
   var table = d3.select("#entropyTableDiv")
       .append("table")
       .attr("id","entropyTable")
-      .attr("class","table-striped sortable")
+      .attr("class","table sortable")
       .style("width","100%");
       
   var thead = table.append("thead");
@@ -36,32 +80,6 @@ function generateEntropyTable(sites) {
       .attr("id", function (d,i) {return "entropyHeader" + i;})
       .style("cursor","pointer")
       .text(function(column) { return column;});
-  // create average and joint rows.
-  // text in data cells is empty, because there is no selection during table generation
-  /*Break out the below into a separate table
-  var avgRow = tbody.append("tr").attr("class", "entropy averageRow groupStatRow");
-  var jtRow = tbody.append("tr").attr("class", "entropy jointRow groupStatRow");
-  avgRow.append("td").attr("class", "rowHeader").text("Average");
-  jtRow.append("td").attr("class", "rowHeader").text("Joint");
-  var numCellsToMake = d3.range(3);
-  avgRow.selectAll("td:not(.rowHeader)").data(numCellsToMake).enter()
-    .append("td")
-      .attr("class", "entropy")
-      .attr("id", function (d){
-        if (d === 0) return "vaccineAverage";
-        else if (d === 1) return "placeboAverage";
-        else return "combinedAverage";
-      })
-      .text("-");
-  jtRow.selectAll("td:not(.rowHeader)").data(numCellsToMake).enter()
-    .append("td")
-      .attr("class", "entropy")
-      .attr("id", function (d){
-        if (d === 0) return "vaccineJoint";
-        else if (d === 1) return "placeboJoint";
-        else return "combinedJoint";
-      })
-      .text("-");*/
       
   // holder for table rows while selection emtpy
   tbody.append("tr").attr("class","entropyTempRow")
@@ -133,7 +151,7 @@ function updateEnropyTable(sites) {
         onClickChangeView(d);
     });
     // and replace average/joint row filler with actual values
-    /*var avgEntropyData = calculateAverageEntropyData(entropyData);
+    var avgEntropyData = calculateAverageEntropyData(entropyData);
     d3.select(".entropy#vaccineAverage").text(avgEntropyData[0]);
     d3.select(".entropy#placeboAverage").text(avgEntropyData[1]);
     d3.select(".entropy#combinedAverage").text(avgEntropyData[2]);
@@ -141,16 +159,10 @@ function updateEnropyTable(sites) {
     var jointEntropyData = calculateJointEntropyData(sites);
     d3.select("#vaccineJoint").text(jointEntropyData[0]);
     d3.select("#placeboJoint").text(jointEntropyData[1]);
-    d3.select("#combinedJoint").text(jointEntropyData[2]);*/
-    
-    // sort rows by site
-    /*tbody.selectAll("tr.siteRow").sort(function(a,b) {
-      return whichIsBigger(a[colnames[0]], b[colnames[0]]);
-    });*/
+    d3.select("#combinedJoint").text(jointEntropyData[2]);
     
   } else {
     // new strategy for zero-length site selection
-    //d3.select(".table-zn").html("");
     generateTables(sites);
   }
 }
@@ -166,7 +178,7 @@ function calculateEntropyData(sites){
   });
 }
 
-/*function calculateAverageEntropyData(entropyData){
+function calculateAverageEntropyData(entropyData){
   return [
       d3.mean(entropyData.map(function(d){return +d.Vaccine;})).toFixed(2),
       d3.mean(entropyData.map(function(d){return +d.Placebo;})).toFixed(2),
@@ -180,13 +192,44 @@ function calculateJointEntropyData(sites){
       jointentropy(sites,sequences.placebo,numplac).toFixed(2),
       jointentropy(sites,sequences_raw,numvac+numplac).toFixed(2)
     ];
-}*/
+}
 
 function generateDistanceTable(sites) {
+  var summtable = d3.select("#distanceTableDiv")
+      .append("table")
+      .attr("id","distanceSummTable")
+      .attr("class","table sortable")
+      .style("width","100%");
+  var summthead = summtable.append("thead");
+  var summtbody = summtable.append("tbody");
+  // create table header
+  summthead.append("tr")
+    .selectAll("th")
+    .data(colnames)
+    .enter()
+    .append("th")
+      .attr("id", function (d,i) {return "summdistanceHeader" + i;})
+      .text(function(column,i) {
+        if (i===0) {return "Summary";}
+        else {return column;}
+      });
+  var summavgRow = summtbody.append("tr").attr("class", "distance averageRow groupStatRow");
+  summavgRow.append("td").attr("class", "rowHeader").text("Average");
+  var numCellsToMake = d3.range(3);
+  summavgRow.selectAll("td:not(.rowHeader)").data(numCellsToMake).enter()
+    .append("td")
+      .attr("class", "distance")
+      .attr("id", function (d){
+        if (d === 0) return "vaccineAverage";
+        else if (d === 1) return "placeboAverage";
+        else return "combinedAverage";
+      })
+      .text("-");
+  
   var table = d3.select("#distanceTableDiv")
       .append("table")
       .attr("id","distanceTable")
-      .attr("class","table-striped sortable")
+      .attr("class","table sortable")
       .style("width","100%");
       
   var thead = table.append("thead");
@@ -200,21 +243,6 @@ function generateDistanceTable(sites) {
       .attr("id", function (d,i) {return "distanceHeader" + i;})
       .style("cursor","pointer")
       .text(function(column) { return column; });
-  // create average and joint rows
-  // text in data cells is empty, because there is no selection during table generation
-  /* convert to its own table
-  var avgRow = tbody.append("tr").attr("class", "distance averageRow groupStatRow");
-  avgRow.append("td").attr("class", "rowHeader").text("Average");
-  var numCellsToMake = d3.range(3);
-  avgRow.selectAll("td:not(.rowHeader)").data(numCellsToMake).enter()
-    .append("td")
-      .attr("class", "distance")
-      .attr("id", function (d){
-        if (d === 0) return "vaccineAverage";
-        else if (d === 1) return "placeboAverage";
-        else return "combinedAverage";
-      })
-      .text("-");*/
       
   // holder for table rows while selection emtpy
   tbody.append("tr").attr("class","distanceTempRow")
@@ -285,19 +313,13 @@ function updateDistanceTable(sites) {
         onClickChangeView(d);
       });
     // and replace average row filler with actual values
-    /*var avgDistanceData = calculateAverageDistanceData(distanceData);
+    var avgDistanceData = calculateAverageDistanceData(distanceData);
     d3.select(".distance#vaccineAverage").text(avgDistanceData[0]);
     d3.select(".distance#placeboAverage").text(avgDistanceData[1]);
     d3.select(".distance#combinedAverage").text(avgDistanceData[2]);
-       
-    // sort rows by site
-    tbody.selectAll("tr.siteRow").sort(function(a,b) {
-      return whichIsBigger(a[colnames[0]],b[colnames[0]])
-    });*/
     
   } else {
     // new strategy for zero-length site selection
-    //d3.select(".table-zn").html("");
     generateTables(sites);
   }
 }
@@ -348,7 +370,7 @@ function calculateAverageDistanceData(distanceData){
 // HXB2 site names are strings, since they may include letters
 // this function does better than a string comparison for >, <, =
 // since it first computes the numeric values of the string 
-/*function whichIsBigger(a,b){
+function whichIsBigger(a,b){
   // determine the numerical value of the arguments
   var firstNum, secondNum;
   if (!isNaN(+a)){
@@ -376,7 +398,7 @@ function calculateAverageDistanceData(distanceData){
     if (firstNum > secondNum) return 1;
     else return -1; // (firstNum < secondNum). It is impossible to have equality here (would have been captured in outer if)
   }
-}*/
+}
   
 
 	function removeOnClick(d) {
