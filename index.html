@@ -13,13 +13,13 @@
       <link rel="stylesheet" type="text/css" href="introjs.css">
       <!-- jQuery -->
       <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+      <!-- For table sorting -->
+      <script src="sorttable.js"></script>
       <!-- bootstrap -->
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
       <!-- end of bootstrap -->
-      <!-- For table sorting -->
-      <script src="sorttable.js"></script>
       
       <!-- When SIEVE is living in its final location, source the D3 and lodash scripts from CDNs rather than locally -->
       <!-- <script src="lodash.min.js"></script>
@@ -111,17 +111,15 @@
 			  <div class="table-container">
           <div class="container table-zn" style="width:100%">
             <ul class="nav nav-tabs">
-              <li class="active"><a data-toggle="tab" href="#entropyTable">Entropy</a></li>
-              <li><a data-toggle="tab" href="#distanceTable">Distance</a></li>
+              <li class="active"><a data-toggle="tab" href="#entropyTableDiv">Entropy</a></li>
+              <li><a data-toggle="tab" href="#distanceTableDiv">Distance</a></li>
             </ul>
             <div class="tab-content">
-              <div id="entropyTable" class="tab-pane fade in active">
+              <div id="entropyTableDiv" class="tab-pane fade in active">
                 <h3>Entropy Summary</h3>
-                <p>A table with the entropy stuff will go here.</p>
               </div>
-              <div id="distanceTable" class="tab-pane fade">
+              <div id="distanceTableDiv" class="tab-pane fade">
                 <h3>Distance Summary</h3>
-                <p>A table with distance stuff will go here.</p>
               </div>
             </div>
           </div>
