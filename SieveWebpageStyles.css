@@ -182,9 +182,6 @@ footer a{
 .tick > line {
     stroke-width: 0.5px;
 }
-.tablesvg text {
-    font-size: .9em;
-}
 
 /* End d3 styling from final project work*/
 
@@ -202,19 +199,7 @@ footer a{
     float: left;
     width: 33%;
     text-align: center;
-    overflow: hidden;
-}
-.tableHeader{
-    font-weight: bold;
-    font-size: 1.2em;
-}
-#tableToggleText{
-    font-size: 0.75em;
-    text-decoration: underline;
-    cursor: pointer;
-}
-.table:hover{
-    overflow-y:auto;
+    overflow-y: scroll;
 }
 .deleteTableRowTrigger:hover{
     background: #ff7f7f;
