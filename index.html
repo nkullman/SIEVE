@@ -3,35 +3,31 @@
       <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="description" content="SIEVE is an interactive visualization for exploring breakthrough sequence data from vaccine efficacy trials, allowing analysis at the level of amino acids.">
-      <!-- CSS for visualization -->
-      <link rel="stylesheet" type="text/css" href="SieveWebpageStyles.css">
+     
+      <!-- local CSS for visualization -->
+      <link rel="stylesheet" type="text/css" href="assets/css/SieveWebpageStyles.css">
+      
       <!-- D3 -->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+      
       <!-- lodash -->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
-      <!-- Intro.js for initial site tour -->
-      <link rel="stylesheet" type="text/css" href="introjs.css">
+      
+      <!-- Intro.js for 'help' site tour -->
+      <script src="https://cdn.jsdelivr.net/intro.js/1.1.1/intro.min.js"></script>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/intro.js/1.1.1/introjs.min.css">
+      
       <!-- jQuery -->
       <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+      
       <!-- For table sorting -->
-      <script src="sorttable.js"></script>
+      <script src="https://cdn.jsdelivr.net/sorttable/2/sorttable.min.js"></script>
+      
       <!-- bootstrap -->
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-      <!-- end of bootstrap -->
-      
-      <!-- When SIEVE is living in its final location, source the D3 and lodash scripts from CDNs rather than locally -->
-      <!-- <script src="lodash.min.js"></script>
-      <script src="d3.v3.min.js" charset="utf-8"></script><style type="text/css"></style> -->
-      <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-        ga('create', 'UA-67398705-1', 'auto');
-        ga('send', 'pageview');
-      </script>
+
       <title>SIEVE</title>
    </head>
    <body class=" hasGoogleVoiceExt">
@@ -54,9 +50,9 @@
               </ul>
               <button type="button" class="btn btn-default navbar-btn" id="shareAnalysisButton">Share this analysis</button>
               <ul class="nav navbar-nav navbar-right">
-                <li><a href="https://uw.edu"><img src="images/UW_Block_W_logo.png" alt="University-of-Washington" height="20px"></a></li>
-                <li><a href="https://www.fredhutch.org/en.html"><img src="images/fhcrc_logo.png" alt="Fred-Hutch" height="20px"></a></li>
-                <li><a href="http://escience.washington.edu/"><img src="images/eScience_logo.png" alt="eScience-Institute" height="20px"></a></li>
+                <li><a href="https://uw.edu"><img src="assets/images/UW_Block_W_logo.png" alt="University-of-Washington" height="20px"></a></li>
+                <li><a href="https://www.fredhutch.org/en.html"><img src="assets/images/fhcrc_logo.png" alt="Fred-Hutch" height="20px"></a></li>
+                <li><a href="http://escience.washington.edu/"><img src="assets/images/eScience_logo.png" alt="eScience-Institute" height="20px"></a></li>
               </ul>
             </div>
           </div>
@@ -142,14 +138,13 @@
 		  </fieldset> <!-- drilldown-wrap -->
       </main>
    </div> <!-- wrapper -->
-   <script src="tableGeneration.js"></script>
-   <script src="colors.js"></script>
-   <script src="summarystats.js"></script>
-   <script src="parseinput.js"></script>
-   <script src="sieve.js"></script>
-   <script src="stackedbars.js"></script>
-   <script src="distancePyramid.js"></script>
-   <script src="intro.js"></script>
+   <script src="assets/js/tableGeneration.js"></script>
+   <script src="assets/js/colors.js"></script>
+   <script src="assets/js/summarystats.js"></script>
+   <script src="assets/js/parseinput.js"></script>
+   <script src="assets/js/sieve.js"></script>
+   <script src="assets/js/stackedbars.js"></script>
+   <script src="assets/js/distancePyramid.js"></script>
    <script type="text/javascript">
       function startIntro(){
         var intro = introJs();
