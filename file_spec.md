@@ -1,8 +1,8 @@
 #(1) Sequence alignment file
- - Alignment of breakthrough and vaccine immunogen sequences from the trial
+ - Alignment of breakthrough and vaccine reference sequences from the trial
  - Filename: `STUDY.PROTEIN.REF.fasta`
- - Should contain all breakthrough sequences and at least one immunogen sequence (a.k.a. reference sequence)
- - A trial with multiple immunogens for a single protein could have an alignment with >1 reference sequence (e.g. `>reference|gag|MRK`. However, the correct one to use for each analysis would depend on the name of the reference specified in the `Treatment assignment` file
+ - Should contain all breakthrough sequences and at least one reference sequence (a.k.a. reference sequence)
+ - A trial with multiple references for a single protein could have an alignment with >1 reference sequence (e.g. `>reference|gag|MRK`. However, the correct one to use for each analysis would depend on the name of the reference specified in the `Treatment assignment` file
  - There should only be one sequence per infected participant. Only sequences listed in the `Treatment assignment` file will be loaded for the analysis.
  - Each sequence has a sequence ID that is the string following `>` (for example `>AA3045`) and it should be the index in the `Treatment assignment file`
  - File should also contain a reference sequence that corresponds to the display positions used below (e.g. `>HXB2`)
