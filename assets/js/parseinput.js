@@ -50,7 +50,7 @@ var studyname,
 	dist_metric;
 	
 /* Load page with initial dataset */
-d3.csv("data/sieve_toc.csv", function (toc){
+d3.csv("../data/sieve_toc.csv", function (toc){
 	// store available data in the table of contents
 	availableDatasets = toc;
 	// use this data to populate the dropdown list in the 
@@ -393,10 +393,10 @@ function transpose(array) {
 /**  */
 function getInputFilenames(studyname, protein, immunogen, dist_metric){
 	var result = {};
-	result.treatmentFile = "data/" + studyname + "." + protein + "." + immunogen + ".trt.csv";
-	result.sequenceFastaFile = "data/" + studyname + "." + protein + "." + immunogen + ".fasta";
-	result.distanceFile = "data/" + studyname + "." + protein + "." + immunogen + "." + dist_metric + ".distance.csv";
-	result.resultsFile = "data/" + studyname + "." + protein + "." + immunogen + "." + dist_metric + ".results.csv";
+	result.treatmentFile = "../data/treatment.csv?study=" + studyname;
+	result.sequenceFastaFile = "../data/alignment.fasta?study=" + studyname + "&protein=" + protein + "&ref=" + immunogen;
+	result.distanceFile = "../data/distance.csv?study=" + studyname + "&protein=" + protein + "&ref=" + immunogen + "&method=" + dist_metric;
+	result.resultsFile = "../data/results.csv?study=" + studyname + "&protein=" + protein + "&ref=" + immunogen + "&method=" + dist_metric;
 	return result;
 }
 function getParameterByName(name) {
