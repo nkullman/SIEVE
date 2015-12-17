@@ -46,7 +46,7 @@ var availableDatasets;
 /** Initial values for study name, protein, reference, and distance measure */
 var studyname = getParameterByName("study"),
 	protein = getParameterByName("protein"),
-	reference = getParameterByName("ref"),
+	reference = getParameterByName("reference"),
 	dist_metric = getParameterByName("dist");
 if (dist_metric.length < 1) { dist_metric = "vxmatch_site"};
 	
@@ -264,7 +264,7 @@ function getInputFilenames(studyname, protein, reference, dist_metric){
 	result.treatmentFile = "../data/treatment.csv?study=" + studyname;
 	result.sequenceFastaFile = "../data/alignment.fasta?study=" + studyname + "&protein=" + protein + "&reference=" + reference;
 	result.distanceFile = "../data/distance.csv?study=" + studyname + "&protein=" + protein + "&reference=" + reference;
-	result.resultsFile = "../data/results.csv?study=" + studyname + "&protein=" + protein + "&ref=" + reference;
+	result.resultsFile = "../data/results.csv?study=" + studyname + "&protein=" + protein + "&reference=" + reference;
 	return result;
 }
 function getParameterByName(name) {
