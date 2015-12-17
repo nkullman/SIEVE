@@ -91,7 +91,7 @@ function generateSiteSelector() {
 	d3.select(".analysisID").html(
 		"<h2><span id='analysisID-studyname'>" + studyname +
 		"</span>: <span id='analysisID-protein'>" + protein +
-		"</span> (<span id='analysisID-immunogen'>" + immunogen + "</span>)</h2>");
+		"</span> (<span id='analysisID-reference'>" + reference + "</span>)</h2>");
 	d3.select("#shareAnalysisButton")
 		.on("click", function(){
 			// get URL and chop off currently added sites, if any
@@ -104,7 +104,7 @@ function generateSiteSelector() {
 			});
 			// assemble the shareable URL and pass to copyToClipboard function
 			var shareableURL = currURL + "?sites=" + sitesInURL.toString() + 
-								"&study=" + studyname + "&protein=" + protein + "&immunogen=" + immunogen + "&dist=" + dist_metric;
+								"&study=" + studyname + "&protein=" + protein + "&reference=" + reference + "&dist=" + dist_metric;
 			copyToClipboard(shareableURL);
 		});
 	d3.select("#startSiteTour")
