@@ -262,8 +262,8 @@ function transpose(array) {
 function getInputFilenames(studyname, protein, reference, dist_metric){
 	var result = {};
 	result.treatmentFile = "../data/treatment.csv?study=" + studyname;
-	result.sequenceFastaFile = "../data/alignment.fasta?study=" + studyname + "&protein=" + protein + "&ref=" + reference;
-	result.distanceFile = "../data/distance.csv?study=" + studyname + "&protein=" + protein + "&ref=" + reference;
+	result.sequenceFastaFile = "../data/alignment.fasta?study=" + studyname + "&protein=" + protein + "&reference=" + reference;
+	result.distanceFile = "../data/distance.csv?study=" + studyname + "&protein=" + protein + "&reference=" + reference;
 	result.resultsFile = "../data/results.csv?study=" + studyname + "&protein=" + protein + "&ref=" + reference;
 	return result;
 }
