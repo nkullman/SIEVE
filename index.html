@@ -35,18 +35,12 @@
          <nav class="navbar navbar-default navbar-fixed-top">
           <div class="container-fluid">
             <div class="navbar-header">
-              <a class="navbar-brand" href="index.html">SIEVE</a>
+              <a class="navbar-brand" href="http://sieve.fredhutch.org/viz">SIEVE</a>
             </div>
             <div>
               <ul class="nav navbar-nav">
                 <li class="active"><a href="index.html">Home</a></li>
-                <li class="dropdown">
-                  <a href="#" id="otherDatasetsDropdownToggle" class ="dropdown-toggle" data-toggle="dropdown">Other datasets<span class="caret"></span></a>
-                  <ul class="dropdown-menu" id="otherDatasetsDropdownList">
-                  </ul>
-                </li>
                 <li><a href="#" id="startSiteTour">Help</a></li>
-                <li><a href="about.html" id="aboutLink">About</a></li>
               </ul>
               <button type="button" class="btn btn-default navbar-btn" id="shareAnalysisButton">Share this analysis</button>
               <ul class="nav navbar-nav navbar-right">
@@ -205,14 +199,6 @@
               {
                 element: document.querySelector("#shareAnalysisButton"),
                 intro: "If you would like to share your current view, click here to get a link you can send to others."
-              },
-              {
-                element: document.querySelector("#otherDatasetsDropdownToggle"),
-                intro: "If you want to check out a different analysis, click here to see the other datasets available."
-              },
-              {
-                element: document.querySelector("#aboutLink"),
-                intro: "Want to learn more about this tool? Check out our about page."
               }
             ]
           });
