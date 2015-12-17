@@ -43,149 +43,16 @@ var entropies = {full:[],vaccine:[],placebo:[]};
 var dists;
 /** Datasets available for analysis */
 var availableDatasets;
-/** Initial values for study name, protein, immunogen, and distance measure */
-var studyname,
-	protein,
-	immunogen,
-	dist_metric;
+/** Initial values for study name, protein, reference, and distance measure */
+var studyname = getParameterByName("study"),
+	protein = getParameterByName("protein"),
+	reference = getParameterByName("ref"),
+	dist_metric = getParameterByName("dist");
+if (dist_metric.length < 1) { dist_metric = "vxmatch_site"};
 	
-/* Load page with initial dataset */
-d3.csv("../data/sieve_toc.csv", function (toc){
-	// store available data in the table of contents
-	availableDatasets = toc;
-	// use this data to populate the dropdown list in the 
-	populateOtherDatasetsDropdown();
-	
-	var initialDataset;
-	// see if a dataset was specified in URL
-	var urlStudyString = getParameterByName("study"),
-		urlProteinString = getParameterByName("protein"),
-		urlImmunogenString = getParameterByName("immunogen"),
-		urlDistString = getParameterByName("dist");
-	
-	if (urlStudyString !== "" || urlProteinString !== "" || urlImmunogenString !== "" || urlDistString !== ""){
-		// If it was, we will attempt to use it as our initial view
-		// We will pare down the array of availableDatasets to only those that match the inputs
-		var potentialDatasets = availableDatasets;
-		// First, the study name
-		if (urlStudyString !== ""){
-			potentialDatasets = potentialDatasets.filter(function(e,i,arr){
-				return e.study.toUpperCase() === urlStudyString.toUpperCase();
-			});
-			if (potentialDatasets.length > 0) {
-				// if there is at least one match, then the study name is valid and we use it
-				studyname = urlStudyString.toUpperCase();
-				// next level of hierarchy is the protein name
-				if (urlProteinString !== "") {
-					potentialDatasets = potentialDatasets.filter(function(e,i,arr){
-						return e.protein.toLowerCase() === urlProteinString.toLowerCase();
-					});
-					if (potentialDatasets.length > 0){
-						protein = urlProteinString.toLowerCase();
-						// next level of hierarchy is the immunogen
-						if (urlImmunogenString !== ""){
-							potentialDatasets = potentialDatasets.filter(function(e,i,arr){
-								return e.immunogen.toUpperCase() === urlImmunogenString.toUpperCase();
-							});
-							if (potentialDatasets.length > 0){
-								// the immunogen provided is valid, and we use it
-								immunogen = urlImmunogenString.toUpperCase();
-								// last level of hierarchy is the distance measure 
-								if (urlDistString !== ""){
-									potentialDatasets = potentialDatasets.filter(function(e,i,arr){
-										return e.distance_method.toLowerCase() === urlDistString.toLowerCase();
-									});
-									if (potentialDatasets.length > 0){
-										// the distance method is a match
-										dist_metric = urlDistString.toLowerCase();
-										// all input specifications are met. Take the remaining potential dataset as our default
-										initialDataset = potentialDatasets[0];
-									} else {
-										// the distance method specified was not recognized. Take a default
-										initialDataset = availableDatasets.filter(function(e,i,arr){
-											return e.immunogen.toUpperCase() === immunogen && e.protein.toLowerCase() === protein && e.study.toUpperCase() === studyname;
-										})[0];
-										dist_metric = initialDataset.distance_method;
-										alert("The distance measure provided was not recognized. Using the first available distance measure for study " + studyname + ", protein " + protein + ", and immunogen " + immunogen);
-									}
-								} else {
-									// no distance measure was provided. Choose one by default
-									initialDataset = availableDatasets.filter(function(e,i,arr){
-										return e.immunogen.toUpperCase() === immunogen && e.protein.toLowerCase() === protein && e.study.toUpperCase() === studyname;
-									})[0];
-									dist_metric = initialDataset.distance_method;
-									alert("A distance measure was not specified. Using the first available for study " + studyname + ", protein " + protein + ", and immunogen " + immunogen);
-								}
-							} else {
-								// the immunogen provided was not valid. use the first availableDataset with the study and protein logged
-								initialDataset = availableDatasets.filter(function(e,i,arr){
-									return e.protein.toLowerCase() === protein && e.study.toUpperCase() === studyname;
-								})[0];
-								immunogen = initialDataset.immunogen;
-								dist_metric = initialDataset.distance_method;
-								alert("The immunogen provided is not supported. Showing the first dataset for study " + studyname + " and protein " + protein)
-							}
-						} else{
-							// no immunogen was provided. load the first availableDataset whose study and protein match what we've recorded
-							initialDataset = availableDatasets.filter(function(e,i,arr){
-								return e.protein.toLowerCase() === protein && e.study.toUpperCase() === studyname;
-							})[0];
-							immunogen = initialDataset.immunogen;
-							dist_metric = initialDataset.distance_method;
-							alert("An immunogen was not specified. Showing the first dataset for study " + studyname + " and protein " + protein);
-						}
-					} else {
-						// study name is valid but protein is not.
-						// Take the first availableDataset whose study is a match
-						initialDataset = availableDatasets.filter(function(e,i,arr){
-							return e.study.toUpperCase() === studyname;
-						})[0];
-						protein = initialDataset.protein;
-						immunogen = initialDataset.immunogen;
-						dist_metric = initialDataset.distance_method;
-						alert("The specified protein is not supported. Showing the first dataset for study " + studyname);
-					}
-				} else {
-					// the protein string was empty, load the first availableDataset whose study matched what we recorded
-					initialDataset = availableDatasets.filter(function(e,i,arr){
-						return e.study.toUpperCase() === studyname;
-					})[0];
-					protein = initialDataset.protein;
-					immunogen = initialDataset.immunogen;
-					dist_metric = initialDataset.distance_method;
-					alert("A protein was not specified. Showing the first dataset for study " + studyname);
-				}
-			} else {
-				// study name was invalid. Use as the initial view the first dataset available
-				initialDataset = availableDatasets[0];
-				studyname = initialDataset.study;
-				protein = initialDataset.protein;
-				immunogen = initialDataset.immunogen;
-				dist_metric = initialDataset.distance_method;
-				alert("The study provided is not supported. A default sieve analysis dataset will be loaded.")
-			}
-		} else {
-			// the study name was not specified in the URL. Use the default initial view
-			initialDataset = availableDatasets[0];
-			studyname = initialDataset.study;
-			protein = initialDataset.protein;
-			immunogen = initialDataset.immunogen;
-			dist_metric = initialDataset.distance_method;
-			alert("No study was specified, so a default sieve analysis dataset will be loaded.")
-		}
-	} else {
-		// otherwise, just pick the first row from the table of contents
-		initialDataset = availableDatasets[0];
-		studyname = initialDataset.study;
-		protein = initialDataset.protein;
-		immunogen = initialDataset.immunogen;
-		dist_metric = initialDataset.distance_method;
-	}
-	
-	// define object containing all required files' names
-	var inputFiles = getInputFilenames(studyname, protein, immunogen, dist_metric);
-	parseInput(inputFiles);
-});
+// define object containing all required files' names
+var inputFiles = getInputFilenames(studyname, protein, reference, dist_metric);
+parseInput(inputFiles);
 
 
 function parseInput(inputFiles){
@@ -228,7 +95,8 @@ d3.csv(inputFiles.treatmentFile, function(assigndata)
 						urlSites[i] = refmap[urlSites[i]];
 					})
 					while(urlSites.length > 0){
-						selected_sites.push(urlSites.pop());
+						var urlsite = urlSites.pop();
+						if (typeof urlsite != 'undefined'){ selected_sites.push(urlsite); }
 					}
 				}
 				
@@ -391,12 +259,12 @@ function transpose(array) {
 }
 
 /**  */
-function getInputFilenames(studyname, protein, immunogen, dist_metric){
+function getInputFilenames(studyname, protein, reference, dist_metric){
 	var result = {};
 	result.treatmentFile = "../data/treatment.csv?study=" + studyname;
-	result.sequenceFastaFile = "../data/alignment.fasta?study=" + studyname + "&protein=" + protein + "&ref=" + immunogen;
-	result.distanceFile = "../data/distance.csv?study=" + studyname + "&protein=" + protein + "&ref=" + immunogen + "&method=" + dist_metric;
-	result.resultsFile = "../data/results.csv?study=" + studyname + "&protein=" + protein + "&ref=" + immunogen + "&method=" + dist_metric;
+	result.sequenceFastaFile = "../data/alignment.fasta?study=" + studyname + "&protein=" + protein + "&ref=" + reference;
+	result.distanceFile = "../data/distance.csv?study=" + studyname + "&protein=" + protein + "&ref=" + reference;
+	result.resultsFile = "../data/results.csv?study=" + studyname + "&protein=" + protein + "&ref=" + reference;
 	return result;
 }
 function getParameterByName(name) {
@@ -404,22 +272,4 @@ function getParameterByName(name) {
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
         results = regex.exec(location.search);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-}
-
-function populateOtherDatasetsDropdown (){
-	var dataDropdown = d3.select("#otherDatasetsDropdownList")
-	// for each element in availableDatasets
-	availableDatasets.forEach(function(elm, idx){
-		// get the URL we want to jump to
-		var currURL = document.URL;
-		if (currURL.indexOf("?") > -1){ currURL = currURL.substring(0,currURL.indexOf("?")); }
-		var newStudyURL = currURL + "?" + 
-					"study=" + elm.study + "&protein=" + elm.protein + "&immunogen=" + elm.immunogen + "&dist=" + elm.distance_method;
-		// add it to the dropdown list
-		dataDropdown.append("li")
-		  .append("a")
-		    .attr("href", newStudyURL)
-			.text(elm.study + ", " + elm.protein + ", " + elm.immunogen + ", " + elm.distance_method);
-		return;
-	});
 }
