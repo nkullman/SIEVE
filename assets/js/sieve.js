@@ -51,6 +51,7 @@ d3.select(window).on("mouseup", function(){ last_updated = undefined; mouse_down
 
 d3.select("#hxb2_select").on("keypress", hxb2_selection);
 d3.select("#yscale_selector").on("input", yscale_selection);
+d3.select("#distMethod_selector").on("input", distMethod_selection);
 
 function overview_yscale(site)
 {
@@ -280,12 +281,15 @@ function generateSiteSelector() {
 			opacity_scale.domain([visWindowSpan/2, visWindowSpan/2 + .01*visWindowSpan]);
 			// update opacity of sitebars based on drawing window
 			sitebars.attr("display", function(d,i){
-				var site_x_loc = parseFloat(sitebars[0][i].getAttribute("x")) + origSiteBarWidth/2;
+				var site_x_loc = parseFloat(this.getAttribute("x")) + origSiteBarWidth/2;
 				if (opacity_scale(Math.abs(visWindowMidpt - site_x_loc)) > 0) {
 					return "default";
 				} else {
 					return "none";
 				}
+			}).style("opacity", function(d,i){
+				var site_x_loc = parseFloat(this.getAttribute("x")) + origSiteBarWidth/2;
+				return opacity_scale(Math.abs(visWindowMidpt - site_x_loc));
 			});
 			// update position of text
 			siteAALabels
@@ -439,7 +443,24 @@ function yscale_selection()
 	}
 	
 	d3.selectAll(".sitebars")
-		.filter(function(d, i) { return i != selected_sites[_.sortedIndex(selected_sites, i)]; })
+		.transition(500)
+		.attr("y", function(d, i) { return overview_yscale(i); })
+		.attr("height", function(d, i) {return height - overview_yscale(i);});
+		
+	siteselSVGg.select(".y.axis.l").transition().call(statAxes[dist_metric][yscale_mode].left);
+	siteselSVGg.select(".y.axis.r").transition().call(statAxes[dist_metric][yscale_mode].right);
+	d3.select(".y.axis.label").text(yscale_mode);
+}
+
+function distMethod_selection()
+{
+	dist_metric = d3.event.target.value;
+	var newYScale = statScales[dist_metric][yscale_mode];
+	if (newYScale.domain()[0] == -1){
+		newYScale.domain([d3.min(siteStats[dist_metric][yscale_mode]), d3.max(siteStats[dist_metric][yscale_mode])]);
+	}
+	
+	d3.selectAll(".sitebars")
 		.transition(500)
 		.attr("y", function(d, i) { return overview_yscale(i); })
 		.attr("height", function(d, i) {return height - overview_yscale(i);});

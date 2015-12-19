@@ -166,14 +166,6 @@ function dodistparsing(distdata)
 		}).map(function(d) {return d.display_position;});
 	display_idx_map.forEach(function(d, i) {refmap[d] = i;});
 	
-	var distMethodSelector = d3.select("#distMethod_selector");
-	dists.forEach(function(d,i){
-		var newOption = distMethodSelector.append("option")
-			.attr("value", d["key"])
-			.attr("id","yscale-selection-option-" + d["key"])
-			.text(d["key"]);
-		if (i === 0){ newOption.attr("selected","selected"); }
-	})
 }
 
 function parseResultsFile(resultdata){
@@ -200,6 +192,16 @@ function parseResultsFile(resultdata){
 		// hard coded for now. Will data always contain a pvalue?
 		// answer is yes if we decide to build in a simple pval generator
 		if (d === "pvalue"){ newOption.attr("selected","selected"); }
+	})
+	
+	var distsToDisplay = Object.keys(siteStats);
+	var distMethodSelector = d3.select("#distMethod_selector");
+	distsToDisplay.forEach(function(d,i){
+		var newOption = distMethodSelector.append("option")
+			.attr("value", d)
+			.attr("id","dist-selection-option-" + d)
+			.text(d);
+		if (i === 0){ newOption.attr("selected","selected"); }
 	})
 		
 	for (var metric in siteStats)
@@ -264,7 +266,7 @@ function getInputFilenames(studyname, protein, reference, dist_metric){
 	result.treatmentFile = "../data/treatment.csv?study=" + studyname;
 	result.sequenceFastaFile = "../data/alignment.fasta?study=" + studyname + "&protein=" + protein + "&reference=" + reference;
 	result.distanceFile = "../data/distance.csv?study=" + studyname + "&protein=" + protein + "&reference=" + reference;
-	result.resultsFile = "../data/results.csv?study=" + studyname + "&protein=" + protein + "&reference=" + reference;
+	result.resultsFile = "../data/results.csv?study=" + studyname + "&protein=" + protein + "&reference=" + reference;	
 	return result;
 }
 function getParameterByName(name) {
