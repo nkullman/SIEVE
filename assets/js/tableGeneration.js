@@ -7,14 +7,14 @@ function generateTables(sites){
  d3.selectAll("#entropyTableDiv table").remove();
  d3.selectAll("#distanceTableDiv table").remove();
  generateEntropyTable(sites);
- sorttable.makeSortable(d3.select("#entropyTable")[0][0]);
+$.bootstrapSortable(true);
  generateDistanceTable(sites);
- sorttable.makeSortable(d3.select("#distanceTable")[0][0]);
+ $.bootstrapSortable(true);
  if (sites.length > 0) updateTables(selected_sites);
 }
 
 function updateTables(sites){
-  updateEnropyTable(sites);
+  updateEntropyTable(sites);
   updateDistanceTable(sites);
 }
 
@@ -101,7 +101,7 @@ function generateEntropyTable(sites) {
 }
 
 
-function updateEnropyTable(sites) {
+function updateEntropyTable(sites) {
   var table = d3.select("#entropyTable");
   var tbody = table.select("tbody");
     // if selection not empty...
@@ -136,10 +136,6 @@ function updateEnropyTable(sites) {
       })
       .enter()
       .append("td")
-        .attr("sorttable_customkey",function(d,i){
-          if (i === 0) { return refmap[d];}
-          else {return +d;}
-        })
         .text(function(d){
           return d;
         });
@@ -150,6 +146,7 @@ function updateEnropyTable(sites) {
       .on("click", function(d){
         onClickChangeView(d);
     });
+    $.bootstrapSortable(true)
     // and replace average/joint row filler with actual values
     var avgEntropyData = calculateAverageEntropyData(entropyData);
     d3.select(".entropy#vaccineAverage").text(avgEntropyData[0]);
@@ -162,7 +159,7 @@ function updateEnropyTable(sites) {
     d3.select("#combinedJoint").text(jointEntropyData[2]);
     
   } else {
-    // new strategy for zero-length site selection
+    // no sites selected. Make empty table
     generateTables(sites);
   }
 }
@@ -198,7 +195,7 @@ function generateDistanceTable(sites) {
   var summtable = d3.select("#distanceTableDiv")
       .append("table")
       .attr("id","distanceSummTable")
-      .attr("class","table sortable")
+      .attr("class","table")
       .style("width","100%");
   var summthead = summtable.append("thead");
   var summtbody = summtable.append("tbody");
@@ -298,10 +295,6 @@ function updateDistanceTable(sites) {
       })
       .enter()
       .append("td")
-        .attr("sorttable_customkey",function(d,i){
-          if (i === 0) { return refmap[d];}
-          else {return +d;}
-        })
         .text(function(d){
           return d;
         });
@@ -312,6 +305,7 @@ function updateDistanceTable(sites) {
       .on("click", function(d){
         onClickChangeView(d);
       });
+    $.bootstrapSortable(true)
     // and replace average row filler with actual values
     var avgDistanceData = calculateAverageDistanceData(distanceData);
     d3.select(".distance#vaccineAverage").text(avgDistanceData[0]);
@@ -319,7 +313,7 @@ function updateDistanceTable(sites) {
     d3.select(".distance#combinedAverage").text(avgDistanceData[2]);
     
   } else {
-    // new strategy for zero-length site selection
+    // no sites selected. Make empty table
     generateTables(sites);
   }
 }
