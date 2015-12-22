@@ -186,11 +186,8 @@ function updatePyramid(sites){
     //update box plot
     var distData = [[],[]]; 
     //mmdata[0] = array of the count of mismatches for each vaccine-recieving participant in selected region
-    //mmdata[1] = same for placebo participants
-    var participantDistances;
-    for (var i = 0; i < dists.length; i++){
-      if (dists[i].key === dist_metric){ participantDistances = dists[i].values; break;}
-    }
+    //mmdata[1] = same for placebo participants    
+    var participantDistances = dists[0].values;
     
     for(var participantIdx = 0; participantIdx < participantDistances.length; participantIdx++){
       if (seqID_lookup[participantDistances[participantIdx].key] !== undefined){
@@ -415,15 +412,6 @@ function drawPyramid(sites){
       .attr("x",pyramid_width/2)
       .attr("y",-2)
       .style("text-anchor","middle");
-      
-    pyramid_svg.append("text")
-      .text("switch chart type")
-      .attr("x",pyramid_width/2)
-      .attr("y", pyramid_height + pyramid_margin.bottom - 8)
-      .on("click", update_mismatchmode)
-      .style("text-anchor","middle")
-      .style("text-decoration", "underline")
-		  .style("cursor", "pointer");
 
     pyramid_svg.append('g')
       .attr('class', 'axis x left')
@@ -474,11 +462,8 @@ function drawBoxplot(sites)
   //Create box plot for the first time (instead of updating as in updatePyramid())
   var leftmargin = 75;
   var distData = [[],[]];
-  var participantDistances;
-  for (var i = 0; i < dists.length; i++){
-    if (dists[i].key === dist_metric){ participantDistances = dists[i].values; break;}
-  }
-  
+  var participantDistances = dists[0].values;
+    
   for(var participantIdx = 0; participantIdx < participantDistances.length; participantIdx++){
     if (seqID_lookup[participantDistances[participantIdx].key] !== undefined){
       var distTot = d3.sum(sites.map(function(d) { return +participantDistances[participantIdx].values[d]; }));
@@ -515,15 +500,6 @@ function drawBoxplot(sites)
       .style("text-anchor","middle")
       .style("font-size","15px")
       .text("Distribution of Distances for selected sites");
-      
-    pyramid_svg.append("text")
-      .text("switch chart type")
-      .attr("x",pyramid_width/2)
-      .attr("y", pyramid_height + pyramid_margin.bottom - 8)
-      .on("click", update_mismatchmode)
-      .style("text-anchor","middle")
-      .style("text-decoration", "underline")
-		  .style("cursor", "pointer");
   
   pyramid_svg.selectAll(".box")
     .data(distData)
