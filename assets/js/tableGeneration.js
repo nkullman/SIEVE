@@ -327,10 +327,7 @@ function calculateDistanceData(sites){
       var distTotFull = 0;
       var distTotVac = 0;
       var distTotPlac = 0;
-      var participantDistances;
-      for (var i = 0; i < dists.length; i++){
-        if (dists[i].key === dist_metric){ participantDistances = dists[i].values; break;}
-      }
+      var participantDistances = dists[0].values;
       for(var participantIdx = 0; participantIdx < participantDistances.length; participantIdx++){
         if (seqID_lookup[participantDistances[participantIdx].key] !== undefined){
           var distance = +participantDistances[participantIdx].values[d];
