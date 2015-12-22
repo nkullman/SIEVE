@@ -28,7 +28,6 @@ var shift_down = false;
 var last_updated;
 var yscale_mode;
 
-var pval_scale_ticks = [0.01 + 0.1, 0.05 + 0.1, 0.2 + 0.1, 1 + 0.1];
 function tval_scale_ticks(tval_scale_domain){
 	var ticks = d3.range(0, tval_scale_domain[1]);
 	ticks.push(tval_scale_domain[1]);
@@ -60,6 +59,45 @@ function overview_yscale(site)
 	*/
 	return statScales[dist_metric][yscale_mode](siteStats[dist_metric][yscale_mode][site]);
 }
+function yscale_reference(site)
+{
+	/*
+		Finds reference location on current scale.
+		If scale contains 0, this is the zero y coordinate.
+		If logarithmic and contains 1, this is the 1 coodinate.
+		If neither, it contains the closest coordinate to the above
+	*/
+	var ref_loc = statScales[dist_metric][yscale_mode](0);
+	if (isNaN(ref_loc))
+	{
+		// logarithmic scale, use 1 instead
+		ref_loc = statScales[dist_metric][yscale_mode](1);
+	}
+	
+	ref_loc = d3.max([0, d3.min([ref_loc, height])]);
+	return ref_loc;
+}
+
+function yscale_y(d, site)
+{
+	/*
+		Returns the y location for given sitebar to be drawn, based
+		on overview_yscale: the location associated to the minimum
+		of the reference location and the value
+	*/
+	return d3.min([yscale_reference(site), overview_yscale(site)]);
+}
+function yscale_height(d, site)
+{
+	/*
+		Returns height of given sitebar to be drawn, difference in
+		y scale between value and reference location
+	*/
+	var ref_loc = yscale_reference(site);
+	
+	return Math.abs(ref_loc - overview_yscale(site));
+}
+
 		
 /** Generate visualization */
 function generateVis(){
@@ -164,9 +202,9 @@ function generateSiteSelector() {
     	.attr("class","sitebars")
 		.attr("id", function (d,i) { return "sitebar" + i;})
 	  	.attr("x", function (d,i) { return xScale(i) - sitebarwidth/2; })
-		.attr("y", function (d,i) {return overview_yscale(i);} )
+		.attr("y", yscale_y)
 		.attr("width", sitebarwidth)
-		.attr("height", function (d,i) {return height - overview_yscale(i);})
+		.attr("height", yscale_height)
 		.attr("fill", function (d) {
 			if (d == '-') return "#000000";
 			else return aacolor(d);
@@ -271,7 +309,7 @@ function generateSiteSelector() {
 			
 			/* Rectangles were being drawn outside chart region (into margins of chart).
 				The below corrects this by measuring a rectangle's distance from the current
-				drawing midpoint and adjusting opacity accordingly. */
+				drawing midpoint and adjusting display accordingly. */
 			var origSiteBarWidth = parseFloat(sitebars[0][0].getAttribute("width"));
 			var visWindowStart = (0-d3.event.translate[0])/d3.event.scale;
 			var visWindowEnd = visWindowStart + width/d3.event.scale; 
@@ -279,7 +317,7 @@ function generateSiteSelector() {
 			var visWindowMidpt = visWindowStart + visWindowSpan/2;
 			// Change in viewing window of nav pane introduces new window span
 			opacity_scale.domain([visWindowSpan/2, visWindowSpan/2 + .01*visWindowSpan]);
-			// update opacity of sitebars based on drawing window
+			// update display of sitebars based on drawing window
 			sitebars.attr("display", function(d,i){
 				var site_x_loc = parseFloat(this.getAttribute("x")) + origSiteBarWidth/2;
 				if (opacity_scale(Math.abs(visWindowMidpt - site_x_loc)) > 0) {
@@ -287,9 +325,6 @@ function generateSiteSelector() {
 				} else {
 					return "none";
 				}
-			}).style("opacity", function(d,i){
-				var site_x_loc = parseFloat(this.getAttribute("x")) + origSiteBarWidth/2;
-				return opacity_scale(Math.abs(visWindowMidpt - site_x_loc));
 			});
 			// update position of text
 			siteAALabels
@@ -356,7 +391,6 @@ function generateSiteSelector() {
 			var index = _.sortedIndex(selected_sites, j);
 			selected_sites.splice(index, 1);
 			// reset formatting, set selected to false
-			var yval = overview_yscale(j);
 			bar.classed("selected",false);
 			marker.classed("selected", false);
 		}
@@ -382,7 +416,6 @@ function clear_selection()
 		var site = selected_sites[i];
     	var bar = d3.select("#sitebar" + site);
 		var marker = d3.select("#selMarker" + site);
-    	var yval = overview_yscale(site);
 		marker.classed("selected",false);
 		bar.classed("selected",false);
 	}
@@ -444,8 +477,8 @@ function yscale_selection()
 	
 	d3.selectAll(".sitebars")
 		.transition(500)
-		.attr("y", function(d, i) { return overview_yscale(i); })
-		.attr("height", function(d, i) {return height - overview_yscale(i);});
+		.attr("y", yscale_y)
+		.attr("height", yscale_height);
 		
 	siteselSVGg.select(".y.axis.l").transition().call(statAxes[dist_metric][yscale_mode].left);
 	siteselSVGg.select(".y.axis.r").transition().call(statAxes[dist_metric][yscale_mode].right);
@@ -462,8 +495,8 @@ function distMethod_selection()
 	
 	d3.selectAll(".sitebars")
 		.transition(500)
-		.attr("y", function(d, i) { return overview_yscale(i); })
-		.attr("height", function(d, i) {return height - overview_yscale(i);});
+		.attr("y", yscale_y)
+		.attr("height", yscale_height);
 		
 	siteselSVGg.select(".y.axis.l").transition().call(statAxes[dist_metric][yscale_mode].left);
 	siteselSVGg.select(".y.axis.r").transition().call(statAxes[dist_metric][yscale_mode].right);
