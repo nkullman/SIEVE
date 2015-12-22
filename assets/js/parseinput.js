@@ -48,10 +48,9 @@ var studyname = getParameterByName("study"),
 	protein = getParameterByName("protein"),
 	reference = getParameterByName("reference"),
 	dist_metric = getParameterByName("dist");
-if (dist_metric.length < 1) { dist_metric = "vxmatch_site"};
 	
 // define object containing all required files' names
-var inputFiles = getInputFilenames(studyname, protein, reference, dist_metric);
+var inputFiles = getInputFilenames(studyname, protein, reference);
 parseInput(inputFiles);
 
 
@@ -169,7 +168,7 @@ function dodistparsing(distdata)
 }
 
 function parseResultsFile(resultdata){
-	
+    
 	var statsToDisplay = Object.keys(resultdata[0]).filter(function(d,i){ return i > 2; })
 	siteStats = d3.nest()
 		.key(function(d) {return d.distance_method;})
@@ -177,7 +176,13 @@ function parseResultsFile(resultdata){
 			var result = {};
 			for (var statidx in statsToDisplay){
 				var stat = statsToDisplay[statidx];
-				result[stat] = d.map(function(a){return +a[stat];});
+				result[stat] = [];
+                for (var aasite in display_idx_map){
+                    result[stat].push(Number.NaN);
+                }
+                d.forEach(function(a){
+                    result[stat][a["start_position"]] = +a[stat];
+                });
 			}
 			return result;
 		})
@@ -201,9 +206,9 @@ function parseResultsFile(resultdata){
 			.attr("value", d)
 			.attr("id","dist-selection-option-" + d)
 			.text(d);
-		if (i === 0){ newOption.attr("selected","selected"); }
+		if (i === 0){ dist_metric = d; newOption.attr("selected","selected"); }
 	})
-		
+    
 	for (var metric in siteStats)
 	{
 		statScales[metric] = {};
@@ -261,12 +266,12 @@ function transpose(array) {
 }
 
 /**  */
-function getInputFilenames(studyname, protein, reference, dist_metric){
+function getInputFilenames(studyname, protein, reference){
 	var result = {};
 	result.treatmentFile = "../data/treatment.csv?study=" + studyname;
 	result.sequenceFastaFile = "../data/alignment.fasta?study=" + studyname + "&protein=" + protein + "&reference=" + reference;
 	result.distanceFile = "../data/distance.csv?study=" + studyname + "&protein=" + protein + "&reference=" + reference;
-	result.resultsFile = "../data/results.csv?study=" + studyname + "&protein=" + protein + "&reference=" + reference;	
+	result.resultsFile = "../data/results.csv?study=" + studyname + "&protein=" + protein + "&reference=" + reference;
 	return result;
 }
 function getParameterByName(name) {
