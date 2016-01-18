@@ -14,13 +14,18 @@ Nick presented the visualization to Andrew's colleagues on Fri, Aug 21st. The de
  - [x] Selection through URL (?sites=347...) using HXB2 site references. Allows sharing of a viz (w/ a selection) via a link.
  - [x] Change all references of "patients" to "participants"
  - [x] Live demo thats quickly show basic functionality
- - [ ] Remove bar plot for non-discrete distances
- - [ ] Implementation and server space at FHCRC (address is http://sieve.fhcrc.org/viz)
+ - [x] Remove bar plot for non-discrete distances
+ - [x] Implementation and server space at FHCRC (address is http://sieve.fhcrc.org/viz)
  - [ ] Download link for a zip file of all the data in the visualization
  - [ ] Link and citation of the primary sieve analysis as well as the primary study manuscripts
  - [ ] Check and recheck (and recheck...) that only pubIDs and publicly available data is shared
- - [ ] Add jitter to the boxplot
- - [ ] Fix BUG with table sorting
+ - [x] Add jitter to the boxplot
+ - [x] Fix bug with table sorting
+ - [ ] Fix bug with overview bars for sieve statistic encoding - HLA, MBS, DVE not centered vertically
+ - [ ] Alphabetically sort entries in distance and y-stat dropdown
+ - [ ] Rotate box plot (make vertical)
+ - [ ] Increase opacity of unselected overview bars
+ - [ ] Text that says "Hold shift and drag to select sites". Add to site selector large grayed text that reads “Hold Shift-key and drag to select” when the user first lands on the page; disappears after selection is made 
  
 #Long term TODO:
  - [ ] Use database instead of files to hold all sieve analysis results. This will also help with generalizing to kmers and other distances. (will also help with staging data prior to publication)
