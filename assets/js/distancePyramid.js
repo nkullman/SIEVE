@@ -1,4 +1,4 @@
-var pyramid_margin = {
+var plot_margin = {
       top: 30,
       right: 20,
       bottom: 40,
@@ -6,20 +6,21 @@ var pyramid_margin = {
       middle: 20
 };
 
-var pyramid_width = 300,
-    pyramid_height = 150;
+var plot_width = 300,
+    plot_height = 150;
 
-var box_width = 225, box_height = 50;
+var box_width = 225,
+    box_height = 50;
 
 // CREATE SVG
-var pyramid_svg = d3.select('.group-box-bar-plot').append('svg')
+var boxplot_svg = d3.select('.group-box-bar-plot').append('svg')
       .attr("version", "1.1")
-      .attr('viewBox', "0 0 " + (pyramid_margin.left + pyramid_width + pyramid_margin.right) + " " + (pyramid_margin.top + pyramid_height + pyramid_margin.bottom))
+      .attr('viewBox', "0 0 " + (plot_margin.left + plot_width + plot_margin.right) + " " + (plot_margin.top + plot_height + plot_margin.bottom))
       .attr('preserveAspectRatio',"xMinYMin meet")
       .attr("class", "svg-content")
       // ADD A GROUP FOR THE SPACE WITHIN THE MARGINS
       .append('g')
-        .attr('transform', translation(pyramid_margin.left, pyramid_margin.top));
+        .attr('transform', translation(plot_margin.left, plot_margin.top));
 
 function drawBoxplot(sites)
 {
@@ -58,14 +59,7 @@ function drawBoxplot(sites)
     .orient("left")
     .tickFormat(function(d) { return ["Vaccine Group", "Placebo Group"][d]; });
   
-    pyramid_svg.append("text")
-      .attr("x",pyramid_width/2)
-      .attr("y",-30)
-      .style("text-anchor","middle")
-      .style("font-size","15px")
-      .text("Distribution of Distances for selected sites");
-  
-  pyramid_svg.selectAll(".box")
+  boxplot_svg.selectAll(".box")
     .data(distData)
     .enter().append("g")
       .attr("class", "box")
@@ -133,7 +127,7 @@ function drawBoxplot(sites)
           .attr("r", box_height/16);
   }
   
-  pyramid_svg.append("g")
+  boxplot_svg.append("g")
     .attr("transform", translation(leftmargin, yscale(1)+box_height/2+10))
     .attr("class", "xbox axis")
     .call(xaxis)
@@ -142,7 +136,7 @@ function drawBoxplot(sites)
       .style("text-anchor", "middle")
       .text("Number of Mismatches");
   
-  pyramid_svg.append("g")
+  boxplot_svg.append("g")
     .attr("class", "ybox axis")
     .attr("transform", translation(leftmargin-10, 0))
     .call(yaxis);
@@ -188,14 +182,14 @@ function updatePyramid(sites){
       .orient("left")
       .tickFormat(function(d) { return ["Vaccine", "Placebo"][d]; });
     
-    pyramid_svg.select(".xbox")
+    boxplot_svg.select(".xbox")
       .transition()
       .call(xaxis);
-    pyramid_svg.select(".ybox")
+    boxplot_svg.select(".ybox")
       .transition()
       .call(yaxis);
     
-    pyramid_svg.selectAll(".box")
+    boxplot_svg.selectAll(".box")
       .data(distData)
       .each(update_box);
     
