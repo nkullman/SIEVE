@@ -18,7 +18,7 @@ var vac_scale = d3.scale.linear()
 	.range([0, barwidth]);
 var opacity_scale = d3.scale.linear()
 	.domain([-1,0]) // will compute domain when navigation area is used the first time.
-	.range([0.3,0])
+	.range([0.6,0])
 	.clamp(true);
 
 var selected_sites = [];
