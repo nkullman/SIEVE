@@ -288,7 +288,7 @@ function generateSiteSelector() {
 		.attr("class", "x axis label")
 		.attr("text-anchor", "middle")
 		.attr("x", (width + margin.left + margin.right)/2)
-		.attr("y", (height + margin.top + .9*margin.bottom))
+		.attr("y", (height + margin.top + .6*margin.bottom))
 		.text("HXB2 position");
 		
 	d3.select("#siteselSVG").append("text")
