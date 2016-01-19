@@ -18,7 +18,7 @@ var vac_scale = d3.scale.linear()
 	.range([0, barwidth]);
 var opacity_scale = d3.scale.linear()
 	.domain([-1,0]) // will compute domain when navigation area is used the first time.
-	.range([0.3,0])
+	.range([0.6,0])
 	.clamp(true);
 
 var selected_sites = [];
@@ -186,6 +186,30 @@ function generateSiteSelector() {
 		.attr("height", height)
 		.attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
 		.call(zoom);
+        
+    d3.select("#siteselSVG").append("rect")
+        .attr("id","selectionHelperBox")
+        .attr("class","selectionHelper")
+        .attr("width",width)
+        .attr("height",height)
+        .attr("rx",3)
+        .attr("ry",3)
+        .attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
+        .attr("fill", "#D3D3D3")
+        .attr("opacity",0.3)
+        .style("pointer-events","none");
+        
+    d3.select("#siteselSVG").append("text")
+        .attr("id","selectionHelperText")
+        .attr("class","selectionHelper")
+        .attr("x",width/2)
+        .attr("y",height/2)
+        .attr("text-anchor", "middle")
+        .style("font-size","1.2em")
+        .attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
+        .text("Hold shift and drag to select sites");
+        
+    var helperPresent = true;
 		
 	siteselSVGg.on("mouseout", function() {d3.select("#tooltip").remove(); });
 		
@@ -264,7 +288,7 @@ function generateSiteSelector() {
 		.attr("class", "x axis label")
 		.attr("text-anchor", "middle")
 		.attr("x", (width + margin.left + margin.right)/2)
-		.attr("y", (height + margin.top + .9*margin.bottom))
+		.attr("y", (height + margin.top + .6*margin.bottom))
 		.text("HXB2 position");
 		
 	d3.select("#siteselSVG").append("text")
@@ -361,6 +385,8 @@ function generateSiteSelector() {
 			});
 		
 		if (!mouse_down || !shift_down) { return; }
+        
+        if (helperPresent) { d3.selectAll(".selectionHelper").remove(); }
 		
 		if (i > last_updated)
 		{
