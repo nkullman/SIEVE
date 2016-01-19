@@ -145,7 +145,7 @@ function drawBoxplot(sites)
     .attr("transform", translation(leftmargin, yscale.range()[0]+10))
     .call(xaxis);
     
-    if (selected_sites.length < 1) {d3.selectAll(".box").attr("display","none");}
+    if (selected_sites.length < 1) {d3.selectAll(".box").remove();}
 }
 
 function updatePyramid(sites){
