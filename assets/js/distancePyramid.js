@@ -7,10 +7,10 @@
 };
 
 var plot_width = 300,
-    plot_height = 180;
+    plot_height = 190;
 
 var box_width = 50,
-    box_height = 160;
+    box_height = 170;
 
 // CREATE SVG
 var boxplot_svg = d3.select('.group-box-bar-plot').append('svg')
@@ -25,7 +25,7 @@ var boxplot_svg = d3.select('.group-box-bar-plot').append('svg')
 function drawBoxplot(sites)
 {
   // Draw box plot for the first time
-  var leftmargin = 35;
+  var leftmargin = 70;
   var distData = [[],[]];
   var participantDistances = dists[0].values;
     
@@ -86,9 +86,9 @@ function drawBoxplot(sites)
     
     box.append("rect")
       .attr("class", "middle50")
-      .attr("y", yscale(q1))
+      .attr("y", yscale(q3))
       .attr("x", -box_width/2)
-      .attr("height", yscale(q3-q1))
+      .attr("height", yscale(q1)-yscale(q3))
       .attr("width", box_width);
       
     box.append("line")
@@ -129,13 +129,12 @@ function drawBoxplot(sites)
   }
   
   boxplot_svg.append("g")
-    .attr("transform", translation(leftmargin, 0))
+    .attr("transform", translation(leftmargin-box_width/2, 0))
     .attr("class", "ybox axis")
     .call(yaxis)
     .append("text")
-      .attr("class", "y label")
       .attr("text-anchor", "end")
-      .attr("y", -15)
+      .attr("y", -leftmargin/2)
       .attr("dy", ".75em")
       .attr("transform", "rotate(-90)")
       .text("Number of Mismatches");
@@ -145,12 +144,10 @@ function drawBoxplot(sites)
     .attr("transform", translation(leftmargin, yscale.range()[0]+10))
     .call(xaxis);
     
-    if (selected_sites.length < 1) {d3.selectAll(".box").remove();}
 }
 
 function updateBoxplot(sites){
-      
-    //update box plot
+
     var distData = [[],[]]; 
     //mmdata[0] = array of the count of mismatches for each vaccine-recieving participant in selected region
     //mmdata[1] = same for placebo participants    
@@ -168,20 +165,23 @@ function updateBoxplot(sites){
       }
     }
     
-    var xscale = d3.scale.linear()
-      .domain([0, Math.max(d3.max(distData[0]), d3.max(distData[1]))])
-      .range([0, box_width])
-      .nice(); 
-    var yscale = d3.scale.ordinal()
-      .domain([0, 1])
-      .rangePoints([20, 100]);
-    var xaxis = d3.svg.axis()
-      .scale(xscale)
-      .orient("bottom");
-    var yaxis = d3.svg.axis()
-      .scale(yscale)
-      .orient("left")
-      .tickFormat(function(d) { return ["Vaccine", "Placebo"][d]; });
+  var yscale = d3.scale.linear()
+    .domain([0, Math.max(d3.max(distData[0]), d3.max(distData[1]))])
+    .range([box_height, 0])
+    .nice();
+  
+  var xscale = d3.scale.ordinal()
+    .domain([0, 1])
+    .rangeRoundPoints([20, 100]);
+  
+  var yaxis = d3.svg.axis()
+    .scale(yscale)
+    .orient("left");
+  
+  var xaxis = d3.svg.axis()
+    .scale(xscale)
+    .orient("bottom")
+    .tickFormat(function(d) { return ["Vaccine Group", "Placebo Group"][d]; });
     
     boxplot_svg.select(".xbox")
       .transition()
@@ -216,50 +216,49 @@ function updateBoxplot(sites){
     
       
      box.select(".middle50").transition()
-      .attr("x", xscale(q1))
-      .attr("y", -box_height/2)
-      .attr("width", xscale(q3-q1))
-      .attr("height", box_height);
+      .attr("y", yscale(q3))
+      .attr("x", -box_width/2)
+      .attr("height", yscale(q1)-yscale(q3))
+      .attr("width", box_width);
       
     box.select(".median").transition()
-      .attr("x1", xscale(q2))
-      .attr("x2", xscale(q2))
-      .attr("y1", -box_height/2)
-      .attr("y2", box_height/2);
+      .attr("y1", yscale(q2))
+      .attr("y2", yscale(q2))
+      .attr("x1", -box_width/2)
+      .attr("x2", box_width/2);
     
     box.select(".outer25.high").transition()
-      .attr("x1", xscale(q3))
-      .attr("x2", xscale(q4));
+      .attr("y1", yscale(q3))
+      .attr("y2", yscale(q4));
     box.select(".outer25.low").transition()
-      .attr("x1", xscale(q0))
-      .attr("x2", xscale(q1));
+      .attr("y1", yscale(q0))
+      .attr("y2", yscale(q1));
     box.select(".whisker.low").transition()
-      .attr("x1", xscale(q0))
-      .attr("x2", xscale(q0))
-      .attr("y1", -box_height/2)
-      .attr("y2", box_height/2);
+      .attr("y1", yscale(q0))
+      .attr("y2", yscale(q0))
+      .attr("x1", -box_width/2)
+      .attr("x2", box_width/2);
     box.select(".whisker.high").transition()
-      .attr("x1", xscale(q4))
-      .attr("x2", xscale(q4))
-      .attr("y1", -box_height/2)
-      .attr("y2", box_height/2);
+      .attr("y1", yscale(q4))
+      .attr("y2", yscale(q4))
+      .attr("x1", -box_width/2)
+      .attr("x2", box_width/2);
       
       var boxplotpoint = box.selectAll(".boxplotpoint")
         .data(data);
       
       boxplotpoint
-        .attr("cx",  function(d) {return xscale(d) + Math.random()*(box_height/8)-(box_height/16);})
+        .attr("cy",  function(d) {return yscale(d) + Math.random()*(box_width/8)-(box_width/16);})
       boxplotpoint.exit()
         .attr("opacity", 0)
         .remove();
       boxplotpoint.enter().append("circle")
           .attr("class", "boxplotpoint")
-          .attr("cx",  function(d) {return xscale(d) + Math.random()*(box_height/8)-(box_height/16);})
-          .attr("cy", function(d) {return yscale(d) - box_height/2 + Math.random()*(box_height/8);})
-          .attr("r", box_height/16);
+          .attr("cy",  function(d) {return yscale(d) + Math.random()*(box_width/8)-(box_width/16);})
+          .attr("cx", function(d) {return xscale(d) - box_width/2 + Math.random()*(box_width/8);})
+          .attr("r", box_width/16);
     }
   
-  if (selected_sites.length === 0) {d3.selectAll(".bar.left,.bar.right").remove();}        
 }
 
 function translation(x,y) {
