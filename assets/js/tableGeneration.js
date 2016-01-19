@@ -402,7 +402,7 @@ function whichIsBigger(a,b){
 		bar.classed("selected",false);
     marker.classed("selected",false);
     update_AAsites(selected_sites);
-		updatePyramid(selected_sites);
+	updateBoxplot(selected_sites);
     updateTables(selected_sites);
 	}
 

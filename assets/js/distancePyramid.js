@@ -24,7 +24,7 @@ var boxplot_svg = d3.select('.group-box-bar-plot').append('svg')
 
 function drawBoxplot(sites)
 {
-  //Create box plot for the first time (instead of updating as in updatePyramid())
+  // Draw box plot for the first time
   var leftmargin = 35;
   var distData = [[],[]];
   var participantDistances = dists[0].values;
@@ -148,7 +148,7 @@ function drawBoxplot(sites)
     if (selected_sites.length < 1) {d3.selectAll(".box").remove();}
 }
 
-function updatePyramid(sites){
+function updateBoxplot(sites){
       
     //update box plot
     var distData = [[],[]]; 
