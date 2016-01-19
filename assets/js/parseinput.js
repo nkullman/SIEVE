@@ -169,7 +169,7 @@ function dodistparsing(distdata)
 
 function parseResultsFile(resultdata){
     
-	var statsToDisplay = Object.keys(resultdata[0]).filter(function(d,i){ return i > 2; })
+	var statsToDisplay = Object.keys(resultdata[0]).filter(function(d,i){ return i > 2; }).sort()
 	siteStats = d3.nest()
 		.key(function(d) {return d.distance_method;})
 		.rollup(function(d){
@@ -199,7 +199,7 @@ function parseResultsFile(resultdata){
 		if (d === "pvalue"){ newOption.attr("selected","selected"); }
 	})
 	
-	var distsToDisplay = Object.keys(siteStats);
+	var distsToDisplay = Object.keys(siteStats).sort();
 	var distMethodSelector = d3.select("#distMethod_selector");
 	distsToDisplay.forEach(function(d,i){
 		var newOption = distMethodSelector.append("option")
