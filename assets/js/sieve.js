@@ -106,7 +106,7 @@ function generateVis(){
 	vac_scale.domain([0, numvac]);
 	
 	generateSiteSelector();
-	drawPyramid(selected_sites);
+	drawBoxplot(selected_sites);
   	generateTables(selected_sites);
 	selected_sites.forEach(function(d) {
 		d3.select("#sitebar" + d).classed("selected",true);
