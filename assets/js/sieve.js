@@ -106,7 +106,7 @@ function generateVis(){
 	vac_scale.domain([0, numvac]);
 	
 	generateSiteSelector();
-	drawPyramid(selected_sites);
+	drawBoxplot(selected_sites);
   	generateTables(selected_sites);
 	selected_sites.forEach(function(d) {
 		d3.select("#sitebar" + d).classed("selected",true);
@@ -428,7 +428,7 @@ function generateSiteSelector() {
 	function update_charts()
 	{
 		update_AAsites(selected_sites);
-		updatePyramid(selected_sites);
+		updateBoxplot(selected_sites);
 		updateTables(selected_sites);
 	}
 }
@@ -447,7 +447,7 @@ function clear_selection()
 	}
 	selected_sites = [];	
 	update_AAsites([]);
-	updatePyramid([]);
+	updateBoxplot([]);
 	updateTables([]);
 }
 
@@ -488,7 +488,7 @@ function hxb2_selection()
 			});
 		this.value = "";
 		update_AAsites(selected_sites);
-		updatePyramid(selected_sites);
+		updateBoxplot(selected_sites);
 		updateTables(selected_sites);
 	}
 }
