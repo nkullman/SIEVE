@@ -1,11 +1,11 @@
 var aacolor = d3.scale.category20().domain(['A','C','D','E','F','G','H','I','K','L','M',
 		'N','P','Q','R','S','T','V','W','Y']);
 var barmargin = {top: 5, right: 10, bottom: 0, left: 10},
-	barwidth = 200,
+	barwidth = 330,
 	barheight = 20,
 	barpadding = .1;
 var barchartmargin = {top: 15, right: 80, bottom: 10, left: 20},
-	barchartwidth = 280,
+	barchartwidth = 320,
 	barchartheight = 70;
 
 var margin =  {top: 20, right: 50, bottom: 50, left: 50};

@@ -6,10 +6,10 @@
       middle: 20
 };
 
-var plot_width = 300,
+var plot_width = 200,
     plot_height = 190;
 
-var box_width = 50,
+var box_width = 70,
     box_height = 170;
 
 // CREATE SVG
