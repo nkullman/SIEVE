@@ -3,9 +3,6 @@
       <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="description" content="SIEVE is an interactive visualization for exploring breakthrough sequence data from vaccine efficacy trials, allowing analysis at the level of amino acids.">
-     
-      <!-- local CSS for visualization -->
-      <link rel="stylesheet" type="text/css" href="assets/css/SieveWebpageStyles.css">
       
       <!-- D3 -->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
@@ -29,35 +26,44 @@
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
+      <!-- local CSS for visualization -->
+      <link rel="stylesheet" type="text/css" href="assets/css/SieveWebpageStyles.css">
+
       <title>SIEVE</title>
    </head>
-   <body class=" hasGoogleVoiceExt">
+   <body>
    <div class="wrapper">
-         <nav class="navbar navbar-default navbar-fixed-top">
-          <div class="container-fluid">
-            <div class="navbar-header">
-              <a class="navbar-brand" href="http://sieve.fredhutch.org/viz">SIEVE</a>
-            </div>
-            <div>
-              <ul class="nav navbar-nav">
-                <li class="active"><a href="index.html">Home</a></li>
-                <li><a href="#" id="startSiteTour">Help</a></li>
-              </ul>
-              <button type="button" class="btn btn-default navbar-btn" id="shareAnalysisButton">Share this analysis</button>
-              <ul class="nav navbar-nav navbar-right">
-                <li><a href="https://uw.edu"><img src="assets/images/UW_Block_W_logo.png" alt="University-of-Washington" height="20px"></a></li>
-                <li><a href="https://www.fredhutch.org/en.html"><img src="assets/images/fhcrc_logo.png" alt="Fred-Hutch" height="20px"></a></li>
-                <li><a href="http://escience.washington.edu/"><img src="assets/images/eScience_logo.png" alt="eScience-Institute" height="20px"></a></li>
-              </ul>
-            </div>
-          </div>
-        </nav>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="http://sieve.fredhutch.org/viz">SIEVE</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="index.html">Home</a></li>
+            <li><a href="#" id="startSiteTour">Help</a></li>
+          </ul>
+          <button type="button" class="btn btn-default navbar-btn" id="shareAnalysisButton">Share this analysis</button>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="https://uw.edu"><img src="assets/images/UW_Block_W_logo.png" alt="University-of-Washington" height="20px"></a></li>
+            <li><a href="https://www.fredhutch.org/en.html"><img src="assets/images/fhcrc_logo.png" alt="Fred-Hutch" height="20px"></a></li>
+            <li><a href="http://escience.washington.edu/"><img src="assets/images/eScience_logo.png" alt="eScience-Institute" height="20px"></a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
          
       <main>
-      <div class="analysisID"></div>
       <div class="nav-fs-wrap">
 		  <fieldset class="protein-nav-wrap">
-			  <div class="protein-nav-opts">
+			  <div class="analysisID"></div>
+        <div class="protein-nav-opts">
           <div id="select-by-hxb2-area">
             Select by HXB2:<br>
             <input type="text" id="hxb2_select" size="13">
@@ -99,7 +105,7 @@
 			  </div> <!-- protein-nav -->
 		  </fieldset> <!--protein-nav-wrap-->
       </div> <!--nav-fs-wrap-->
-		  <fieldset class="drilldown-wrap">
+		  <div class="drilldown-wrap">
 			  <div class="table-container">
           <div class="container table-zn" style="width:100%">
             <ul class="nav nav-tabs">
@@ -128,7 +134,7 @@
           </div> <!-- stacked-bars-export-fn -->
           <div class="stacked-bars-export-zone"></div>
 			  </div> <!-- stacked-bars -->
-		  </fieldset> <!-- drilldown-wrap -->
+		  </div> <!-- drilldown-wrap -->
       </main>
    </div> <!-- wrapper -->
    <script src="assets/js/tableGeneration.js"></script>
