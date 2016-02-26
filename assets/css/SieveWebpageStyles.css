@@ -183,7 +183,7 @@ footer a{
 
 .axis,
 .tick > text {
-    font-size: .8em;
+    font-size: .9em;
 }
 .tick > line {
     stroke-width: 0.5px;
@@ -203,7 +203,7 @@ footer a{
 }
 
 .table-container{
-    width: 350px;
+    width: 375px;
     flex-shrink: 0;
     overflow-y: scroll;
 }
@@ -217,13 +217,13 @@ footer a{
 }
 .group-box-bar{
     min-width: 200px;
-    max-width: 400px;
+    max-width: 300px;
     flex: 1;
     flex-shrink: 0;
 }
 .stacked-bars{
   flex: 1;
-  max-width:500px;
+  max-width: 450px;
   min-width: 300px;
   flex-shrink: 0;
     text-align: center;

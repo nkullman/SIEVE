@@ -27,7 +27,7 @@ var sites_svg = d3.select(".stacked-bars-export-zone") //holds all the stacked b
 
 sites_svg.append("style")
 	.attr("type", "text/css")
-	.text("text { font-size: 10px; font-family: sans-serif;}" +
+	.text("text { font-size: 11px; font-family: sans-serif;}" +
 		".aatitle { font-weight: bold; }" +
 		".axis line, .axis path { stroke: #000; fill: none; }");
 // The styling goes here instead of the CSS file so that the SVG
