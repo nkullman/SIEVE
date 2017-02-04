@@ -204,8 +204,10 @@ function create_AAsite_chart(site)
 			return 1;
 		} else if (prev[a.key] > prev[b.key]){
 			return -1;
+		} else {
+			return a.key < b.key
 		}
-		//fall through if equal
+		
 	}
 	function sort_keys(a, b)
 	{
@@ -213,7 +215,9 @@ function create_AAsite_chart(site)
 			return 1;
 		} else if (prev[a] > prev[b]) {
 			return -1;
-		} //fall through if equal
+		} else {
+			return a.key < b.key
+		}
 	}
 }
 
