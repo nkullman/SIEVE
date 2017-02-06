@@ -67,10 +67,11 @@
           <div id="select-by-hxb2-area">
             Select by HXB2:<br>
             <input type="text" id="hxb2_select" size="13">
-            <a class="help">?
-    					<span>
-    						Select and append sites by HXB2 position, in a comma-separted list with single sites or ranges; e.g., 2, 5, 7-13, 506d.
-    					</span></a>
+            <a href="#" class="help" data-toggle="tooltip" data-placement="right"
+              data-container="body" 
+              title="Select and append sites by HXB2 position, in a comma-separted list with single sites or ranges; e.g., 2, 5, 7-13, 506d.">
+              ?
+            </a>
           </div> <!-- select-by-hxb2-area -->
           <div id="distance-selection">
             Distance measure:<br>
@@ -90,14 +91,16 @@
               <option value="hydrophobicity">Hydrophobicity</option>
               <option value="taylor">Taylor</option>
             </select>
-            <a class="help">?
-    					<span>
-    						Default: D3's default 20-category color scheme <br>
-                Choose amino acid color encoding. <br>
-						    Taylor: W. Taylor, Protein Engineering, Vol 10 , 743-746 (1997) <br>
-                Hydrophobicity: blue = hydrophilic, green = neutral, black = hydrophobic (WebLogo 3 default)<br>
-                Chemistry: green = polar, purple = neutral, blue = basic, red = acidic, black = hydrophobic (Weblogo 1 and 2 and makelogo default)
-    					</span></a>
+            <a href="#" class="help" data-toggle="tooltip" data-placement="auto" data-html="true"
+              data-container="body" 
+              title="<span style='text-align:left'><ul>
+                <li><b>Default</b>: D3's default 20-category color scheme</li>
+                <li><b>Taylor</b>: W. Taylor, Protein Engineering, Vol 10 , 743-746 (1997)</li>
+                <li><b>Hydrophobicity</b>: blue = hydrophilic, green = neutral, black = hydrophobic (WebLogo 3 default)</li>
+                <li><b>Chemistry</b>: green = polar, purple = neutral, blue = basic, red = acidic, black = hydrophobic (Weblogo 1 and 2 and makelogo default)</li>
+                </ul></span>">
+              ?
+            </a>
           </div> <!-- color-encoding -->
 			  </div><!--protein-nav-opts-->
 			  <div class="protein-nav">
@@ -128,9 +131,15 @@
 			  </div> <!-- group-box-bar -->
 			  <div class="stacked-bars">
           <div class="stacked-bars-export-fn">
-            <p id="export-charts" style="cursor:pointer;">Export charts as SVG<a class="help"> ? <span>
-    						Opens new window with the stacked bar charts for individual sites. Ctrl-S or similar to save in SVG format, which can be edited/converted in Inkscape or other editors or converted using an online tool such as CloudConvert.com.
-    				</span></a></p>
+            <p id="export-charts" style="cursor:pointer;">Export charts as SVG
+              <a href="#" class="help" data-toggle="tooltip" data-placement="auto"
+              data-container="body" 
+              title="Opens new window with the stacked bar charts for individual sites.
+              Ctrl-S or similar to save in SVG format, which can be edited/converted to a different format in Inkscape or other editors, 
+              or you can convert using an online tool such as CloudConvert.com.">
+              ?
+            </a>
+            </p>
           </div> <!-- stacked-bars-export-fn -->
           <div class="stacked-bars-export-zone"></div>
 			  </div> <!-- stacked-bars -->
@@ -144,6 +153,12 @@
    <script src="assets/js/sieve.js"></script>
    <script src="assets/js/stackedbars.js"></script>
    <script src="assets/js/distancePyramid.js"></script>
+   <script type="text/javascript">
+      // enable tooltips
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+      })
+   </script>
    <script type="text/javascript">
       function startIntro(){
         var intro = introJs();
