@@ -77,11 +77,25 @@
             Distance measure:<br>
             <select id="distMethod_selector">
             </select>
+            <a id ="distMethod-tooltip-source" href="#" class="help" data-toggle="tooltip" data-placement="auto" data-html="true"
+              data-container="body" 
+              >
+              ?
+            </a>
           </div> <!-- distance-selection -->
           <div id="bar-height-encoding">
             Bar height:<br>
             <select id="yscale_selector">
             </select>
+            <a href="#" class="help" data-toggle="tooltip" data-placement="auto" data-html="true"
+              data-container="body" 
+              title="<span style='text-align:left'><ul>
+                <li><b>P-value</b>: Significance of a treatment association with each position, based on a permutation test.</li>
+                <li><b>Q-value</b>: Significance adjusted to control the false discovery rate (FDR)</li>
+                <li><b>Sieve_statistic</b>: Based on a pooled variance t-statistic, summarizing the difference between the vaccine and placebo group at each amino acid position</li>
+                </ul></span>">
+              ?
+            </a>
           </div> <!-- bar-height-encoding -->
           <div id="color-encoding">
             Color encoding:<br>
@@ -154,6 +168,26 @@
    <script src="assets/js/stackedbars.js"></script>
    <script src="assets/js/distancePyramid.js"></script>
    <script type="text/javascript">
+      // Available sieve analysis publications
+      var sievePubs = {
+        VTN502:'Rolland, M et al. 2011. "Genetic Impact of Vaccination on Breakthrough HIV-1 Sequences from the STEP Trial." Nature Medicine 17 (3): 366-71.',
+        VTN503:'Hertz et al. "A study of vaccine-induced immune pressure on breakthrough infections in the Phambili phase 2b HIV-1 vaccine efficacy trial." Vaccine. 2016. 34(47): 5792-5801.',
+        RV144:'Edlefsen, PT, Rolland M, et al. 2015. "Comprehensive Sieve Analysis of Breakthrough HIV-1 Sequences in the RV144 Vaccine Efficacy Trial", 1-37.',
+        VTN505:"<em>no sieve analysis paper for this study yet available</em>"
+      }
+      // set distance method tooltip text
+      var distanceMethodTooltipText = {
+        pre:"In general, distance measures define ...<br>To learn more about the distances used in the ",
+        study:studyname,
+        uptoPub:" study, see the corresponding sieve analysis paper:<br><br>",
+        pub:sievePubs[studyname]
+      }
+      d3.select("#distMethod-tooltip-source")
+        .attr("title",
+          distanceMethodTooltipText.pre+
+          distanceMethodTooltipText.study+
+          distanceMethodTooltipText.uptoPub+
+          distanceMethodTooltipText.pub);
       // enable tooltips
       $(function () {
         $('[data-toggle="tooltip"]').tooltip()
@@ -185,7 +219,7 @@
               },
               {
                 element: document.querySelector("#bar-height-encoding"),
-                intro: "Be default, the height of the element for each site shows its p-value. Here, you can change it to any of the other attributes provided in the results CSV"
+                intro: "By default, the height of the element for each site shows its p-value. Here, you can change it to any of the other attributes provided in the results CSV"
               },
               {
                 element: document.querySelector("#color-encoding"),
