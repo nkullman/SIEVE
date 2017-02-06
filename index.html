@@ -46,7 +46,9 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="index.html">Home</a></li>
+            <li class="active"><a href="http://sieve.fredhutch.org/viz/">Home</a></li>
+            <li><a id="linkToStudyOverview" href="">Study overview</a></li>
+            <li><a href="http://sieve.fredhutch.org/data">Data</a></li>
             <li><a href="#" id="startSiteTour">Help</a></li>
           </ul>
           <button type="button" class="btn btn-default navbar-btn" id="shareAnalysisButton">Share this analysis</button>
@@ -168,6 +170,8 @@
    <script src="assets/js/stackedbars.js"></script>
    <script src="assets/js/distancePyramid.js"></script>
    <script type="text/javascript">
+      // update link back to study overview
+      d3.select("#linkToStudyOverview").attr("href","http://sieve.fredhutch.org/viz#"+studyname);
       // Available sieve analysis publications
       var sievePubs = {
         VTN502:'Rolland, M et al. 2011. "Genetic Impact of Vaccination on Breakthrough HIV-1 Sequences from the STEP Trial." Nature Medicine 17 (3): 366-71.',
@@ -219,7 +223,7 @@
               },
               {
                 element: document.querySelector("#bar-height-encoding"),
-                intro: "By default, the height of the element for each site shows its p-value. Here, you can change it to any of the other attributes provided in the results CSV"
+                intro: "By default, the height of the element for each site shows its p-value."
               },
               {
                 element: document.querySelector("#color-encoding"),
