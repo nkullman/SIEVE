@@ -130,11 +130,21 @@
             <ul class="nav nav-tabs">
               <li class="active"><a data-toggle="tab" href="#entropyTableDiv">Entropy</a></li>
               <li><a data-toggle="tab" href="#distanceTableDiv">Distance</a></li>
+              <li><a data-toggle="tab" href="#downloadTableDataDiv">Download</a></li>
             </ul>
             <div class="tab-content">
               <div id="entropyTableDiv" class="tab-pane fade in active">
               </div>
               <div id="distanceTableDiv" class="tab-pane fade">
+              </div>
+              <div id="downloadTableDataDiv" class="tab-pane fade">
+                <h4>Download tables as CSVs:</h4>
+                <p>
+                  <a href="#" id="export-entropy-table" type="button" class="btn btn-primary">Entropy data</a>
+                </p>
+                <p>
+                  <a href="#" id="export-distance-table" type="button" class="btn btn-primary">Distance data</a>
+                </p>
               </div>
             </div>
           </div>
@@ -169,6 +179,7 @@
    <script src="assets/js/sieve.js"></script>
    <script src="assets/js/stackedbars.js"></script>
    <script src="assets/js/distancePyramid.js"></script>
+   <script src="assets/js/html2CSV.js" ></script>
    <script type="text/javascript">
       // update link back to study overview
       d3.select("#linkToStudyOverview").attr("href","http://sieve.fredhutch.org/viz#"+studyname);
