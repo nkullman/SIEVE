@@ -55,7 +55,9 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="/viz">Home</a></li>
+            <li class="active"><a href="http://sieve.fredhutch.org/viz/">Home</a></li>
+            <li><a id="linkToStudyOverview" href="">Study overview</a></li>
+            <li><a href="http://sieve.fredhutch.org/data">Data</a></li>
             <li><a href="#" id="startSiteTour">Help</a></li>
           </ul>
           <button type="button" class="btn btn-default navbar-btn" id="shareAnalysisButton">Share this analysis</button>
@@ -76,20 +78,35 @@
           <div id="select-by-hxb2-area">
             Select by HXB2:<br>
             <input type="text" id="hxb2_select" size="13">
-            <a class="help">?
-    					<span>
-    						Select and append sites by HXB2 position, in a comma-separted list with single sites or ranges; e.g., 2, 5, 7-13, 506d.
-    					</span></a>
+            <a href="#" class="help" data-toggle="tooltip" data-placement="right"
+              data-container="body" 
+              title="Select and append sites by HXB2 position, in a comma-separted list with single sites or ranges; e.g., 2, 5, 7-13, 506d.">
+              ?
+            </a>
           </div> <!-- select-by-hxb2-area -->
           <div id="distance-selection">
             Distance measure:<br>
             <select id="distMethod_selector">
             </select>
+            <a id ="distMethod-tooltip-source" href="#" class="help" data-toggle="tooltip" data-placement="auto" data-html="true"
+              data-container="body" 
+              >
+              ?
+            </a>
           </div> <!-- distance-selection -->
           <div id="bar-height-encoding">
             Bar height:<br>
             <select id="yscale_selector">
             </select>
+            <a href="#" class="help" data-toggle="tooltip" data-placement="auto" data-html="true"
+              data-container="body" 
+              title="<span style='text-align:left'><ul>
+                <li><b>P-value</b>: Significance of a treatment association with each position, based on a permutation test.</li>
+                <li><b>Q-value</b>: Significance adjusted to control the false discovery rate (FDR)</li>
+                <li><b>Sieve_statistic</b>: Based on a pooled variance t-statistic, summarizing the difference between the vaccine and placebo group at each amino acid position</li>
+                </ul></span>">
+              ?
+            </a>
           </div> <!-- bar-height-encoding -->
           <div id="color-encoding">
             Color encoding:<br>
@@ -99,14 +116,16 @@
               <option value="hydrophobicity">Hydrophobicity</option>
               <option value="taylor">Taylor</option>
             </select>
-            <a class="help">?
-    					<span>
-    						Default: D3's default 20-category color scheme <br>
-                Choose amino acid color encoding. <br>
-						    Taylor: W. Taylor, Protein Engineering, Vol 10 , 743-746 (1997) <br>
-                Hydrophobicity: blue = hydrophilic, green = neutral, black = hydrophobic (WebLogo 3 default)<br>
-                Chemistry: green = polar, purple = neutral, blue = basic, red = acidic, black = hydrophobic (Weblogo 1 and 2 and makelogo default)
-    					</span></a>
+            <a href="#" class="help" data-toggle="tooltip" data-placement="auto" data-html="true"
+              data-container="body" 
+              title="<span style='text-align:left'><ul>
+                <li><b>Default</b>: D3's default 20-category color scheme</li>
+                <li><b>Taylor</b>: W. Taylor, Protein Engineering, Vol 10 , 743-746 (1997)</li>
+                <li><b>Hydrophobicity</b>: blue = hydrophilic, green = neutral, black = hydrophobic (WebLogo 3 default)</li>
+                <li><b>Chemistry</b>: green = polar, purple = neutral, blue = basic, red = acidic, black = hydrophobic (Weblogo 1 and 2 and makelogo default)</li>
+                </ul></span>">
+              ?
+            </a>
           </div> <!-- color-encoding -->
 			  </div><!--protein-nav-opts-->
 			  <div class="protein-nav">
@@ -120,11 +139,21 @@
             <ul class="nav nav-tabs">
               <li class="active"><a data-toggle="tab" href="#entropyTableDiv">Entropy</a></li>
               <li><a data-toggle="tab" href="#distanceTableDiv">Distance</a></li>
+              <li><a data-toggle="tab" href="#downloadTableDataDiv">Download</a></li>
             </ul>
             <div class="tab-content">
               <div id="entropyTableDiv" class="tab-pane fade in active">
               </div>
               <div id="distanceTableDiv" class="tab-pane fade">
+              </div>
+              <div id="downloadTableDataDiv" class="tab-pane fade">
+                <h4>Download tables as CSVs:</h4>
+                <p>
+                  <a href="#" id="export-entropy-table" type="button" class="btn btn-primary">Entropy data</a>
+                </p>
+                <p>
+                  <a href="#" id="export-distance-table" type="button" class="btn btn-primary">Distance data</a>
+                </p>
               </div>
             </div>
           </div>
@@ -137,9 +166,15 @@
 			  </div> <!-- group-box-bar -->
 			  <div class="stacked-bars">
           <div class="stacked-bars-export-fn">
-            <p id="export-charts" style="cursor:pointer;">Export charts as SVG<a class="help"> ? <span>
-    						Opens new window with the stacked bar charts for individual sites. Ctrl-S or similar to save in SVG format, which can be edited/converted in Inkscape or other editors or converted using an online tool such as CloudConvert.com.
-    				</span></a></p>
+            <p id="export-charts" style="cursor:pointer;">Export charts as SVG
+              <a href="#" class="help" data-toggle="tooltip" data-placement="auto"
+              data-container="body" 
+              title="Opens new window with the stacked bar charts for individual sites.
+              Ctrl-S or similar to save in SVG format, which can be edited/converted to a different format in Inkscape or other editors, 
+              or you can convert using an online tool such as CloudConvert.com.">
+              ?
+            </a>
+            </p>
           </div> <!-- stacked-bars-export-fn -->
           <div class="stacked-bars-export-zone"></div>
 			  </div> <!-- stacked-bars -->
@@ -153,6 +188,35 @@
    <script src="assets/js/sieve.js"></script>
    <script src="assets/js/stackedbars.js"></script>
    <script src="assets/js/distancePyramid.js"></script>
+   <script src="assets/js/html2CSV.js" ></script>
+   <script type="text/javascript">
+      // update link back to study overview
+      d3.select("#linkToStudyOverview").attr("href","http://sieve.fredhutch.org/viz#"+studyname);
+      // Available sieve analysis publications
+      var sievePubs = {
+        VTN502:'Rolland, M et al. 2011. "Genetic Impact of Vaccination on Breakthrough HIV-1 Sequences from the STEP Trial." Nature Medicine 17 (3): 366-71.',
+        VTN503:'Hertz et al. "A study of vaccine-induced immune pressure on breakthrough infections in the Phambili phase 2b HIV-1 vaccine efficacy trial." Vaccine. 2016. 34(47): 5792-5801.',
+        RV144:'Edlefsen, PT, Rolland M, et al. 2015. "Comprehensive Sieve Analysis of Breakthrough HIV-1 Sequences in the RV144 Vaccine Efficacy Trial", 1-37.',
+        VTN505:"<em>no sieve analysis paper for this study yet available</em>"
+      }
+      // set distance method tooltip text
+      var distanceMethodTooltipText = {
+        pre:"In general, distance measures define ...<br>To learn more about the distances used in the ",
+        study:studyname,
+        uptoPub:" study, see the corresponding sieve analysis paper:<br><br>",
+        pub:sievePubs[studyname]
+      }
+      d3.select("#distMethod-tooltip-source")
+        .attr("title",
+          distanceMethodTooltipText.pre+
+          distanceMethodTooltipText.study+
+          distanceMethodTooltipText.uptoPub+
+          distanceMethodTooltipText.pub);
+      // enable tooltips
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+      })
+   </script>
    <script type="text/javascript">
       function startIntro(){
         var intro = introJs();
@@ -179,7 +243,7 @@
               },
               {
                 element: document.querySelector("#bar-height-encoding"),
-                intro: "Be default, the height of the element for each site shows its p-value. Here, you can change it to any of the other attributes provided in the results CSV"
+                intro: "By default, the height of the element for each site shows its p-value."
               },
               {
                 element: document.querySelector("#color-encoding"),

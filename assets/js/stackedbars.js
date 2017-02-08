@@ -2,7 +2,7 @@ var legendspacing = {x: 25, y: 15};
 
 var group_axis = d3.svg.axis()
 	.scale(d3.scale.ordinal()
-		.domain(["V", "P"])
+		.domain(["V (N="+numvac+")", "P (N="+numplac+")"])
 		.rangeRoundPoints([15,40]))
 	.orient("left");
 
@@ -205,9 +205,8 @@ function create_AAsite_chart(site)
 		} else if (prev[a.key] > prev[b.key]){
 			return -1;
 		} else {
-			return a.key < b.key
+			return (a.key < b.key)?-1:1;
 		}
-		
 	}
 	function sort_keys(a, b)
 	{
@@ -216,7 +215,7 @@ function create_AAsite_chart(site)
 		} else if (prev[a] > prev[b]) {
 			return -1;
 		} else {
-			return a.key < b.key
+			return (a < b)?-1:1;
 		}
 	}
 }
