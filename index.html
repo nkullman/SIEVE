@@ -101,9 +101,9 @@
             <a href="#" class="help" data-toggle="tooltip" data-placement="auto" data-html="true"
               data-container="body" 
               title="<span style='text-align:left'><ul>
-                <li><b>P-value</b>: Significance of a treatment association with each position, based on a permutation test.</li>
-                <li><b>Q-value</b>: Significance adjusted to control the false discovery rate (FDR)</li>
-                <li><b>Sieve_statistic</b>: Based on a pooled variance t-statistic, summarizing the difference between the vaccine and placebo group at each amino acid position</li>
+                <li><b>P-value</b>: Statistical significance of the sieve statistic comparing vaccine and placebo infections at each position, based on a permutation test.</li>
+                <li><b>Q-value</b>: Statistical significance adjusted to control the false discovery rate (FDR)</li>
+                <li><b>Sieve statistic</b>: Represents the magnitude of the effect at each site, essentially summarizing the comparison of the vaccine and placebo infections at each amino acid position</li>
                 </ul></span>">
               ?
             </a>
@@ -201,10 +201,9 @@
       }
       // set distance method tooltip text
       var distanceMethodTooltipText = {
-        pre:"In general, distance measures define ...<br>To learn more about the distances used in the ",
+        pre:"Sieve analysis is based on a metric that quantifies a site-specific distance between a breakthrough infection and the vaccine.<br>To learn more about the distances used in the ",
         study:studyname,
-        uptoPub:" study, see the corresponding sieve analysis paper:<br><br>",
-        pub:sievePubs[studyname]
+        uptoPub:' study, see the corresponding sieve analysis paper below or click "Study Overview":<br><br>', pub:sievePubs[studyname]
       }
       d3.select("#distMethod-tooltip-source")
         .attr("title",
@@ -223,7 +222,7 @@
           intro.setOptions({
             steps: [
               { 
-                intro: "<h3>Welcome to SIEVE</h3> This tour will get you started visualizing your sieve analysis data"
+                intro: "<h3>Welcome to SIEVE</h3> This tour will get you started visualizing sieve analysis data."
               },
               {
                 element: document.querySelector('.protein-nav'),
@@ -243,7 +242,7 @@
               },
               {
                 element: document.querySelector("#bar-height-encoding"),
-                intro: "By default, the height of the element for each site shows its p-value."
+                intro: "By default, the height of the element for each site represents its p-value."
               },
               {
                 element: document.querySelector("#color-encoding"),
@@ -251,15 +250,15 @@
               },
               {
                 element: document.querySelector('#analysisID-studyname'),
-                intro: "<h4>Study name</h4> This is the study being visualized..."
+                intro: "<h4>Study name</h4> The abbreviated study title..."
               },
               {
                 element: document.querySelector('#analysisID-protein'),
-                intro: "the protein..."
+                intro: "the HIV-1 protein..."
               },
               {
                 element: document.querySelector('#analysisID-reference'),
-                intro: "and the reference."
+                intro: "and the abbreviated name of the vaccine reference sequence."
               },
               {
                 element: document.querySelector(".table-container"),
