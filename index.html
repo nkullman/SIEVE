@@ -57,7 +57,17 @@
           <ul class="nav navbar-nav">
             <li class="active"><a href="http://sieve.fredhutch.org/viz/">Home</a></li>
             <li><a id="linkToStudyOverview" href="">Study overview</a></li>
-            <li><a href="http://sieve.fredhutch.org/data">Data</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Data <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a id="trt-url" href="">Treatment assignments</a></li>
+                  <li><a id="seq-url" href="">Sequence alignment</a></li>
+                  <li><a id="dist-url" href="">Site-specific distances</a></li>
+                  <li><a id="results-url" href="">Site-specific results</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li><a href="http://sieve.fredhutch.org/data">Data API Overview</a></li>
+                </ul>
+              </li>
             <li><a href="#" id="startSiteTour">Help</a></li>
           </ul>
           <button type="button" class="btn btn-default navbar-btn" id="shareAnalysisButton">Share this analysis</button>
@@ -188,8 +198,19 @@
    <script src="assets/js/sieve.js"></script>
    <script src="assets/js/stackedbars.js"></script>
    <script src="assets/js/distancePyramid.js"></script>
-   <script src="assets/js/html2CSV.js" ></script>
+   <script src="assets/js/html2csv.js" ></script>
    <script type="text/javascript">
+
+      // update links in data dropdown
+      d3.select("#trt-url")
+        .attr("href","../data/treatment.csv?study=" + studyname);
+      d3.select("#seq-url")
+        .attr("href","../data/alignment.fasta?study=" + studyname + "&protein=" + protein + "&reference=" + reference);
+      d3.select("#dist-url")
+        .attr("href","../data/distance.csv?study=" + studyname + "&protein=" + protein + "&reference=" + reference);
+      d3.select("#results-url")
+        .attr("href","../data/results.csv?study=" + studyname + "&protein=" + protein + "&reference=" + reference);
+
       // update link back to study overview
       d3.select("#linkToStudyOverview").attr("href","http://sieve.fredhutch.org/viz#"+studyname);
       // Available sieve analysis publications
@@ -262,7 +283,7 @@
               },
               {
                 element: document.querySelector(".table-container"),
-                intro: "The table let's you view summaries of the selected sites' entropies and distances. " + 
+                intro: "The table let's you view summaries of the selected sites' entropies and distances. You can also download the data as a CSV. " + 
                 "Hit the X to the left of each row to unselect a site. Click the site's ID (first column) to zoom to it in the navigation area. (Note: the table will be empty when no sites are selected)"
               },
               {
