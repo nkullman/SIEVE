@@ -181,7 +181,7 @@ function updateBoxplot(sites){
   var xaxis = d3.svg.axis()
     .scale(xscale)
     .orient("bottom")
-    .tickFormat(function(d) { return ["Vaccine Group (N="+numvac+")", "Placebo Group(N="+numplac+")"][d]; });
+    .tickFormat(function(d) { return ["Vaccine Group<br>(N="+numvac+")", "Placebo Group<br>(N="+numplac+")"][d]; });
     
     boxplot_svg.select(".xbox")
       .transition()
