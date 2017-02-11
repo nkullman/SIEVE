@@ -1,6 +1,7 @@
 function exportTableToCSV($table, filename) {
     var $headers = $table.find('tr:has(th)')
-        ,$rows = $table.find('tr:has(td)')
+    console.log($headers)
+    var $rows = $table.find('tr:has(td)')
 
         // Temporary delimiter characters unlikely to be typed by keyboard
         // This is to avoid accidentally splitting the actual contents
@@ -66,9 +67,9 @@ function exportTableToCSV($table, filename) {
 }
 
 $("#export-entropy-table").click(function (event) {
-    // var outputFile = 'export'
-    var outputFile = window.prompt("Output filename") || 'export';
-    outputFile = outputFile.replace('.csv','') + '.csv'
+    var outputFile = 'entropy_table.csv'
+    // var outputFile = window.prompt("Output filename") || 'export';
+    //outputFile = outputFile.replace('.csv','') + '.csv'
         
     // CSV
     exportTableToCSV.apply(this, [$('#entropyTable'), outputFile]);
@@ -77,9 +78,9 @@ $("#export-entropy-table").click(function (event) {
     // We actually need this to be a typical hyperlink
 });
 $("#export-distance-table").click(function (event) {
-    // var outputFile = 'export'
-    var outputFile = window.prompt("Output filename") || 'export';
-    outputFile = outputFile.replace('.csv','') + '.csv'
+    var outputFile = 'distance_table.csv'
+    // var outputFile = window.prompt("Output filename") || 'export';
+    // outputFile = outputFile.replace('.csv','') + '.csv'
         
     // CSV
     exportTableToCSV.apply(this, [$('#distanceTable'), outputFile]);
