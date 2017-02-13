@@ -1,10 +1,8 @@
 var legendspacing = {x: 25, y: 15};
 
-var selected_sites = [];
-
 var group_axis = d3.svg.axis()
 	.scale(d3.scale.ordinal()
-		.domain(["Vaccine", "Placebo"])
+		.domain(["V (N="+numvac+")", "P (N="+numplac+")"])
 		.rangeRoundPoints([15,40]))
 	.orient("left");
 
@@ -29,7 +27,7 @@ var sites_svg = d3.select(".stacked-bars-export-zone") //holds all the stacked b
 
 sites_svg.append("style")
 	.attr("type", "text/css")
-	.text("text { font-size: 10px; font-family: sans-serif;}" +
+	.text("text { font-size: 11px; font-family: sans-serif;}" +
 		".aatitle { font-weight: bold; }" +
 		".axis line, .axis path { stroke: #000; fill: none; }");
 // The styling goes here instead of the CSS file so that the SVG
@@ -37,6 +35,8 @@ sites_svg.append("style")
 
 var export_button = d3.select("#export-charts")
 	.on("click", export_AAsites);
+var color_selector = d3.select("#color_selector")
+	.on("input", update_aasite_colors);
 
 function update_AAsites(sites)
 {
@@ -121,7 +121,7 @@ function create_AAsite_chart(site)
 		.attr("text-anchor", "middle")
 		.attr("x", barchartwidth/2)
 		.attr("y", 0)
-		.text("Env " + envmap[site].hxb2Pos + " (" + vaccine.sequence[site]+ ") Mismatches (p=" + pvalues[site].toPrecision(2) + ")");
+		.text(protein + " " + display_idx_map[site] + " (" + vaccine.sequence[site]+ ") Mismatches");
 	
 	//Create legend
 	var acids = d3.set(); //assemble list of amino acids present in chart
@@ -172,8 +172,8 @@ function create_AAsite_chart(site)
 			.attr("width", 10)
 			.attr("height", 10)
 			.style("fill", function() {
-				if (d == '-') {return "#000000";}
-				else {return aacolor(d);}
+				if (d == '-') return "#000000";
+				else return aacolor(d);
 			});
 		acid_g.append("text")
 			.attr("transform", "translate(12,9)")
@@ -192,7 +192,7 @@ function create_AAsite_chart(site)
 	match_g.append("rect")
 		.attr("width", 10)
 		.attr("height", 10)
-		.style("fill", "grey");
+		.style("fill", "#303030");
 	match_g.append("text")
 		.attr("transform", "translate(12,9)")
 		.text(vaccine.sequence[site]);
@@ -204,9 +204,9 @@ function create_AAsite_chart(site)
 			return 1;
 		} else if (prev[a.key] > prev[b.key]){
 			return -1;
-		} else{
-            return a.key < b.key
-        }
+		} else {
+			return (a.key < b.key)?-1:1;
+		}
 	}
 	function sort_keys(a, b)
 	{
@@ -215,8 +215,8 @@ function create_AAsite_chart(site)
 		} else if (prev[a] > prev[b]) {
 			return -1;
 		} else {
-            return a.key < b.key
-        }
+			return (a < b)?-1:1;
+		}
 	}
 }
 
@@ -261,20 +261,29 @@ function create_stacked_bar(svg, nest, scale, yloc)
 		.append("svg:title")
 			.text(function(d, i)
 			{
-				return d.key + ": " + d.values + " Patients";
+				return d.key + ": " + d.values + " Participants";
 			});
 	bar.append("rect")
 		.attr("x", scale(sum))
 		.attr("height", barheight)
 		.attr("width", scale.range()[1] - scale(sum))
 		.attr("class", "matchbar")
-		.style("fill", "grey")
+		.style("fill", "#303030")
 		.style("stroke-width", 1)
 		.style("stroke", "white")
 		.on("mouseover", function() { d3.select(this).attr("opacity", .5)})
 		.on("mouseout", function() { d3.select(this).attr("opacity", 1)})
 		.append("svg:title")
-			.text("Match: " + (scale.domain()[1] - sum) + " Patients");
+			.text("Match: " + (scale.domain()[1] - sum) + " Participants");
+}
+
+function update_aasite_colors()
+{
+	/*Switches the color scheme by changing the range of the aacolor scale, then redrawing everything*/
+	aacolor.range(aacolor.domain().map(function(d) { return aa_to_color(d3.event.target.value, d); }));
+	sites_svg.selectAll(".AAsite").remove();
+	update_AAsites(selected_sites);
+	d3.selectAll(".sitebars").attr("fill", function(d,i) { return aacolor(d); });
 }
 
 function AAsite_translate(d, i)

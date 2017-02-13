@@ -1,16 +1,12 @@
 var aacolor = d3.scale.category20().domain(['A','C','D','E','F','G','H','I','K','L','M',
 		'N','P','Q','R','S','T','V','W','Y']);
 var barmargin = {top: 5, right: 10, bottom: 0, left: 10},
-	barwidth = 200,
+	barwidth = 330,
 	barheight = 20,
 	barpadding = .1;
-var barchartmargin = {top: 15, right: 80, bottom: 10, left: 50},
-	barchartwidth = 250,
+var barchartmargin = {top: 15, right: 80, bottom: 10, left: 20},
+	barchartwidth = 320,
 	barchartheight = 70;
-	
-// The below will be read from file at some point
-var studyname = "RV144",
-	protein = "env";
 
 var margin =  {top: 20, right: 50, bottom: 50, left: 50};
 var width = 800 - margin.left - margin.right;
@@ -20,18 +16,9 @@ var plac_scale = d3.scale.linear()
 	.range([0, barwidth]);
 var vac_scale = d3.scale.linear()
 	.range([0, barwidth]);
-var pval_scale = d3.scale.log()
-	.domain([.1, 1.1])
-	.range([0, .95*height]);
-var tval_scale = d3.scale.linear()
-	.domain([-1,0]) // will compute domain when scale is selected the first time
-	.range([.95*height, 0]);
-var entropy_scale = d3.scale.linear()
-	.range([.95*height, 0])
-	.domain([-1, 0]); //will compute domain when scale is selected the first time.
 var opacity_scale = d3.scale.linear()
 	.domain([-1,0]) // will compute domain when navigation area is used the first time.
-	.range([0.5,0])
+	.range([0.6,0])
 	.clamp(true);
 
 var selected_sites = [];
@@ -39,9 +26,8 @@ var selected_sites = [];
 var mouse_down = false;
 var shift_down = false;
 var last_updated;
-var yscale_mode = 0; //0 = pval, 1 = entropy, 2 = tstat, -1 = constant
+var yscale_mode;
 
-var pval_scale_ticks = [0.01 + 0.1, 0.05 + 0.1, 0.2 + 0.1, 1 + 0.1];
 function tval_scale_ticks(tval_scale_domain){
 	var ticks = d3.range(0, tval_scale_domain[1]);
 	ticks.push(tval_scale_domain[1]);
@@ -53,7 +39,7 @@ function entropy_scale_ticks(entropy_scale_domain){
 	ticks.push(entropy_scale_domain[1]);
 	return ticks;
 }
-var selaxistitle = "p-value";
+
 
 // clear selecting mode even if you release your mouse elsewhere.
 d3.select(window).on("mouseup", function(){ last_updated = undefined; mouse_down = false; })
@@ -64,24 +50,54 @@ d3.select(window).on("mouseup", function(){ last_updated = undefined; mouse_down
 
 d3.select("#hxb2_select").on("keypress", hxb2_selection);
 d3.select("#yscale_selector").on("input", yscale_selection);
+d3.select("#distMethod_selector").on("input", distMethod_selection);
 
 function overview_yscale(site)
 {
 	/*	returns the y of a site bar based on the currently selected
 		scale
 	*/
-	switch (yscale_mode)
-	{
-	case 0:
-		return pval_scale(pvalues[site]+.1);
-	case 1:
-		return entropy_scale(entropies.full[site]);
-	case 2:
-		return tval_scale(tvalues[site]);
-	default:
-		return 0;
-	}
+	return statScales[dist_metric][yscale_mode](siteStats[dist_metric][yscale_mode][site]);
 }
+function yscale_reference(site)
+{
+	/*
+		Finds reference location on current scale.
+		If scale contains 0, this is the zero y coordinate.
+		If logarithmic and contains 1, this is the 1 coodinate.
+		If neither, it contains the closest coordinate to the above
+	*/
+	var ref_loc = statScales[dist_metric][yscale_mode](0);
+	if (isNaN(ref_loc))
+	{
+		// logarithmic scale, use 1 instead
+		ref_loc = statScales[dist_metric][yscale_mode](1);
+	}
+	
+	ref_loc = d3.max([0, d3.min([ref_loc, height])]);
+	return ref_loc;
+}
+
+function yscale_y(d, site)
+{
+	/*
+		Returns the y location for given sitebar to be drawn, based
+		on overview_yscale: the location associated to the minimum
+		of the reference location and the value
+	*/
+	return d3.min([yscale_reference(site), overview_yscale(site)]);
+}
+function yscale_height(d, site)
+{
+	/*
+		Returns height of given sitebar to be drawn, difference in
+		y scale between value and reference location
+	*/
+	var ref_loc = yscale_reference(site);
+	
+	return Math.abs(ref_loc - overview_yscale(site));
+}
+
 		
 /** Generate visualization */
 function generateVis(){
@@ -90,8 +106,16 @@ function generateVis(){
 	vac_scale.domain([0, numvac]);
 	
 	generateSiteSelector();
-	drawPyramid([]);
-  generateTable();
+	drawBoxplot(selected_sites);
+  	generateTables(selected_sites);
+	selected_sites.forEach(function(d) {
+		d3.select("#sitebar" + d).classed("selected",true);
+		d3.select("#selMarker" + d).classed("selected",true);
+	});
+	update_AAsites(selected_sites);
+}
+function copyToClipboard(text){
+	window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
 }
 
 function generateSiteSelector() {
@@ -103,8 +127,29 @@ function generateSiteSelector() {
 		how often the script attempts to process the selected sites when making
 		a sweep over the site selection chart.	*/
   
-  d3.select(".analysisID").append("html").html(
-	  "<h2>" + studyname + ": " + protein + " (" + vaccine.ID.trim() + ")</h2>");
+	d3.select(".analysisID").html(
+		"<h2><span id='analysisID-studyname'>" + studyname +
+		"</span>: <span id='analysisID-protein'>" + protein +
+		"</span> (<span id='analysisID-reference'>" + reference + "</span>)</h2>");
+	d3.select("#shareAnalysisButton")
+		.on("click", function(){
+			// get URL and chop off currently added sites, if any
+			var currURL = document.URL;
+			if (currURL.indexOf("?") > -1){ currURL = currURL.substring(0,currURL.indexOf("?")); }
+			// get HXB2 (or other ref) for sites being appended to URL
+			var sitesInURL = [];
+			selected_sites.forEach(function(d){
+				sitesInURL.push(display_idx_map[d]);
+			});
+			// assemble the shareable URL and pass to copyToClipboard function
+			var shareableURL = currURL + "?sites=" + sitesInURL.toString() + 
+								"&study=" + studyname + "&protein=" + protein + "&reference=" + reference + "&dist=" + dist_metric;
+			copyToClipboard(shareableURL);
+		});
+	d3.select("#startSiteTour")
+		.on("click", function(){
+			startIntro();
+		});
   
   window.xScale = d3.scale.linear()
     .domain([0, vaccine.sequence.length-1])
@@ -112,19 +157,8 @@ function generateSiteSelector() {
 	
 	window.xAxis = d3.svg.axis()
 			.scale(xScale)
-      .tickFormat(function(d,i){return envmap[d].hxb2Pos})
+      .tickFormat(function(d,i){return display_idx_map[d]})
 			.orient("bottom");
-			
-	window.yAxisl = d3.svg.axis()
-		.scale(pval_scale)
-		.tickValues(pval_scale_ticks)
-		.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;})
-		.orient("left");
-	window.yAxisr = d3.svg.axis()
-		.scale(pval_scale)
-		.tickValues(pval_scale_ticks)
-		.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;})
-		.orient("right");
 			
 	window.sitebarwidth = xScale.range()[1] / d3.max(xScale.domain());
 			// = totalwidth/numbars
@@ -152,6 +186,30 @@ function generateSiteSelector() {
 		.attr("height", height)
 		.attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
 		.call(zoom);
+        
+    d3.select("#siteselSVG").append("rect")
+        .attr("id","selectionHelperBox")
+        .attr("class","selectionHelper")
+        .attr("width",width)
+        .attr("height",height)
+        .attr("rx",3)
+        .attr("ry",3)
+        .attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
+        .attr("fill", "#D3D3D3")
+        .attr("opacity",0.3)
+        .style("pointer-events","none");
+        
+    d3.select("#siteselSVG").append("text")
+        .attr("id","selectionHelperText")
+        .attr("class","selectionHelper")
+        .attr("x",width/2)
+        .attr("y",height/2)
+        .attr("text-anchor", "middle")
+        .style("font-size","1.2em")
+        .attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
+        .text("Hold shift and drag to select sites");
+        
+    var helperPresent = true;
 		
 	siteselSVGg.on("mouseout", function() {d3.select("#tooltip").remove(); });
 		
@@ -168,14 +226,33 @@ function generateSiteSelector() {
     	.attr("class","sitebars")
 		.attr("id", function (d,i) { return "sitebar" + i;})
 	  	.attr("x", function (d,i) { return xScale(i) - sitebarwidth/2; })
-		.attr("y", function (d,i) {return overview_yscale(i);} )
+		.attr("y", yscale_y)
 		.attr("width", sitebarwidth)
-		.attr("height", function (d,i) {return height - overview_yscale(i);})
+		.attr("height", yscale_height)
 		.attr("fill", function (d) {
 			if (d == '-') return "#000000";
 			else return aacolor(d);
-		})
-		.attr("opacity", 0.5);
+		});
+		
+	window.siteAALabels = siteselSVGg.selectAll(".siteAAlabel").data(vaccine.sequence);
+	siteAALabels.enter().append("text")
+		.attr("class", "siteAALabels")
+		.attr("id", function (d,i) { return "aaLabel" + i;})
+	  	.attr("x", function (d,i) { return xScale(i); })
+		.attr("y", function (d,i) {return height;} )
+		.attr("text-anchor", "middle")
+		.attr("display", "none")
+		.text(function(d) { return "" + d; });
+	
+	window.siteSelMarkers = siteselSVGg.selectAll(".siteSelMarkers").data(vaccine.sequence);
+	siteSelMarkers.enter().append("rect")
+		.attr("class", "siteSelMarkers")
+		.attr("id", function (d,i) {return "selMarker" + i;})
+		.attr("x", function (d,i) { return xScale(i) - sitebarwidth/2; })
+		.attr("y", -height/5)
+		.attr("width", sitebarwidth)
+		.attr("height", height/15)
+		.attr("fill","steelblue");
 		
 	window.foregroundbars = siteselSVGg.selectAll(".foregroundbars")
 		.data(vaccine.sequence);
@@ -211,7 +288,7 @@ function generateSiteSelector() {
 		.attr("class", "x axis label")
 		.attr("text-anchor", "middle")
 		.attr("x", (width + margin.left + margin.right)/2)
-		.attr("y", (height + margin.top + .9*margin.bottom))
+		.attr("y", (height + margin.top + .6*margin.bottom))
 		.text("HXB2 position");
 		
 	d3.select("#siteselSVG").append("text")
@@ -227,17 +304,17 @@ function generateSiteSelector() {
 	siteselSVGg.append("g")
 		.attr("class", "y axis l")
 		.attr("transform", "translate(-5,0)")
-		.call(yAxisl);
+		.call(statAxes[dist_metric][yscale_mode].left);
 	siteselSVGg.append("text")
 		.attr("class", "y axis label")
 		.attr("text-anchor", "beginning")
 		.attr("x", -margin.right)
 		.attr("y", -margin.top/2)
-		.text(selaxistitle);
+		.text(yscale_mode);
 	siteselSVGg.append("g")
 		.attr("class", "y axis r")
 		.attr("transform", "translate(" + (width+5) + ",0)")
-		.call(yAxisr);
+		.call(statAxes[dist_metric][yscale_mode].right);
 	
 	function refresh() {
 		if (!shift_down) {			
@@ -251,11 +328,12 @@ function generateSiteSelector() {
 			
 			sitebars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
 			foregroundbars.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
+			siteSelMarkers.attr("transform", "translate(" + d3.event.translate[0] +", 0)scale(" + d3.event.scale + ", 1)");
 			siteselSVGg.select(".x.axis").call(xAxis.scale(xScale));
 			
 			/* Rectangles were being drawn outside chart region (into margins of chart).
 				The below corrects this by measuring a rectangle's distance from the current
-				drawing midpoint and adjusting opacity accordingly. */
+				drawing midpoint and adjusting display accordingly. */
 			var origSiteBarWidth = parseFloat(sitebars[0][0].getAttribute("width"));
 			var visWindowStart = (0-d3.event.translate[0])/d3.event.scale;
 			var visWindowEnd = visWindowStart + width/d3.event.scale; 
@@ -263,12 +341,25 @@ function generateSiteSelector() {
 			var visWindowMidpt = visWindowStart + visWindowSpan/2;
 			// Change in viewing window of nav pane introduces new window span
 			opacity_scale.domain([visWindowSpan/2, visWindowSpan/2 + .01*visWindowSpan]);
-			// update opacity of sitebars based on drawing window
-			sitebars.attr("opacity", function(d,i){
-				var site_x_loc = parseFloat(sitebars[0][i].getAttribute("x")) + origSiteBarWidth/2;
-				return opacity_scale(Math.abs(visWindowMidpt - site_x_loc));
+			// update display of sitebars based on drawing window
+			sitebars.attr("display", function(d,i){
+				var site_x_loc = parseFloat(this.getAttribute("x")) + origSiteBarWidth/2;
+				if (opacity_scale(Math.abs(visWindowMidpt - site_x_loc)) > 0) {
+					return "default";
+				} else {
+					return "none";
+				}
 			});
-			
+			// update position of text
+			siteAALabels
+				.attr("x", function(d,i){
+					var origLabelLocation = parseFloat(sitebars[0][i].getAttribute("x")) + origSiteBarWidth/2;
+					return (origLabelLocation + d3.event.translate[0]/d3.event.scale)*d3.event.scale;})
+				.attr("display", function(d,i){
+					if (d3.event.scale > 15 && sitebars[0][i].getAttribute("display") != "none") {
+						return "default";
+					} else {
+						return "none";}});
 		}
 	}
 	
@@ -289,21 +380,13 @@ function generateSiteSelector() {
 			.attr("y", -margin.top/2)
 			.attr("text-anchor", "end")
 			.text(function () {
-				if (yscale_mode === 0){ 
-					return "HXB2 Pos: " + envmap[i].hxb2Pos +
-						" // p-value: " + pvalues[i].toPrecision(2);
-				} else if (yscale_mode === 1) {
-					return "HXB2 Pos: " + envmap[i].hxb2Pos +
-						" // entropy: " + entropies.full[i];
-				} else if (yscale_mode === 2) {
-					return "HXB2 Pos: " + envmap[i].hxb2Pos +
-						" // t-stat: " + tvalues[i].toPrecision(2);
-				} else {
-					return "HXB2 Pos: " + envmap[i].hxb2Pos;
-				}
+				return "HXB2 Pos: " + display_idx_map[i] +
+						" // " + yscale_mode + ": " + siteStats[dist_metric][yscale_mode][i].toPrecision(2);
 			});
 		
 		if (!mouse_down || !shift_down) { return; }
+        
+        if (helperPresent) { d3.selectAll(".selectionHelper").remove(); }
 		
 		if (i > last_updated)
 		{
@@ -319,27 +402,23 @@ function generateSiteSelector() {
 		
 		update_array.forEach(function(j) {
 		var bar = d3.select("#sitebar"+j);
+		var marker = d3.select("#selMarker"+j);
 		if (!bar.classed("selected")) { // if not selected
 		
 			// add to and sort array
 			selected_sites.splice(_.sortedIndex(selected_sites, j), 0, j);
 			
 			// up it and set selected to true
-			bar.classed("selected",true)
-				.attr("opacity", 1)
-				.attr("y", -height/5)
-				.attr("height", height/5);
+			bar.classed("selected",true);
+			marker.classed("selected",true);
 				
 		} else { // if already selected
 			// remove from array
 			var index = _.sortedIndex(selected_sites, j);
 			selected_sites.splice(index, 1);
 			// reset formatting, set selected to false
-			var yval = overview_yscale(j);
-			bar.classed("selected",false)
-				.attr('opacity', 0.5)
-				.attr("y", function (d) { return yval;} )
-				.attr("height", function (d) {return height - yval;});
+			bar.classed("selected",false);
+			marker.classed("selected", false);
 		}
 		});
 		
@@ -349,8 +428,8 @@ function generateSiteSelector() {
 	function update_charts()
 	{
 		update_AAsites(selected_sites);
-		updatePyramid(selected_sites);
-		updateTable(selected_sites);
+		updateBoxplot(selected_sites);
+		updateTables(selected_sites);
 	}
 }
 
@@ -362,16 +441,14 @@ function clear_selection()
 	for (var i = 0; i < selected_sites.length; i++) {
 		var site = selected_sites[i];
     	var bar = d3.select("#sitebar" + site);
-    	var yval = overview_yscale(site);
-		bar.classed("selected",false)
-			.attr('opacity', 0.5)
-			.attr("y", yval )
-			.attr("height", height - yval);
+		var marker = d3.select("#selMarker" + site);
+		marker.classed("selected",false);
+		bar.classed("selected",false);
 	}
 	selected_sites = [];	
 	update_AAsites([]);
-	updatePyramid([]);
-	updateTable([]);
+	updateBoxplot([]);
+	updateTables([]);
 }
 
 function hxb2_selection()
@@ -388,7 +465,7 @@ function hxb2_selection()
 				var arr = d.split("-")
 					.map(function(e)
 					{ //convert hxb2 pos to index
-						return hxb2map[e];
+						return refmap[e];
 					});
 				if (arr.length == 1)
 				{
@@ -405,71 +482,49 @@ function hxb2_selection()
 					return;
 				} else {
 					selected_sites.splice(index, 0, d);
-					
-					d3.select("#sitebar" + d).classed("selected",true)
-						.attr("opacity", 1)
-						.attr("y", -height/5)
-						.attr("height",height/5);
+					d3.select("#selMarker" + d).classed("selected",true);
+					d3.select("#sitebar" + d).classed("selected",true);
 				}
 			});
 		this.value = "";
 		update_AAsites(selected_sites);
-		updatePyramid(selected_sites);
-		updateTable(selected_sites);
+		updateBoxplot(selected_sites);
+		updateTables(selected_sites);
 	}
 }
 
 function yscale_selection()
 {
-	switch (d3.event.target.value)
-	{
-	case "pvalue":
-		yscale_mode = 0;
-		yAxisl.scale(pval_scale).tickValues(pval_scale_ticks)
-			.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;});
-		yAxisr.scale(pval_scale).tickValues(pval_scale_ticks)
-			.tickFormat(function(d) {return Math.round((d - 0.1)*100)/100;});
-		selaxistitle = "p-value";
-		break;
-	case "entropy":
-		yscale_mode = 1;
-		if (entropy_scale.domain()[0] == -1)
-		{ //first time selection
-			entropy_scale.domain([0, _.max(entropies.full)]);
-		}
-		
-		yAxisl.scale(entropy_scale).tickValues(entropy_scale_ticks(entropy_scale.domain()))
-			.tickFormat(function(d) {return Math.round(d*100)/100;});
-		yAxisr.scale(entropy_scale).tickValues(entropy_scale_ticks(entropy_scale.domain()))
-			.tickFormat(function(d) {return Math.round(d*100)/100;});
-		selaxistitle = "entropy";
-		break;
-	case "tvalue":
-		yscale_mode = 2;
-		if (tval_scale.domain()[0] == -1){
-			tval_scale.domain([0, Math.abs(d3.max([d3.min(tvalues),d3.max(tvalues)]))]);
-		}
-		yAxisl.scale(tval_scale).tickValues(tval_scale_ticks(tval_scale.domain()))
-			.tickFormat(function(d) {return Math.round((d)*100)/100;});
-		yAxisr.scale(tval_scale).tickValues(tval_scale_ticks(tval_scale.domain()))
-			.tickFormat(function(d) {return Math.round((d)*100)/100;});
-		selaxistitle = "t-stat";
-		break;
-	case "constant":
-		yscale_mode = -1;
-		yAxisl.scale(entropy_scale).tickValues(0);
-		yAxisr.scale(entropy_scale).tickValues(0);
-		selaxistitle = "";
-		break;
+	yscale_mode = d3.event.target.value;
+	var newYScale = statScales[dist_metric][yscale_mode];
+	if (newYScale.domain()[0] == -1){
+		newYScale.domain([d3.min(siteStats[dist_metric][yscale_mode]), d3.max(siteStats[dist_metric][yscale_mode])]);
 	}
 	
 	d3.selectAll(".sitebars")
-		.filter(function(d, i) { return i != selected_sites[_.sortedIndex(selected_sites, i)]; })
 		.transition(500)
-		.attr("y", function(d, i) { return overview_yscale(i); })
-		.attr("height", function(d, i) {return height - overview_yscale(i);});
+		.attr("y", yscale_y)
+		.attr("height", yscale_height);
 		
-	siteselSVGg.select(".y.axis.l").transition().call(yAxisl);
-	siteselSVGg.select(".y.axis.r").transition().call(yAxisr);
-	d3.select(".y.axis.label").text(selaxistitle);
+	siteselSVGg.select(".y.axis.l").transition().call(statAxes[dist_metric][yscale_mode].left);
+	siteselSVGg.select(".y.axis.r").transition().call(statAxes[dist_metric][yscale_mode].right);
+	d3.select(".y.axis.label").text(yscale_mode);
+}
+
+function distMethod_selection()
+{
+	dist_metric = d3.event.target.value;
+	var newYScale = statScales[dist_metric][yscale_mode];
+	if (newYScale.domain()[0] == -1){
+		newYScale.domain([d3.min(siteStats[dist_metric][yscale_mode]), d3.max(siteStats[dist_metric][yscale_mode])]);
+	}
+	
+	d3.selectAll(".sitebars")
+		.transition(500)
+		.attr("y", yscale_y)
+		.attr("height", yscale_height);
+		
+	siteselSVGg.select(".y.axis.l").transition().call(statAxes[dist_metric][yscale_mode].left);
+	siteselSVGg.select(".y.axis.r").transition().call(statAxes[dist_metric][yscale_mode].right);
+	d3.select(".y.axis.label").text(yscale_mode);
 }

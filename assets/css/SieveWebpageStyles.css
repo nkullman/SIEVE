@@ -1,0 +1,224 @@
+html,body {
+    height:100%;
+}
+
+.wrapper {
+	position: relative;
+  height: 100%;
+}
+
+body{
+    margin: 0;
+    padding-top: 45px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    min-width: 880px;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+main {
+    padding: 10px 8px 8px 8px;
+    line-height: 1.5em;
+    font-size: 0.9em;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.analysisID {
+  display: inline-block;
+  float: left;
+}
+.analysisID > h2 {
+  display: inline-block;
+}
+/* Protein navigation/selection area styling */
+.nav-fs-wrap{
+    width: 100%;
+    display: block;
+}
+.protein-nav-wrap{
+    max-height: 100%;
+    border: none;
+}
+
+.protein-nav-opts{
+    min-height: 2em;
+    padding: 0;
+    margin: 0 auto;
+    border: none;
+    margin-top: 11px;
+    float: right;
+}
+.protein-nav-opts div {
+    float: left;
+    width: 224px;
+    text-align: center;
+}
+
+.protein-nav{
+    width: 100%;
+    display: block;
+    padding: 0;
+    margin: 0 auto;
+    text-align: center;
+    padding-bottom: 20px;
+}
+.protein-nav span{
+    float: left;
+    text-align: left;
+    font-size: 1.2em;
+    line-height: 1.5em;
+}
+
+footer{
+    background-color: #F8F8F8;
+    width:100%;
+    height: 55px;
+	position:absolute;
+	bottom:0;
+	left:0;
+    line-height: 1.5em;
+    font-size: 0.9em;
+}
+
+footer ul{
+    color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+footer ul li {
+    display: inline-block;
+    padding: 10px;
+    padding-bottom: 0;
+}
+
+footer a{
+    text-decoration: none;
+    color: inherit;
+}
+
+/* End of styling for navigation area */
+/* Styling for help tooltips */
+
+.help {
+  outline:none;
+  text-decoration: underline;
+  font-size: 10px;
+}
+
+.tooltip-inner {
+    max-width: 350px !important;
+    width: 350px;
+}
+
+/* Begin d3 styling from final project work*/
+.overlay {
+    fill: none;
+	pointer-events: all;
+}
+.brush .extent {
+  stroke: steelblue;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+.y.axis path {
+  display: none;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+.sitebars.selected {
+    opacity: 1;
+}
+.siteSelMarkers.selected {
+    display: initial !important;
+}
+.sitebars:not(.selected){
+    opacity: 0.6;
+}
+.siteSelMarkers{
+    display: none;
+}
+.box .whisker {
+  stroke: #000;
+  stroke-width: 1px;
+}
+.box .median {
+  stroke: #000;
+  stroke-width: 2px;
+}
+
+.box .middle50 {
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 1px;
+}
+
+.box .outer25 {
+  stroke: #000;
+  stroke-width: 1px;
+  stroke-dasharray: 3,3;
+}
+
+.box .boxplotpoint {
+  fill: #CCBADC;
+  stroke: #666;
+  stroke-opacity: .7;
+  fill-opacity: .7;
+}
+
+.axis,
+.tick > text {
+    font-size: .9em;
+}
+.tick > line {
+    stroke-width: 0.5px;
+}
+
+/* End d3 styling from final project work*/
+
+/* Selection drilldown stats area styling */
+.drilldown-wrap{
+    flex: 1 100%;
+
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+}
+
+.table-container{
+    width: 375px;
+    flex-shrink: 0;
+    overflow-y: scroll;
+}
+.deleteTableRowTrigger:hover{
+    background: #ff7f7f;
+    opacity: 0.8;
+}
+.siteRowSiteID:hover{
+    background: #99cc99;
+    opacity: 0.8;
+}
+.group-box-bar{
+    min-width: 200px;
+    max-width: 300px;
+    flex: 1;
+    flex-shrink: 0;
+}
+.stacked-bars{
+  flex: 1;
+  max-width: 450px;
+  min-width: 300px;
+  flex-shrink: 0;
+    text-align: center;
+    overflow-y: scroll;
+}

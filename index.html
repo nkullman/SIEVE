@@ -1,103 +1,307 @@
-<!-- NEXT:
-  For stacked-bars: click title takes you to the site in nav-area (similar to click on row in table)
-  add comments
-  update table construction (stack text in header cells, esp. "Average Entropy", "Average Mismatches", make header cells taller?)
--->
-
 <!DOCTYPE html>
 <html><head>
       <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
-      <link rel="stylesheet" type="text/css" href="SieveWebpageStyles.css">
-      <script src="lodash.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script><style type="text/css"></style>
-      <!--<script src="d3.v3.min.js" charset="utf-8"></script>-->
-      <title>SIEVE</title>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="description" content="SieveSifter is an interactive visualization for exploring breakthrough sequence data from vaccine efficacy trials, allowing analysis at the level of amino acids.">
+      
+      <!-- D3 -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+      
+      <!-- lodash -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
+      
+      <!-- Intro.js for 'help' site tour -->
+      <script src="https://cdn.jsdelivr.net/intro.js/1.1.1/intro.min.js"></script>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/intro.js/1.1.1/introjs.min.css">
+      
+      <!-- jQuery -->
+      <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+      
+      <!-- For table sorting -->
+      <script src="assets/js/bootstrap-sortable.js"></script>
+      <link rel="stylesheet" type="text/css" href="assets/css/bootstrap-sortable.css">
+      
+      <!-- bootstrap -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+      <!-- local CSS for visualization -->
+      <link rel="stylesheet" type="text/css" href="assets/css/SieveWebpageStyles.css">
+
+      <title>SieveSifter</title>
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-72503045-2', 'auto');
+        ga('send', 'pageview');
+      </script>
    </head>
-   <body class=" hasGoogleVoiceExt">
+   <body>
    <div class="wrapper">
-         <nav>
-               <ul>
-                     <a id="headline-link" href="/"><li id="headline-li"><span id="headline-span">SIEVE</span><br>Statistical Interactive Explorer of Vaccine Efficacy</li></a>
-                     <a href="/examples/"><li>Other sieve analysis datasets</li></a>
-                     <a href="/custom/"><li>Upload your own data</li></a>
-					 <a href="/about/"><li>About</li></a>
-               </ul>
-               <div class="handle">SIEVE <span>Menu ☰</span></div>
-         </nav>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="http://sieve.fredhutch.org/viz">SieveSifter</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="http://sieve.fredhutch.org/viz/">Home</a></li>
+            <li><a id="linkToStudyOverview" href="">Study overview</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Data <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a id="trt-url" href="">Treatment assignments</a></li>
+                  <li><a id="seq-url" href="">Sequence alignment</a></li>
+                  <li><a id="dist-url" href="">Site-specific distances</a></li>
+                  <li><a id="results-url" href="">Site-specific results</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li><a href="http://sieve.fredhutch.org/data">Data API Overview</a></li>
+                </ul>
+              </li>
+            <li><a href="#" id="startSiteTour">Help</a></li>
+          </ul>
+          <button type="button" class="btn btn-default navbar-btn" id="shareAnalysisButton">Share this analysis</button>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="https://uw.edu"><img src="assets/images/UW_Block_W_logo.png" alt="University-of-Washington" height="20px"></a></li>
+            <li><a href="https://www.fredhutch.org/en.html"><img src="assets/images/fhcrc_logo.png" alt="Fred-Hutch" height="20px"></a></li>
+            <li><a href="http://escience.washington.edu/"><img src="assets/images/eScience_logo.png" alt="eScience-Institute" height="20px"></a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
          
       <main>
-      <div class="analysisID"></div>
       <div class="nav-fs-wrap">
 		  <fieldset class="protein-nav-wrap">
-			  <div class="protein-nav-opts">
+			  <div class="analysisID"></div>
+        <div class="protein-nav-opts">
           <div id="select-by-hxb2-area">
-            Select by HXB2: <input type="text" id="hxb2_select" size="13">
-            <a class="help">?
-    					<span>
-    						Select and append sites by HXB2 position, in a comma-separted list with single sites or ranges; e.g., 2, 5, 7-13, 506d.
-    					</span></a>
+            Select by HXB2:<br>
+            <input type="text" id="hxb2_select" size="13">
+            <a href="#" class="help" data-toggle="tooltip" data-placement="right"
+              data-container="body" 
+              title="Select and append sites by HXB2 position, in a comma-separted list with single sites or ranges; e.g., 2, 5, 7-13, 506d.">
+              ?
+            </a>
           </div> <!-- select-by-hxb2-area -->
-          <div id="bar-height-encoding">
-            Bar height encoding:
-            <select id="yscale_selector">
-              <option value="pvalue">p-value</option>
-              <option value="entropy">Entropy</option>
-              <option value="tvalue">t-stat</option>
-              <option value="constant">Constant</option>
+          <div id="distance-selection">
+            Distance measure:<br>
+            <select id="distMethod_selector">
             </select>
+            <a id ="distMethod-tooltip-source" href="#" class="help" data-toggle="tooltip" data-placement="auto" data-html="true"
+              data-container="body" 
+              >
+              ?
+            </a>
+          </div> <!-- distance-selection -->
+          <div id="bar-height-encoding">
+            Bar height:<br>
+            <select id="yscale_selector">
+            </select>
+            <a href="#" class="help" data-toggle="tooltip" data-placement="auto" data-html="true"
+              data-container="body" 
+              title="<span style='text-align:left'><ul>
+                <li><b>P-value</b>: Statistical significance of the sieve statistic comparing vaccine and placebo infections at each position, based on a permutation test.</li>
+                <li><b>Q-value</b>: Statistical significance adjusted to control the false discovery rate (FDR)</li>
+                <li><b>Sieve statistic</b>: Represents the magnitude of the effect at each site, essentially summarizing the comparison of the vaccine and placebo infections at each amino acid position</li>
+                </ul></span>">
+              ?
+            </a>
           </div> <!-- bar-height-encoding -->
+          <div id="color-encoding">
+            Color encoding:<br>
+            <select id="color_selector">
+              <option value="d3">Default</option>
+              <option value="chemistry">Chemistry</option>
+              <option value="hydrophobicity">Hydrophobicity</option>
+              <option value="taylor">Taylor</option>
+            </select>
+            <a href="#" class="help" data-toggle="tooltip" data-placement="auto" data-html="true"
+              data-container="body" 
+              title="<span style='text-align:left'><ul>
+                <li><b>Default</b>: D3's default 20-category color scheme</li>
+                <li><b>Taylor</b>: W. Taylor, Protein Engineering, Vol 10 , 743-746 (1997)</li>
+                <li><b>Hydrophobicity</b>: blue = hydrophilic, green = neutral, black = hydrophobic (WebLogo 3 default)</li>
+                <li><b>Chemistry</b>: green = polar, purple = neutral, blue = basic, red = acidic, black = hydrophobic (Weblogo 1 and 2 and makelogo default)</li>
+                </ul></span>">
+              ?
+            </a>
+          </div> <!-- color-encoding -->
 			  </div><!--protein-nav-opts-->
 			  <div class="protein-nav">
           
 			  </div> <!-- protein-nav -->
 		  </fieldset> <!--protein-nav-wrap-->
       </div> <!--nav-fs-wrap-->
-		  <fieldset class="drilldown-wrap">
-			  <div class="table">
-          <div class="table-header">
-            <p>
-              Summary statistics
-            </p>
+		  <div class="drilldown-wrap">
+			  <div class="table-container">
+          <div class="container table-zn" style="width:100%">
+            <ul class="nav nav-tabs">
+              <li class="active"><a data-toggle="tab" href="#entropyTableDiv">Entropy</a></li>
+              <li><a data-toggle="tab" href="#distanceTableDiv">Distance</a></li>
+              <li><a data-toggle="tab" href="#downloadTableDataDiv">Download</a></li>
+            </ul>
+            <div class="tab-content">
+              <div id="entropyTableDiv" class="tab-pane fade in active">
+              </div>
+              <div id="distanceTableDiv" class="tab-pane fade">
+              </div>
+              <div id="downloadTableDataDiv" class="tab-pane fade">
+                <h4>Download tables as CSV:</h4>
+                <p>
+                  <a href="#" id="export-entropy-table" type="button" class="btn btn-primary">Entropy data</a>
+                </p>
+                <p>
+                  <a href="#" id="export-distance-table" type="button" class="btn btn-primary">Distance data</a>
+                </p>
+              </div>
+            </div>
           </div>
-          <div class="table-zn"></div>
-			  </div> <!-- table -->
+			  </div> <!-- table-container -->
 			  <div class="group-box-bar">
           <div class="group-box-bar-header">
-            <p>
-              Distribution of mismatch counts from selected sites
-            </p>
           </div> <!-- group-box-bar-header -->
           <div class="group-box-bar-plot">
           </div> <!-- group-box-bar-plot -->
 			  </div> <!-- group-box-bar -->
 			  <div class="stacked-bars">
           <div class="stacked-bars-export-fn">
-            <p id="export-charts" style="cursor:pointer;">Export charts as SVG<a class="help"> ? <span>
-    						Opens new window with the stacked bar charts for individual sites. Ctrl-S or similar to save in SVG format, which can be edited/converted in Inkscape or other editors or converted using an online tool such as CloudConvert.com.
-    				</span></a></p>
+            <p id="export-charts" style="cursor:pointer;">Export charts as SVG
+              <a href="#" class="help" data-toggle="tooltip" data-placement="auto"
+              data-container="body" 
+              title="Opens new window with the stacked bar charts for individual sites.
+              Ctrl-S or similar to save in SVG format, which can be edited/converted to a different format in Inkscape or other editors, 
+              or you can convert using an online tool such as CloudConvert.com.">
+              ?
+            </a>
+            </p>
           </div> <!-- stacked-bars-export-fn -->
           <div class="stacked-bars-export-zone"></div>
 			  </div> <!-- stacked-bars -->
-		  </fieldset> <!-- drilldown-wrap -->
+		  </div> <!-- drilldown-wrap -->
       </main>
-      <footer>
-            <ul>
-               <li><a href="https://www.fredhutch.org/en.html"><img src="images/fhcrc_logo.png" alt="Fred-Hutch" height="37px"></a></li>
-               <li><a href="https://uw.edu"><img src="images/UW_Block_W_logo.png" alt="University-of-Washington" height="37px"></a></li>
-               <li><a href="http://escience.washington.edu/"><img src="images/eScience_logo.png" alt="eScience-Institute" height="37px"></a></li>
-            </ul>
-      </footer>
-      <script>
-            d3.select(".handle").on("click", function(){
-                  var navul = d3.select("nav ul");
-                  navul.classed("showing", !navul.classed("showing"));
-            })
-      </script>
    </div> <!-- wrapper -->
-   <script src="entropy.js"></script>
-   <script src="summarystats.js"></script>
-   <script src="parseinput_nested.js"></script>
-   <script src="sieve.js"></script>
-   <script src="stackedbars.js"></script>
-   <script src="pyramid.js"></script>
+   <script src="assets/js/tableGeneration.js"></script>
+   <script src="assets/js/colors.js"></script>
+   <script src="assets/js/summarystats.js"></script>
+   <script src="assets/js/parseinput.js"></script>
+   <script src="assets/js/sieve.js"></script>
+   <script src="assets/js/stackedbars.js"></script>
+   <script src="assets/js/distancePyramid.js"></script>
+   <script src="assets/js/html2csv.js" ></script>
+   <script type="text/javascript">
+
+      // update links in data dropdown
+      d3.select("#trt-url")
+        .attr("href","../data/treatment.csv?study=" + studyname);
+      d3.select("#seq-url")
+        .attr("href","../data/alignment.fasta?study=" + studyname + "&protein=" + protein + "&reference=" + reference);
+      d3.select("#dist-url")
+        .attr("href","../data/distance.csv?study=" + studyname + "&protein=" + protein + "&reference=" + reference);
+      d3.select("#results-url")
+        .attr("href","../data/results.csv?study=" + studyname + "&protein=" + protein + "&reference=" + reference);
+
+      // update link back to study overview
+      d3.select("#linkToStudyOverview").attr("href","http://sieve.fredhutch.org/viz#"+studyname);
+      // Available sieve analysis publications
+      var sievePubs = {
+        VTN502:'Rolland, M et al. 2011. "Genetic Impact of Vaccination on Breakthrough HIV-1 Sequences from the STEP Trial." Nature Medicine 17 (3): 366-71.',
+        VTN503:'Hertz et al. "A study of vaccine-induced immune pressure on breakthrough infections in the Phambili phase 2b HIV-1 vaccine efficacy trial." Vaccine. 2016. 34(47): 5792-5801.',
+        RV144:'Edlefsen, PT, Rolland M, et al. 2015. "Comprehensive Sieve Analysis of Breakthrough HIV-1 Sequences in the RV144 Vaccine Efficacy Trial", 1-37.',
+        VTN505:"<em>no sieve analysis paper for this study yet available</em>"
+      }
+      // set distance method tooltip text
+      var distanceMethodTooltipText = {
+        pre:"Sieve analysis is based on a metric that quantifies a site-specific distance between a breakthrough infection and the vaccine.<br>To learn more about the distances used in the ",
+        study:studyname,
+        uptoPub:' study, see the corresponding sieve analysis paper below or click "Study Overview":<br><br>', pub:sievePubs[studyname]
+      }
+      d3.select("#distMethod-tooltip-source")
+        .attr("title",
+          distanceMethodTooltipText.pre+
+          distanceMethodTooltipText.study+
+          distanceMethodTooltipText.uptoPub+
+          distanceMethodTooltipText.pub);
+      // enable tooltips
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+      })
+   </script>
+   <script type="text/javascript">
+      function startIntro(){
+        var intro = introJs();
+          intro.setOptions({
+            steps: [
+              { 
+                intro: "<h3>Welcome to SieveSifter</h3> This tour will get you started visualizing sieve analysis data."
+              },
+              {
+                element: document.querySelector('.protein-nav'),
+                intro: "<h4>Navigation area</h4> Here you can see the entire study protein with a colored element for each amino acid."
+              },
+              {
+                element: document.querySelector('.protein-nav'),
+                intro: "You can select a site by holding shift and clicking + dragging."
+              },
+              {
+                element: document.querySelector('.protein-nav'),
+                intro: "Pan and zoom like you would on a map: click and drag, scroll, double-click"
+              },
+              {
+                element: document.querySelector('#select-by-hxb2-area'),
+                intro: "Select and append sites by HXB2 position, in a comma-separted list with single sites or ranges; e.g., 2, 5, 7-13, 506d."
+              },
+              {
+                element: document.querySelector("#bar-height-encoding"),
+                intro: "By default, the height of the element for each site represents its p-value."
+              },
+              {
+                element: document.querySelector("#color-encoding"),
+                intro: "Different color encodings are available for the sites. Hover over the question mark here to learn more about the options."
+              },
+              {
+                element: document.querySelector('#analysisID-studyname'),
+                intro: "<h4>Study name</h4> The abbreviated study title..."
+              },
+              {
+                element: document.querySelector('#analysisID-protein'),
+                intro: "the HIV-1 protein..."
+              },
+              {
+                element: document.querySelector('#analysisID-reference'),
+                intro: "and the abbreviated name of the vaccine reference sequence."
+              },
+              {
+                element: document.querySelector(".table-container"),
+                intro: "The table let's you view summaries of the selected sites' entropies and distances. You can also download the data as a CSV. " + 
+                "Hit the X to the left of each row to unselect a site. Click the site's ID (first column) to zoom to it in the navigation area. (Note: the table will be empty when no sites are selected)"
+              },
+              {
+                element: document.querySelector(".group-box-bar"),
+                intro: "A box plot showing the distribution of distances over all sites for both the vaccine and placebo groups."
+              },
+              {
+                element: document.querySelector(".stacked-bars"),
+                intro: "For each site selected, there is a chart with two bars. The bars show the distribution of the amino acids that occur at that site for participants in the vaccine (top bar) and placebo (bottom bar)."
+              },
+              {
+                element: document.querySelector("#shareAnalysisButton"),
+                intro: "If you would like to share your current view, click here to get a link you can send to others."
+              }
+            ]
+          });
+
+          intro.start();
+      }
+    </script>
 </body></html>
