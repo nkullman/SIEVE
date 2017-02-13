@@ -13,10 +13,14 @@ function exportTableToCSV($table, filename) {
         ,rowDelim = '"\r\n"';
 
         // Grab text from table into CSV formatted string
-        var csv = '"';
+        var csv = '';
         csv += formatRows($headers.map(grabRow));
         csv += rowDelim;
         csv += formatRows($rows.map(grabRow)) + '"';
+
+        // Removes the additional column from the header row,
+        // Adds double-quote for the URI
+        csv = '"' + csv.slice(3)
 
         // Data URI
         var csvData = 'data:application/csv;charset=utf-8,' + encodeURIComponent(csv);

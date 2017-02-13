@@ -57,7 +57,7 @@ function drawBoxplot(sites)
   var xaxis = d3.svg.axis()
     .scale(xscale)
     .orient("bottom")
-    .tickFormat(function(d) { return ["Vaccine Group", "Placebo Group"][d]; });
+    .tickFormat(function(d) { return ["Vaccine Group<br>(N="+numvac+")", "Placebo Group<br>(N="+numplac+")"][d]; });
   
   boxplot_svg.selectAll(".box")
     .data(distData)
