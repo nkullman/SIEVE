@@ -2,7 +2,7 @@ var legendspacing = {x: 25, y: 15};
 
 var group_axis = d3.svg.axis()
 	.scale(d3.scale.ordinal()
-		.domain(["V (N="+numvac+")", "P (N="+numplac+")"])
+		.domain(["V", "P"])
 		.rangeRoundPoints([15,40]))
 	.orient("left");
 

@@ -58,7 +58,7 @@ function drawBoxplot(sites)
     .scale(xscale)
     .orient("bottom")
     .tickFormat(function(d) { return ["Vaccine Group", "Placebo Group"][d]; });
-  
+
   boxplot_svg.selectAll(".box")
     .data(distData)
     .enter().append("g")
@@ -181,7 +181,7 @@ function updateBoxplot(sites){
   var xaxis = d3.svg.axis()
     .scale(xscale)
     .orient("bottom")
-    .tickFormat(function(d) { return ["Vaccine Group (N="+numvac+")", "Placebo Group(N="+numplac+")"][d]; });
+    .tickFormat(function(d) { return ["Vaccine Group", "Placebo Group"][d]; });
     
     boxplot_svg.select(".xbox")
       .transition()
