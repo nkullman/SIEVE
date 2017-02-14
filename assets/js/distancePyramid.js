@@ -57,8 +57,12 @@ function drawBoxplot(sites)
   var xaxis = d3.svg.axis()
     .scale(xscale)
     .orient("bottom")
-    .tickFormat(function(d) { return ["Vaccine Group<br>(N="+numvac+")", "Placebo Group<br>(N="+numplac+")"][d]; });
-  
+    .tickFormat(function(d) { return ["Vaccine Group", "Placebo Group"][d]; });
+  var xaxis = d3.svg.axis()
+    .scale(xscale)
+    .orient("top")
+    .tickFormat(function(d) { return ["(N="+numvac+")", "(N="+numplac+")"][d]; });
+
   boxplot_svg.selectAll(".box")
     .data(distData)
     .enter().append("g")
@@ -181,7 +185,11 @@ function updateBoxplot(sites){
   var xaxis = d3.svg.axis()
     .scale(xscale)
     .orient("bottom")
-    .tickFormat(function(d) { return ["Vaccine Group<br>(N="+numvac+")", "Placebo Group<br>(N="+numplac+")"][d]; });
+    .tickFormat(function(d) { return ["Vaccine Group", "Placebo Group"][d]; });
+  var xaxis = d3.svg.axis()
+    .scale(xscale)
+    .orient("top")
+    .tickFormat(function(d) { return ["(N="+numvac+")", "(N="+numplac+")"][d]; });
     
     boxplot_svg.select(".xbox")
       .transition()
