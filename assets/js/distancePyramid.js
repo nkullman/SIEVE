@@ -59,6 +59,13 @@ function drawBoxplot(sites)
     .orient("bottom")
     .tickFormat(function(d) { return ["Vaccine Group", "Placebo Group"][d]; });
 
+// add an axis for the number of participants in each category
+  var xNAxis = d3.svg.axis()
+    .scale(xscale)
+    .orient("bottom")
+    .tickSize(0)
+    .tickFormat(function(d) { return ["(N = "+numvac+")", "(N = "+numplac+")"][d]; });
+
   boxplot_svg.selectAll(".box")
     .data(distData)
     .enter().append("g")
@@ -143,6 +150,14 @@ function drawBoxplot(sites)
     .attr("class", "xbox axis")
     .attr("transform", translation(leftmargin, yscale.range()[0]+10))
     .call(xaxis);
+
+  // append axis for number of participants
+  boxplot_svg.append("g")
+    .attr("class", "xbox axis nAxis")
+    .attr("transform", translation(leftmargin, yscale.range()[0]+30))
+    .call(xNAxis);
+  // hide the bar
+  d3.select("g.nAxis").select("path").classed("hidden",true)
     
 }
 
